@@ -64,9 +64,9 @@ class Rest extends _Help {
 
 /// An annotation which marks a class as representing a script command.
 class Command extends _Help {
-  final bool wrapped;
+  final CallStyle callStyle;
 
-  const Command({String help}) : super(help: help);
+  const Command({String help, this.callStyle}) : super(help: help);
 }
 
 /// An annotation which can be used on a class to mark it as representing a

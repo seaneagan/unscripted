@@ -1,50 +1,6 @@
 
 part of ink;
 
-/// Returns full usage text for the current dart script,
-/// including a [description].
-String _getFullHelp(ArgParser parser, {String description, List<String> path}) {
-
-  if(path == null) path = const [];
-  if(description == null) description = '';
-  var descriptionBlock = description.isEmpty ? '' : '''
-$description
-''';
-
-  var optionsPlaceholder = '[options]';
-  var scriptName = basename(Platform.script.path);
-  var hasOptions = parser.options.isEmpty;
-  var globalOptions = hasOptions ? '' : ' $optionsPlaceholder';
-  var optionsBlock = hasOptions ? '' : '''
-
-Options:
-
-${parser.getUsage()}''';
-
-  var commandBlock = '';
-  var commandPlaceholder = '';
-  if(path.isNotEmpty) {
-    globalOptions = '';
-    commandPlaceholder = ' ${path.join(' ')} $optionsPlaceholder';
-  } else if(parser.commands.isNotEmpty) {
-    globalOptions = '';
-    commandPlaceholder = ' command';
-    commandBlock = '''
-
-Available commands:
-
-${parser.commands.keys.map((command) => '  $command\n').join()}
-Use "$scriptName $_HELP [command]" for more information about a command.''';
-  }
-
-  return '''
-$descriptionBlock
-Usage: $scriptName$globalOptions$commandPlaceholder
-$optionsBlock
-$commandBlock
-''';
-}
-
 const String _HELP = 'help';
 
 /// Adds a standard --help (-h) option to [parser].
@@ -62,11 +18,29 @@ void _addHelp(ArgParser parser) {
   }
 }
 
-ArgParser _getParserFromFunction(
-    MethodMirror methodMirror,
-    [Map<String, ArgParser> commands]) {
+Rest _getRestFromMethod(MethodMirror method) {
+  var firstParameter = method.parameters.firstWhere(
+      (parameter) => !parameter.isOptional,
+      orElse: () => null);
+  if(firstParameter != null) {
+    return firstParameter
+        .metadata
+          .map((metadata) => metadata.reflectee)
+          .firstWhere(
+              (annotation) => annotation is Rest,
+              orElse: () => null);
+    }
+    return null;
+  }
 
-  var parser = new ArgParser();
+
+Usage _getUsageFromFunction(MethodMirror methodMirror, {Usage usage}) {
+
+  if(usage == null) usage = new Usage();
+
+  usage.rest = _getRestFromMethod(methodMirror);
+
+  _addCommandMetadata(usage, methodMirror);
 
   var parameters = methodMirror.parameters;
 
@@ -100,21 +74,19 @@ ArgParser _getParserFromFunction(
       throw 'Parameter $name is not a Flag, Option, Rest, List, String, bool';
     }
 
-    _addArgToParser(parser, dashesToCamelCase.decode(name), defaultValue, arg);
+    _addArgToParser(usage.parser, dashesToCamelCase.decode(name), defaultValue, arg);
   });
 
-  if(commands != null) {
-    commands.forEach((command, commandParser) {
-      parser.addCommand(command, commandParser);
-    });
-  }
-
-  return parser;
+  return usage;
 }
 
-ArgParser _getParserFromClass(Type theClass) {
+Usage _getUsageFromClass(Type theClass) {
 
   var classMirror = reflectClass(theClass);
+
+  var unnamedConstructor = _getUnnamedConstructor(classMirror);
+
+  var usage = _getUsageFromFunction(unnamedConstructor);
 
   // TODO: Include inherited methods, when supported by 'dart:mirrors'.
   var methods = classMirror.declarations.values
@@ -140,18 +112,27 @@ ArgParser _getParserFromClass(Type theClass) {
   var commands = {};
 
   subCommands.forEach((methodMirror, subCommand) {
-    var usage = _getParserFromFunction(methodMirror);
     var commandName = dashesToCamelCase
         .decode(MirrorSystem.getName(methodMirror.simpleName));
-    commands[commandName] = usage;
+    var subCommandUsage = _getUsageFromFunction(
+        methodMirror,
+        usage: usage.addCommand(commandName));
+    _addCommandMetadata(subCommandUsage, methodMirror);
   });
 
   var constructors = classMirror.declarations.values
       .where((d) => d is MethodMirror && d.isConstructor);
 
-  var unnamedConstructor = _getUnnamedConstructor(classMirror);
+  return usage;
+}
 
-  return _getParserFromFunction(unnamedConstructor, commands);
+_addCommandMetadata(Usage usage, DeclarationMirror declaration) {
+  Command command = declaration.metadata
+      .map((annotation) => annotation.reflectee)
+        .firstWhere((metadata) =>
+            metadata is Command, orElse: () => null);
+  var description = command == null ? '' : command.help;
+  usage.description = description;
 }
 
 void _addArgToParser(ArgParser parser, String name, defaultValue, _Arg arg) {

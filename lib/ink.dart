@@ -14,4 +14,6 @@ part 'src/script.dart';
 part 'src/annotations.dart';
 part 'src/call_style.dart';
 part 'src/args_codec.dart';
+part 'src/usage.dart';
+part 'src/usage_format.dart';
 part 'src/util.dart';

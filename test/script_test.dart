@@ -141,6 +141,7 @@ main() {
   });
 }
 
+@Command(help: 'Test command with sub-commands')
 class CommandScriptTest {
   final bool flag;
   final String option;

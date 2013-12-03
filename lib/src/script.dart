@@ -27,25 +27,9 @@ ink(model) {
 /// set to `1`.
 abstract class Script {
 
-  /// A simple description of what this script does, for use in help text.
-  final String description;
+  Usage get usage;
 
-  /// The parser associated with this script.
-  ArgParser get parser {
-    if(!_parserInitialized) {
-      _parser = _getParser();
-      _addHelp(_parser);
-      _parserInitialized = true;
-    }
-    return _parser;
-  }
-  ArgParser _getParser() => _parser;
-  ArgParser _parser;
-  bool _parserInitialized = false;
-
-  Script(this.description, this._parser);
-
-  Script._({this.description});
+  final UsageFormat usageFormat = new TerminalUsageFormat();
 
   /// Executes this script.
   ///
@@ -57,7 +41,7 @@ abstract class Script {
     ArgResults results;
 
     try {
-      results = _getResults(arguments);
+      results = usage.validate(arguments);
     } catch(e) {
       print('$e\n');
       _printHelp();
@@ -69,22 +53,16 @@ abstract class Script {
 
   }
 
-  ArgResults _getResults(List<String> arguments) =>
-      parser.parse(arguments);
-
   /// Handles successfully parsed [results].
   handleResults(ArgResults results);
 
   /// Prints help information for this script.
   // TODO: Integrate with Loggers.
-  _printHelp([List<String> path]) {
-    var helpParser = parser;
-
-    if(path != null) {
-      helpParser = path.fold(parser, (curr, command) =>
-          parser.commands[command]);
-    }
-    print(_getFullHelp(helpParser, description: description, path: path));
+  _printHelp([List<String> commandPath]) {
+    var helpUsage = (commandPath == null ? [] : commandPath)
+        .fold(usage, (usage, subCommand) =>
+            usage.commands[subCommand]);
+    print(usageFormat.format(helpUsage));
   }
 
   List<String> _getHelpPath(ArgResults results) {
@@ -107,24 +85,6 @@ abstract class Script {
     }
     return false;
   }
-
-  Map<String, Script> get subScripts {
-    return parser.commands.keys.fold({}, (subScripts, name) {
-      subScripts[name] = _getSubScript(name);
-      return subScripts;
-    });
-  }
-
-  Script _getSubScript(String name);
-}
-
-class _SubScript {
-
-  final String _name;
-  final Script _parent;
-
-  ArgParser _getParser() => _parent.parser.commands[_name];
-
 }
 
 abstract class _DeclarationScript extends Script {
@@ -133,67 +93,7 @@ abstract class _DeclarationScript extends Script {
 
   MethodMirror get _method;
 
-  String get description {
-    Command command = _declaration.metadata
-        .map((annotation) => annotation.reflectee)
-        .firstWhere((metadata) =>
-            metadata is Command, orElse: () => null);
-    return command == null ? '' : command.help;
-  }
-
-  Script _getSubScript(String name) => new _Sub
-
-  _getResults(List<String> arguments) {
-    var results = super._getResults(arguments);
-
-    _checkResults(results);
-
-    return results;
-  }
-
-  Rest get __restAnnotation {
-    var firstParameter = _method.parameters.firstWhere(
-        (parameter) => !parameter.isOptional,
-        orElse: () => null);
-    if(firstParameter != null) {
-      return firstParameter
-          .metadata
-          .map((metadata) => metadata.reflectee)
-          .firstWhere(
-              (annotation) => annotation is Rest,
-              orElse: () => null);
-    }
-    return null;
-  }
-
-  Rest _restAnnotation;
-  Rest get restAnnotation {
-    if(_restAnnotation == null) {
-      _restAnnotation = __restAnnotation;
-    }
-    return _restAnnotation;
-  }
-
-  _checkResults(ArgResults results) {
-    if(restAnnotation != null) {
-      var min = restAnnotation.min;
-      var count = results.rest.length;
-      if(min != null && count < min) {
-        throw 'This script requires at least $min argument(s)'
-            ', but received $count.';
-      }
-    }
-  }
-
-  _DeclarationScript() : super._();
-}
-
-class _SubFunctionScript extends FunctionScript with _SubScript {
-  _SubFunctionScript()
-}
-
-class _SubClassScript extends FunctionScript with _SubScript {
-  _SubClassScript()
+  _DeclarationScript();
 }
 
 /// A [Script] whose interface and behavior is defined by a [Function].
@@ -214,7 +114,7 @@ class FunctionScript extends _DeclarationScript {
 
   MethodMirror get _method => _declaration;
 
-  ArgParser _getParser() => _getParserFromFunction(_declaration);
+  Usage get usage => _getUsageFromFunction(_declaration);
 
   FunctionScript(this._function, {String description})
       : super();
@@ -241,7 +141,7 @@ class FunctionScript extends _DeclarationScript {
 /// options.
 ///
 /// When [execute]d, the base command line arguments (before the command)
-/// are injected into the their corresponding constructor arguments, to create
+/// are injected into their corresponding constructor arguments, to create
 /// an instance of the class.  Then, the method corresponding to the
 /// sub-command that was specified on the command line is invoked on the
 /// instance.
@@ -255,7 +155,7 @@ class ClassScript extends _DeclarationScript {
 
   MethodMirror get _method => _getUnnamedConstructor(_declaration);
 
-  ArgParser _getParser() => _getParserFromClass(_class);
+  Usage get usage => _getUsageFromClass(_class);
 
   ClassScript(this._class)
       : super();
@@ -266,6 +166,7 @@ class ClassScript extends _DeclarationScript {
     // Handle constructor.
     var constructorInvocation = new ArgResultsToInvocationConverter(
         _getRestParameterIndex(_getUnnamedConstructor(classMirror))).convert(results);
+
     var instanceMirror = classMirror.newInstance(
         const Symbol(''),
         constructorInvocation.positionalArguments,
