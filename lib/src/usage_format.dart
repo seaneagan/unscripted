@@ -5,50 +5,72 @@ abstract class UsageFormat {
   String format(Usage usage);
 }
 
+// TODO: Add tests for this.
 class TerminalUsageFormat extends UsageFormat {
   String format(Usage usage) {
 
     var parser = usage.parser;
     var description = usage.description;
-    var path = usage.commandPath;
-
-    if(path == null) path = const [];
     if(description == null) description = '';
-    var descriptionBlock = description.isEmpty ? '' : '''
-$description
-''';
 
-    var optionsPlaceholder = '[options]';
-    var scriptName = basename(Platform.script.path);
-    var hasOptions = parser.options.isEmpty;
-    var globalOptions = hasOptions ? '' : ' $optionsPlaceholder';
-    var optionsBlock = hasOptions ? '' : '''
+    var blocks = [];
 
-Options:
+    var hasOptions = parser.options.isNotEmpty;
 
-${parser.getUsage()}''';
-
-    var commandBlock = '';
-    var commandPlaceholder = '';
-    if(path.isNotEmpty) {
-      globalOptions = '';
-      commandPlaceholder = ' ${path.join(' ')} $optionsPlaceholder';
-    } else if(parser.commands.isNotEmpty) {
-      globalOptions = '';
-      commandPlaceholder = ' command';
-      commandBlock = '''
-
-Available commands:
-
-${parser.commands.keys.map((command) => '  $command\n').join()}
-Use "$scriptName $_HELP [command]" for more information about a command.''';
+    if(usage.examples.isNotEmpty) {
+      blocks.add([
+          'Examples',
+          usage.examples.map((example) => _formatExample(usage, example)).join('\n')]);
     }
 
+    if(hasOptions) {
+      blocks.add(['Options', parser.getUsage()]);
+    }
+
+    var usageParts = [_formatCommands(usage)];
+
+    var optionsPlaceholder = '[options]';
+    var args = parser.commands.isEmpty ? optionsPlaceholder : 'command';
+    usageParts.add(args);
+
+    var restHelp = usage.rest == null ? '' : usage.rest.help;
+    if(restHelp != null && restHelp.isNotEmpty) usageParts.add(restHelp);
+
+    if(parser.commands.isNotEmpty) {
+      blocks.add(['Available commands', '''
+${parser.commands.keys.map((command) => '  $command\n').join()}
+Use "rootCommand $_HELP [command]" for more information about a command.''']);
+    }
+
+    var usageString = usageParts.join(' ');
+
+    blocks.insert(0, ['Usage', usageString]);
+
+    var blockText = blocks.map((block) => _formatBlock(block[0], block[1])).join('\n\n');
+
     return '''
-$descriptionBlock
-Usage: $scriptName$globalOptions$commandPlaceholder
-$optionsBlock
-$commandBlock
+$description
+
+$blockText
 ''';
+  }
+
+  _formatExample(Usage usage, ArgExample example) {
+    return '${_formatCommands(usage)} ${example.example} ${example.help}';
+  }
+
+  String _formatRootCommand(Usage usage) {
+    var commandName = basenameWithoutExtension(Platform.script.path);
+    return usage.callStyle.formatCommand(commandName);
+  }
+
+  String _formatCommands(Usage usage) =>
+      ([_formatRootCommand(usage)]..addAll(usage.commandPath)).join(' ');
+
+  String _formatBlock(String title, String content) {
+    return '''
+$title:
+
+$content''';
   }
 }

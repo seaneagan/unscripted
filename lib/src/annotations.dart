@@ -51,6 +51,13 @@ class Flag extends _Arg {
       : super(help: help, abbr: abbr);
 }
 
+class ArgExample extends _Help {
+
+  final String example;
+
+  const ArgExample(this.example, {String help}) : super(help: help);
+}
+
 /// An annotation which marks the last positional parameter of a method
 /// as a rest argument.  If the parameter has a type annotation,
 /// it should be `List` or `List<String>`.

@@ -3,36 +3,16 @@ part of ink;
 
 const String _HELP = 'help';
 
-/// Adds a standard --help (-h) option to [parser].
-/// If [parser] has any sub-commands also add a help sub-command,
-/// and recursively [_addHelp] to all sub-commands' parsers.
-void _addHelp(ArgParser parser) {
-  parser.addFlag(
-      _HELP,
-      abbr: 'h',
-      help: 'Print this usage information.', negatable: false);
-
-  if(parser.commands.isNotEmpty) {
-    parser.commands.values.forEach(_addHelp);
-    parser.addCommand(_HELP);
-  }
-}
-
 Rest _getRestFromMethod(MethodMirror method) {
   var firstParameter = method.parameters.firstWhere(
       (parameter) => !parameter.isOptional,
       orElse: () => null);
   if(firstParameter != null) {
-    return firstParameter
-        .metadata
-          .map((metadata) => metadata.reflectee)
-          .firstWhere(
-              (annotation) => annotation is Rest,
-              orElse: () => null);
-    }
-    return null;
+    return _getFirstMetadataMatch(firstParameter,
+        (metadata) => metadata is Rest);
   }
-
+    return null;
+}
 
 Usage _getUsageFromFunction(MethodMirror methodMirror, {Usage usage}) {
 
@@ -127,12 +107,22 @@ Usage _getUsageFromClass(Type theClass) {
 }
 
 _addCommandMetadata(Usage usage, DeclarationMirror declaration) {
-  Command command = declaration.metadata
-      .map((annotation) => annotation.reflectee)
-        .firstWhere((metadata) =>
-            metadata is Command, orElse: () => null);
+  Command command = _getFirstMetadataMatch(
+      declaration, (metadata) => metadata is Command);
   var description = command == null ? '' : command.help;
   usage.description = description;
+  Iterable<ArgExample> examples = declaration.metadata
+      .map((annotation) => annotation.reflectee)
+      .where((metadata) => metadata is ArgExample);
+  examples.forEach((example) {
+    usage.addExample(example);
+  });
+}
+
+_getFirstMetadataMatch(DeclarationMirror declaration, bool match(metadata)) {
+  return declaration.metadata
+      .map((annotation) => annotation.reflectee)
+        .firstWhere(match, orElse: () => null);
 }
 
 void _addArgToParser(ArgParser parser, String name, defaultValue, _Arg arg) {

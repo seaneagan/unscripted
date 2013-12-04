@@ -20,7 +20,8 @@ class Commands {
   }
 
   @SubCommand()
-  baz() {
+  baz(@Rest(help: '<items>') items) {
+    print(items.join(', '));
     print('baz');
   }
 }
