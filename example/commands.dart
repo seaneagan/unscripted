@@ -8,7 +8,8 @@ main(arguments) => ink(Commands).execute(arguments);
 @Command(help: 'Does command-ish stuff')
 class Commands {
 
-  @SubCommand()
+  @SubCommand(help: 'Does foo')
+  @ArgExample('--foo-flag')
   foo({bool fooFlag}) {
     print('foo');
     print('fooFlag: $fooFlag');

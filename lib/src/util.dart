@@ -97,7 +97,6 @@ Usage _getUsageFromClass(Type theClass) {
     var subCommandUsage = _getUsageFromFunction(
         methodMirror,
         usage: usage.addCommand(commandName));
-    _addCommandMetadata(subCommandUsage, methodMirror);
   });
 
   var constructors = classMirror.declarations.values
@@ -107,8 +106,8 @@ Usage _getUsageFromClass(Type theClass) {
 }
 
 _addCommandMetadata(Usage usage, DeclarationMirror declaration) {
-  Command command = _getFirstMetadataMatch(
-      declaration, (metadata) => metadata is Command);
+  _BaseCommand command = _getFirstMetadataMatch(
+      declaration, (metadata) => metadata is _BaseCommand);
   var description = command == null ? '' : command.help;
   usage.description = description;
   Iterable<ArgExample> examples = declaration.metadata

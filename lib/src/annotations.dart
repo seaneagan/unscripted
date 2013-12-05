@@ -51,6 +51,8 @@ class Flag extends _Arg {
       : super(help: help, abbr: abbr);
 }
 
+/// An annotation which gives an example of arguments that can be passed to a
+/// command, along with help text for the example.
 class ArgExample extends _Help {
 
   final String example;
@@ -61,7 +63,6 @@ class ArgExample extends _Help {
 /// An annotation which marks the last positional parameter of a method
 /// as a rest argument.  If the parameter has a type annotation,
 /// it should be `List` or `List<String>`.
-// TODO: If dart ever gets real rest parameters, remove this.
 class Rest extends _Help {
 
   final int min;
@@ -69,8 +70,12 @@ class Rest extends _Help {
   const Rest({this.min, String help}) : super(help: help);
 }
 
+class _BaseCommand extends _Help {
+  const _BaseCommand({String help}) : super(help: help);
+}
+
 /// An annotation which marks a class as representing a script command.
-class Command extends _Help {
+class Command extends _BaseCommand {
   final CallStyle callStyle;
 
   const Command({String help, this.callStyle}) : super(help: help);
@@ -78,6 +83,6 @@ class Command extends _Help {
 
 /// An annotation which can be used on a class to mark it as representing a
 /// script command.
-class SubCommand extends _Help {
+class SubCommand extends _BaseCommand {
   const SubCommand({String help}) : super(help: help);
 }

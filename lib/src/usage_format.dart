@@ -17,14 +17,15 @@ class TerminalUsageFormat extends UsageFormat {
 
     var hasOptions = parser.options.isNotEmpty;
 
+    if(hasOptions) {
+      blocks.add(['Options', parser.getUsage()]);
+    }
+
     if(usage.examples.isNotEmpty) {
       blocks.add([
           'Examples',
-          usage.examples.map((example) => _formatExample(usage, example)).join('\n')]);
-    }
-
-    if(hasOptions) {
-      blocks.add(['Options', parser.getUsage()]);
+          usage.examples.map((example) => _formatExample(usage, example))
+              .join('\n')]);
     }
 
     var usageParts = [_formatCommands(usage)];
@@ -46,17 +47,21 @@ Use "rootCommand $_HELP [command]" for more information about a command.''']);
 
     blocks.insert(0, ['Usage', usageString]);
 
-    var blockText = blocks.map((block) => _formatBlock(block[0], block[1])).join('\n\n');
+    var blockStrings = blocks
+        .map((block) => _formatBlock(block[0], block[1]))
+        .toList();
 
-    return '''
-$description
+    if(description.isNotEmpty) blockStrings.insert(0, description);
 
-$blockText
-''';
+    return blockStrings.join('\n\n');
   }
 
   _formatExample(Usage usage, ArgExample example) {
-    return '${_formatCommands(usage)} ${example.example} ${example.help}';
+    var parts = [_formatCommands(usage), example.example];
+    if(example.help != null && example.help.isNotEmpty) {
+      parts..add('#')..add(example.help);
+    }
+    return parts.join(' ');
   }
 
   String _formatRootCommand(Usage usage) {

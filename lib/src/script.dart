@@ -59,7 +59,6 @@ abstract class Script {
   /// Prints help information for this script.
   // TODO: Integrate with Loggers.
   _printHelp([List<String> commandPath]) {
-    print('printing help for command path: $commandPath');
     var helpUsage = (commandPath == null ? [] : commandPath)
         .fold(usage, (usage, subCommand) =>
             usage.commands[subCommand]);
