@@ -34,13 +34,16 @@ class TerminalUsageFormat extends UsageFormat {
     var args = parser.commands.isEmpty ? optionsPlaceholder : 'command';
     usageParts.add(args);
 
+    var positionalNames = usage.positionals.map((positional) => '<${positional.help}>');
+    usageParts.addAll(positionalNames);
+
     var restHelp = usage.rest == null ? '' : usage.rest.help;
     if(restHelp != null && restHelp.isNotEmpty) usageParts.add(restHelp);
 
     if(parser.commands.isNotEmpty) {
       blocks.add(['Available commands', '''
 ${parser.commands.keys.map((command) => '  $command\n').join()}
-Use "rootCommand $_HELP [command]" for more information about a command.''']);
+Use "${_formatRootCommand(usage)} $_HELP [command]" for more information about a command.''']);
     }
 
     var usageString = usageParts.join(' ');

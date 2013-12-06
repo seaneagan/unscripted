@@ -2,6 +2,7 @@
 /// Flip the (command line) script.
 library ink;
 
+import 'dart:collection';
 import 'dart:convert';
 import 'dart:mirrors';
 import 'dart:io';

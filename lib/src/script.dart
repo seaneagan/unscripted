@@ -65,23 +65,6 @@ abstract class Script {
     print(usageFormat.format(helpUsage));
   }
 
-  List<String> _getHelpPath(ArgResults results) {
-    var path = [];
-    var subResults = results;
-    while(true) {
-      if(subResults.options.contains(_HELP) && subResults[_HELP]) return path;
-      if(subResults.command == null) return null;
-      if(subResults.command.name == _HELP) {
-        var helpCommand = subResults.command;
-        if(helpCommand.rest.isNotEmpty) path.add(helpCommand.rest.first);
-        return path;
-      }
-      subResults = subResults.command;
-      path.add(subResults.name);
-    }
-    return path;
-  }
-
   bool _checkHelp(ArgResults results) {
     var path = _getHelpPath(results);
     if(path != null) {

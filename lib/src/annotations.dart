@@ -60,6 +60,12 @@ class ArgExample extends _Help {
   const ArgExample(this.example, {String help}) : super(help: help);
 }
 
+/// An annotation for specifying metadata about positional command line
+/// parameters.
+class Positional extends _Help {
+  Positional({String help}) : super(help: help);
+}
+
 /// An annotation which marks the last positional parameter of a method
 /// as a rest argument.  If the parameter has a type annotation,
 /// it should be `List` or `List<String>`.

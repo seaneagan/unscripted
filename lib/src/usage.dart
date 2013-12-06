@@ -29,6 +29,19 @@ class Usage {
     return parser;
   }
 
+  addPositional(String help) {
+    _positionals.add(new Positional(help: help));
+  }
+
+  List<Positional> _positionals = [];
+  List<Positional> _positionalsView;
+  List<Positional> get positionals {
+    if(_positionalsView == null) {
+      _positionalsView = new UnmodifiableListView(_positionals);
+    }
+    return _positionalsView;
+  }
+
   _addHelpFlag(ArgParser parser) {
     parser.addFlag(
         _HELP,
@@ -67,13 +80,26 @@ class Usage {
   }
 
   _checkResults(ArgResults results) {
-    if(rest != null) {
-      var min = rest.min;
-      var count = results.rest.length;
-      if(min != null && count < min) {
-        throw 'This script requires at least $min argument(s)'
-            ', but received $count.';
-      }
+
+    // Ignore other arguments if user wants help.
+    if(_getHelpPath(results) != null) return;
+
+    // Check positional count.
+    var min = _positionals.length +
+        (rest == null ? 0 : rest.min == null ? 0 : rest.min);
+    var count = results.rest.length;
+    if(count < min) {
+      List<_Help> positionalHelp = _positionals.toList();
+      if(rest != null) positionalHelp.add(rest);
+
+      var missingPositional = positionalHelp[count].help;
+
+      var message = missingPositional == null ?
+          'This script requires at least $min positional argument(s)'
+          ', but received $count.' :
+          'Missing the <$missingPositional> positional ';
+
+      throw new FormatException(message);
     }
   }
 

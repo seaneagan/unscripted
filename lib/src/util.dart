@@ -24,6 +24,14 @@ Usage _getUsageFromFunction(MethodMirror methodMirror, {Usage usage}) {
 
   var parameters = methodMirror.parameters;
 
+  var required = parameters
+      .where((parameter) => !parameter.isOptional).toList();
+  if(usage.rest != null) required.removeLast();
+
+  var requiredNames = required.map((parameter) => MirrorSystem.getName(parameter.simpleName));
+
+  requiredNames.forEach((requiredName) => usage.addPositional(requiredName.toUpperCase()));
+
   parameters.where((parameter) => parameter.isNamed).forEach((parameter) {
 
     _Arg arg;
@@ -174,6 +182,23 @@ void _addArgToParser(ArgParser parser, String name, defaultValue, _Arg arg) {
   var parserMethod = 'add$suffix';
 
   parserMirror.invoke(new Symbol(parserMethod), [name], namedParameters);
+}
+
+List<String> _getHelpPath(ArgResults results) {
+  var path = [];
+  var subResults = results;
+  while(true) {
+    if(subResults.options.contains(_HELP) && subResults[_HELP]) return path;
+    if(subResults.command == null) return null;
+    if(subResults.command.name == _HELP) {
+      var helpCommand = subResults.command;
+      if(helpCommand.rest.isNotEmpty) path.add(helpCommand.rest.first);
+      return path;
+    }
+    subResults = subResults.command;
+    path.add(subResults.name);
+  }
+  return path;
 }
 
 // Returns a List whose elements are the required argument count, and whether
