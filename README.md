@@ -1,17 +1,67 @@
-ink
-=====
+unscripted
+==========
 
-For
+Unscripted is a pub package for dart which enables one to design command line
+interfaces in terms of normal programming constructs such as classes,
+constructors, closures, method parameters, and annotations.
 
+It applies the concept of dependency injection to command line arguments,
+which avoids the need for boilerplate assignment to local variables or method
+parameters.  This allows for an [improvosational][improvise] development style,
+since changes to the command line interface generally only need to be made in a
+single place.
 
+##Examples
 
-"Ink" command line scripts in no time, using modern programming constructs such
-as classes and closures.
+###Basic
 
-With ink, there is no need to prepare a command line script ahead of time.  Instead, you create a normal programming construct such as a function or class, and iterate on it as needed, and unscripted automatically transforms this into a command line interface for you."
+```dart
+#!/usr/bin/env dart
 
-Simply develop a normal programming construct, such as a function or class, annotate it with command line interface things as necessary, and let {package_name} automatically transform this into a command line script for you.
+import 'package:unscripted/unscripted.dart';
 
-It basically applies the concept of inversion of control and dependency injection to command line scripts.
+main(arguments) => improvise(greet).execute(arguments);
 
-[ink_method]: https://seaneagan.github.io/ink/docs#ink@id_ink
+@Command(help: 'Outputs a greeting')
+@ArgExample('--exclaim --salutation Howdy Mr. John Doe', help: 'enthusiastic')
+greet(String title, @Rest(min: 1, help: '<names>') who, {String salutation : 'Hello', bool exclaim : false}) {
+  print('$salutation $title ${who.join(' ')}${exclaim ? '!' : ''}');
+}
+```
+
+###With Sub-Commands
+
+```dart
+#!/usr/bin/env dart
+
+import 'package:unscripted/unscripted.dart';
+
+/// A simple comand line script with sub-commands.
+main(arguments) => improvise(Commands).execute(arguments);
+
+@Command(help: 'Does command-ish stuff')
+class Commands {
+
+  @SubCommand(help: 'Does foo')
+  @ArgExample('--foo-flag')
+  foo({bool fooFlag}) {
+    print('foo');
+    print('fooFlag: $fooFlag');
+  }
+
+  @SubCommand()
+  bar() {
+    print('bar');
+  }
+
+  @SubCommand()
+  baz(@Rest(help: '<items>') items) {
+    print(items.join(', '));
+    print('baz');
+  }
+}
+```
+
+It also supports script which nee
+
+[improvise]: https://seaneagan.github.io/unscripted/docs#unscripted@id_improvise
