@@ -1,5 +1,5 @@
 
-part of ink;
+part of unscripted;
 
 const String _HELP = 'help';
 

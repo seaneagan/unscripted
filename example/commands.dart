@@ -1,9 +1,9 @@
 #!/usr/bin/env dart
 
-import 'package:ink/ink.dart';
+import 'package:unscripted/unscripted.dart';
 
 /// A simple comand line script with sub-commands.
-main(arguments) => ink(Commands).execute(arguments);
+main(arguments) => improvise(Commands).execute(arguments);
 
 @Command(help: 'Does command-ish stuff')
 class Commands {

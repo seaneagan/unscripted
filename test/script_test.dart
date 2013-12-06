@@ -1,5 +1,5 @@
 
-import 'package:ink/ink.dart';
+import 'package:unscripted/unscripted.dart';
 import 'package:unittest/unittest.dart';
 
 List _lastSeenRest;

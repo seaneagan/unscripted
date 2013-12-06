@@ -1,5 +1,5 @@
 
-part of ink;
+part of unscripted;
 
 /// Adds a standard --help (-h) option to [parser].
 /// If [parser] has any sub-commands also add a help sub-command,

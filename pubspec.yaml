@@ -1,7 +1,7 @@
-name: ink
+name: unscripted
 version: 0.0.1
 author: Sean Eagan <seaneagan1@gmail.com>
-homepage: http://github.com/seaneagan/ink
+homepage: http://github.com/seaneagan/unscripted
 dependencies:
   args: any
 dev_dependencies:

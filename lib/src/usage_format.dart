@@ -1,5 +1,5 @@
 
-part of ink;
+part of unscripted;
 
 abstract class UsageFormat {
   String format(Usage usage);

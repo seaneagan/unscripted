@@ -1,7 +1,7 @@
 
-part of ink;
+part of unscripted;
 
-ink(model) {
+improvise(model) {
   if(model is Type) return new ClassScript(model);
   if(model is Function) return new FunctionScript(model);
   throw new ArgumentError('model must be a Type or Function');

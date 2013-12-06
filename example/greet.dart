@@ -1,8 +1,8 @@
 #!/usr/bin/env dart
 
-import 'package:ink/ink.dart';
+import 'package:unscripted/unscripted.dart';
 
-main(arguments) => ink(greet).execute(arguments);
+main(arguments) => improvise(greet).execute(arguments);
 
 @Command(help: 'Outputs a greeting')
 @ArgExample('--exclaim --salutation Howdy Mr. John Doe', help: 'enthusiastic')

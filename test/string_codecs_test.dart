@@ -1,6 +1,6 @@
 
 import 'package:unittest/unittest.dart';
-import 'package:ink/src/string_codecs.dart';
+import 'package:unscripted/src/string_codecs.dart';
 
 main() {
 
