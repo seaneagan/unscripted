@@ -62,6 +62,4 @@ class Commands {
 }
 ```
 
-It also supports script which nee
-
 [improvise]: https://seaneagan.github.io/unscripted/docs#unscripted@id_improvise

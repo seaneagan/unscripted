@@ -73,7 +73,7 @@ class Rest extends _Help {
 
   final int min;
 
-  const Rest({this.min, String help}) : super(help: help);
+  const Rest({this.min: 1, String help}) : super(help: help);
 }
 
 class _BaseCommand extends _Help {
