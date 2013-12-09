@@ -1,4 +1,6 @@
 
+library script_test;
+
 import 'package:unscripted/unscripted.dart';
 import 'package:unittest/unittest.dart';
 

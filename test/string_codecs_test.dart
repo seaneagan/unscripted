@@ -1,4 +1,6 @@
 
+library string_codecs_test;
+
 import 'package:unittest/unittest.dart';
 import 'package:unscripted/src/string_codecs.dart';
 

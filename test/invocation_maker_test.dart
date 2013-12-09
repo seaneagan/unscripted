@@ -1,4 +1,6 @@
 
+library invocation_maker_test;
+
 import 'package:unscripted/src/invocation_maker.dart';
 import 'package:unittest/unittest.dart';
 
