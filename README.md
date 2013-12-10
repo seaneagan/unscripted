@@ -1,6 +1,8 @@
 unscripted
 ==========
 
+[![Build Status](https://drone.io/github.com/seaneagan/unscripted/status.png)](https://drone.io/github.com/seaneagan/unscripted/latest)
+
 Unscripted is a pub package for dart which enables one to design command line
 interfaces in terms of normal programming constructs such as classes,
 constructors, closures, method parameters, and annotations.
