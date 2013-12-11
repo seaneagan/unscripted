@@ -29,7 +29,8 @@ abstract class Script {
 
   Usage get usage;
 
-  final UsageFormat usageFormat = new TerminalUsageFormat();
+  UsageFormatter getUsageFormatter(Usage usage) =>
+      new TerminalUsageFormatter(usage);
 
   /// Executes this script.
   ///
@@ -62,7 +63,7 @@ abstract class Script {
     var helpUsage = (commandPath == null ? [] : commandPath)
         .fold(usage, (usage, subCommand) =>
             usage.commands[subCommand]);
-    print(usageFormat.format(helpUsage));
+    print(getUsageFormatter(helpUsage).format());
   }
 
   bool _checkHelp(ArgResults results) {

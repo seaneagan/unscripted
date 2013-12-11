@@ -1,13 +1,21 @@
 
 part of unscripted;
 
-abstract class UsageFormat {
-  String format(Usage usage);
+abstract class UsageFormatter {
+
+  final Usage usage;
+
+  String format();
+
+  UsageFormatter(this.usage);
 }
 
 // TODO: Add tests for this.
-class TerminalUsageFormat extends UsageFormat {
-  String format(Usage usage) {
+class TerminalUsageFormatter extends UsageFormatter {
+
+  TerminalUsageFormatter(Usage usage) : super(usage);
+
+  String format() {
 
     var parser = usage.parser;
     var description = usage.description;
@@ -24,11 +32,11 @@ class TerminalUsageFormat extends UsageFormat {
     if(usage.examples.isNotEmpty) {
       blocks.add([
           'Examples',
-          usage.examples.map((example) => _formatExample(usage, example))
+          usage.examples.map((example) => _formatExample(example))
               .join('\n')]);
     }
 
-    var usageParts = [_formatCommands(usage)];
+    var usageParts = [_formatCommands()];
 
     var optionsPlaceholder = '[options]';
     var args = parser.commands.isEmpty ? optionsPlaceholder : 'command';
@@ -43,7 +51,7 @@ class TerminalUsageFormat extends UsageFormat {
     if(parser.commands.isNotEmpty) {
       blocks.add(['Available commands', '''
 ${parser.commands.keys.map((command) => '  $command\n').join()}
-Use "${_formatRootCommand(usage)} $_HELP [command]" for more information about a command.''']);
+Use "${_formatRootCommand()} $_HELP [command]" for more information about a command.''']);
     }
 
     var usageString = usageParts.join(' ');
@@ -59,21 +67,21 @@ Use "${_formatRootCommand(usage)} $_HELP [command]" for more information about a
     return blockStrings.join('\n\n');
   }
 
-  _formatExample(Usage usage, ArgExample example) {
-    var parts = [_formatCommands(usage), example.example];
+  _formatExample(ArgExample example) {
+    var parts = [_formatCommands(), example.example];
     if(example.help != null && example.help.isNotEmpty) {
       parts..add('#')..add(example.help);
     }
     return parts.join(' ');
   }
 
-  String _formatRootCommand(Usage usage) {
+  String _formatRootCommand() {
     var commandName = basenameWithoutExtension(Platform.script.path);
     return usage.callStyle.formatCommand(commandName);
   }
 
-  String _formatCommands(Usage usage) =>
-      ([_formatRootCommand(usage)]..addAll(usage.commandPath)).join(' ');
+  String _formatCommands() =>
+      ([_formatRootCommand()]..addAll(usage.commandPath)).join(' ');
 
   String _formatBlock(String title, String content) {
     return '''
