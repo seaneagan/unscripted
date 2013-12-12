@@ -3,22 +3,22 @@ part of unscripted;
 
 const String _HELP = 'help';
 
-Rest _getRestFromMethod(MethodMirror method) {
+Rest getRestFromMethod(MethodMirror method) {
   var firstParameter = method.parameters.firstWhere(
       (parameter) => !parameter.isOptional,
       orElse: () => null);
   if(firstParameter != null) {
-    return _getFirstMetadataMatch(firstParameter,
+    return getFirstMetadataMatch(firstParameter,
         (metadata) => metadata is Rest);
   }
     return null;
 }
 
-Usage _getUsageFromFunction(MethodMirror methodMirror, {Usage usage}) {
+Usage getUsageFromFunction(MethodMirror methodMirror, {Usage usage}) {
 
   if(usage == null) usage = new Usage();
 
-  usage.rest = _getRestFromMethod(methodMirror);
+  usage.rest = getRestFromMethod(methodMirror);
 
   _addCommandMetadata(usage, methodMirror);
 
@@ -29,7 +29,7 @@ Usage _getUsageFromFunction(MethodMirror methodMirror, {Usage usage}) {
   if(usage.rest != null) required.removeLast();
 
   var positionals = required.map((parameter) {
-    Positional positional = _getFirstMetadataMatch(
+    Positional positional = getFirstMetadataMatch(
         parameter, (metadata) => metadata is Positional);
 
     String positionalName = MirrorSystem.getName(parameter.simpleName).toUpperCase();
@@ -76,19 +76,19 @@ Usage _getUsageFromFunction(MethodMirror methodMirror, {Usage usage}) {
       throw 'Parameter $name is not a Flag, Option, Rest, List, String, bool';
     }
 
-    _addArgToParser(usage.parser, dashesToCamelCase.decode(name), defaultValue, arg);
+    addArgToParser(usage.parser, dashesToCamelCase.decode(name), defaultValue, arg);
   });
 
   return usage;
 }
 
-Usage _getUsageFromClass(Type theClass) {
+Usage getUsageFromClass(Type theClass) {
 
   var classMirror = reflectClass(theClass);
 
-  var unnamedConstructor = _getUnnamedConstructor(classMirror);
+  var unnamedConstructor = getUnnamedConstructor(classMirror);
 
-  var usage = _getUsageFromFunction(unnamedConstructor);
+  var usage = getUsageFromFunction(unnamedConstructor);
 
   // TODO: Include inherited methods, when supported by 'dart:mirrors'.
   var methods = classMirror.declarations.values
@@ -116,7 +116,7 @@ Usage _getUsageFromClass(Type theClass) {
   subCommands.forEach((methodMirror, subCommand) {
     var commandName = dashesToCamelCase
         .decode(MirrorSystem.getName(methodMirror.simpleName));
-    var subCommandUsage = _getUsageFromFunction(
+    var subCommandUsage = getUsageFromFunction(
         methodMirror,
         usage: usage.addCommand(commandName));
   });
@@ -128,7 +128,7 @@ Usage _getUsageFromClass(Type theClass) {
 }
 
 _addCommandMetadata(Usage usage, DeclarationMirror declaration) {
-  _BaseCommand command = _getFirstMetadataMatch(
+  _BaseCommand command = getFirstMetadataMatch(
       declaration, (metadata) => metadata is _BaseCommand);
   var description = command == null ? '' : command.help;
   usage.description = description;
@@ -140,13 +140,13 @@ _addCommandMetadata(Usage usage, DeclarationMirror declaration) {
   });
 }
 
-_getFirstMetadataMatch(DeclarationMirror declaration, bool match(metadata)) {
+getFirstMetadataMatch(DeclarationMirror declaration, bool match(metadata)) {
   return declaration.metadata
       .map((annotation) => annotation.reflectee)
         .firstWhere(match, orElse: () => null);
 }
 
-void _addArgToParser(ArgParser parser, String name, defaultValue, _Arg arg) {
+void addArgToParser(ArgParser parser, String name, defaultValue, _Arg arg) {
 
   var parserMirror = reflect(parser);
 
@@ -198,7 +198,7 @@ void _addArgToParser(ArgParser parser, String name, defaultValue, _Arg arg) {
   parserMirror.invoke(new Symbol(parserMethod), [name], namedParameters);
 }
 
-List<String> _getHelpPath(ArgResults results) {
+List<String> getHelpPath(ArgResults results) {
   var path = [];
   var subResults = results;
   while(true) {
@@ -217,7 +217,7 @@ List<String> _getHelpPath(ArgResults results) {
 
 // Returns a List whose elements are the required argument count, and whether
 // there is a Rest parameter.
-List _getPositionalParameterInfo(MethodMirror methodMirror) {
+List getPositionalParameterInfo(MethodMirror methodMirror) {
   var positionals = methodMirror.parameters.where((parameter) =>
       !parameter.isNamed);
 
@@ -244,14 +244,14 @@ List _getPositionalParameterInfo(MethodMirror methodMirror) {
   return [requiredPositionals.length - (isRest ? 1 : 0), isRest];
 }
 
-_getRestParameterIndex(MethodMirror methodMirror) {
-  var positionalParameterInfo = _getPositionalParameterInfo(methodMirror);
+getRestParameterIndex(MethodMirror methodMirror) {
+  var positionalParameterInfo = getPositionalParameterInfo(methodMirror);
   return positionalParameterInfo[1] ?
       positionalParameterInfo[0] :
         null;
 }
 
-MethodMirror _getUnnamedConstructor(ClassMirror classMirror) {
+MethodMirror getUnnamedConstructor(ClassMirror classMirror) {
   var constructors = classMirror.declarations.values
   .where((d) => d is MethodMirror && d.isConstructor);
 

@@ -2,7 +2,6 @@
 
 import 'package:unscripted/unscripted.dart';
 
-/// A simple comand line script with sub-commands.
 main(arguments) => improvise(Commands).execute(arguments);
 
 @Command(help: 'Does command-ish stuff')

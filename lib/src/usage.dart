@@ -82,7 +82,7 @@ class Usage {
   _checkResults(ArgResults results) {
 
     // Ignore other arguments if user wants help.
-    if(_getHelpPath(results) != null) return;
+    if(getHelpPath(results) != null) return;
 
     // Check positional count.
     var min = _positionals.length +

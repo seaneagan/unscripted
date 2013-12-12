@@ -2,6 +2,7 @@
 library script_test;
 
 import 'package:unscripted/unscripted.dart';
+import 'package:unscripted/src/script_impl.dart';
 import 'package:unittest/unittest.dart';
 
 List _lastSeenRest;
