@@ -1,5 +1,13 @@
 
-part of unscripted;
+library args_codec;
+
+import 'dart:convert';
+import 'dart:mirrors';
+
+import 'package:args/args.dart';
+import 'package:unscripted/unscripted.dart';
+import 'package:unscripted/src/invocation_maker.dart';
+import 'package:unscripted/src/string_codecs.dart';
 
 class InvocationToArgsConverter extends Converter<Invocation, List<String>> {
 
@@ -38,7 +46,7 @@ class ArgResultsToInvocationConverter extends Converter<ArgResults, Invocation> 
 
     Map<Symbol, dynamic> named = results
         .options
-        .where((option) => option != _HELP)
+        .where((option) => option != 'help')
         .fold({}, (result, option) {
           result[new Symbol(dashesToCamelCase.encode(option))] = results[option];
           return result;
