@@ -29,8 +29,8 @@ class Usage {
     return parser;
   }
 
-  addPositional(String help) {
-    _positionals.add(new Positional(help: help));
+  addPositional(String name, {String help}) {
+    _positionals.add(new Positional(name: name, help: help));
   }
 
   List<Positional> _positionals = [];
@@ -109,6 +109,8 @@ class _SubCommandUsage extends Usage {
 
   final Usage parent;
   final String _subCommandName;
+
+  CallStyle get callStyle => parent.callStyle;
 
   _SubCommandUsage(this.parent, this._subCommandName);
 

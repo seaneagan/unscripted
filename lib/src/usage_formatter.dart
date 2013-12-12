@@ -42,7 +42,7 @@ class TerminalUsageFormatter extends UsageFormatter {
     var args = parser.commands.isEmpty ? optionsPlaceholder : 'command';
     usageParts.add(args);
 
-    var positionalNames = usage.positionals.map((positional) => '<${positional.help}>');
+    var positionalNames = usage.positionals.map((positional) => '<${positional.name}>');
     usageParts.addAll(positionalNames);
 
     var restHelp = usage.rest == null ? '' : usage.rest.help;

@@ -28,9 +28,23 @@ Usage _getUsageFromFunction(MethodMirror methodMirror, {Usage usage}) {
       .where((parameter) => !parameter.isOptional).toList();
   if(usage.rest != null) required.removeLast();
 
-  var requiredNames = required.map((parameter) => MirrorSystem.getName(parameter.simpleName));
+  var positionals = required.map((parameter) {
+    Positional positional = _getFirstMetadataMatch(
+        parameter, (metadata) => metadata is Positional);
 
-  requiredNames.forEach((requiredName) => usage.addPositional(requiredName.toUpperCase()));
+    String positionalName = MirrorSystem.getName(parameter.simpleName).toUpperCase();
+    String positionalHelp;
+    if(positional != null) {
+      if(positional.name != null) {
+        positionalName = positional.name;
+      }
+      positionalHelp = positional.help;
+    }
+    return new Positional(name: positionalName, help: positionalHelp);
+  });
+
+  positionals.forEach((positional) =>
+      usage.addPositional(positional.name, help: positional.help));
 
   parameters.where((parameter) => parameter.isNamed).forEach((parameter) {
 
