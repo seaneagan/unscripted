@@ -5,9 +5,9 @@ import 'dart:convert';
 import 'dart:mirrors';
 
 import 'package:args/args.dart';
-import 'package:unscripted/unscripted.dart';
 import 'package:unscripted/src/invocation_maker.dart';
 import 'package:unscripted/src/string_codecs.dart';
+import 'package:unscripted/src/util.dart';
 
 class InvocationToArgsConverter extends Converter<Invocation, List<String>> {
 
@@ -46,7 +46,7 @@ class ArgResultsToInvocationConverter extends Converter<ArgResults, Invocation> 
 
     Map<Symbol, dynamic> named = results
         .options
-        .where((option) => option != 'help')
+        .where((option) => option != HELP)
         .fold({}, (result, option) {
           result[new Symbol(dashesToCamelCase.encode(option))] = results[option];
           return result;

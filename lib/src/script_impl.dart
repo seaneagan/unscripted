@@ -7,6 +7,7 @@ import 'package:args/args.dart' show ArgResults;
 import 'package:unscripted/unscripted.dart';
 import 'package:unscripted/src/string_codecs.dart';
 import 'package:unscripted/src/args_codec.dart';
+import 'package:unscripted/src/util.dart';
 
 abstract class _DeclarationScript extends Script {
 

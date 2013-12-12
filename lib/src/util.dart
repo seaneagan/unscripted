@@ -1,7 +1,31 @@
 
-part of unscripted;
+library unscripted.src.util;
 
-const String _HELP = 'help';
+import 'dart:mirrors';
+
+import 'package:args/args.dart' show ArgParser, ArgResults;
+import 'package:unscripted/unscripted.dart';
+import 'package:unscripted/src/string_codecs.dart';
+
+const String HELP = 'help';
+
+/// A base class for script annotations which include help.
+class Help {
+  final String help;
+
+  const Help({this.help});
+}
+
+/// A base class for script argument annotations.
+class Arg extends Help {
+  final String abbr;
+
+  const Arg({String help, this.abbr}) : super(help: help);
+}
+
+class BaseCommand extends Help {
+  const BaseCommand({String help}) : super(help: help);
+}
 
 Rest getRestFromMethod(MethodMirror method) {
   var firstParameter = method.parameters.firstWhere(
@@ -48,7 +72,7 @@ Usage getUsageFromFunction(MethodMirror methodMirror, {Usage usage}) {
 
   parameters.where((parameter) => parameter.isNamed).forEach((parameter) {
 
-    _Arg arg;
+    Arg arg;
     var type = parameter.type;
     var defaultValue;
 
@@ -60,7 +84,7 @@ Usage getUsageFromFunction(MethodMirror methodMirror, {Usage usage}) {
     // TODO: handle List, List<String> as Options with allowMultiple = true.
 
     InstanceMirror argAnnotation = parameter.metadata.firstWhere((annotation) =>
-        annotation.reflectee is _Arg, orElse: () => null);
+        annotation.reflectee is Arg, orElse: () => null);
 
     if(argAnnotation != null) {
       arg = argAnnotation.reflectee;
@@ -128,8 +152,8 @@ Usage getUsageFromClass(Type theClass) {
 }
 
 _addCommandMetadata(Usage usage, DeclarationMirror declaration) {
-  _BaseCommand command = getFirstMetadataMatch(
-      declaration, (metadata) => metadata is _BaseCommand);
+  BaseCommand command = getFirstMetadataMatch(
+      declaration, (metadata) => metadata is BaseCommand);
   var description = command == null ? '' : command.help;
   usage.description = description;
   Iterable<ArgExample> examples = declaration.metadata
@@ -146,7 +170,7 @@ getFirstMetadataMatch(DeclarationMirror declaration, bool match(metadata)) {
         .firstWhere(match, orElse: () => null);
 }
 
-void addArgToParser(ArgParser parser, String name, defaultValue, _Arg arg) {
+void addArgToParser(ArgParser parser, String name, defaultValue, Arg arg) {
 
   var parserMirror = reflect(parser);
 
@@ -171,7 +195,7 @@ void addArgToParser(ArgParser parser, String name, defaultValue, _Arg arg) {
       .forEach(setNamedParameter);
   }
 
-  mergeProperties(_Arg);
+  mergeProperties(Arg);
 
   var suffix;
 
@@ -202,9 +226,9 @@ List<String> getHelpPath(ArgResults results) {
   var path = [];
   var subResults = results;
   while(true) {
-    if(subResults.options.contains(_HELP) && subResults[_HELP]) return path;
+    if(subResults.options.contains(HELP) && subResults[HELP]) return path;
     if(subResults.command == null) return null;
-    if(subResults.command.name == _HELP) {
+    if(subResults.command.name == HELP) {
       var helpCommand = subResults.command;
       if(helpCommand.rest.isNotEmpty) path.add(helpCommand.rest.first);
       return path;

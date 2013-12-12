@@ -1,26 +1,12 @@
 
 part of unscripted;
 
-/// A base class for script annotations which include help.
-class _Help {
-  final String help;
-
-  const _Help({this.help});
-}
-
-/// A base class for script argument annotations.
-class _Arg extends _Help {
-  final String abbr;
-
-  const _Arg({String help, this.abbr}) : super(help: help);
-}
-
 /// An annotation to use on named method parameters,
 /// marking them as command line options.
 ///
 /// See the corresponding method parameters to [ArgParser.addOption]
 /// for descriptions of the fields.
-class Option extends _Arg {
+class Option extends Arg {
   final List<String> allowed;
   final Map<dynamic, String> allowedHelp;
   final bool allowMultiple;
@@ -41,7 +27,7 @@ class Option extends _Arg {
 ///
 /// See the corresponding method parameters to [ArgParser.addFlag]
 /// for descriptions of the fields.
-class Flag extends _Arg {
+class Flag extends Arg {
   final bool negatable;
 
   const Flag({
@@ -53,7 +39,7 @@ class Flag extends _Arg {
 
 /// An annotation which gives an example of arguments that can be passed to a
 /// command, along with help text for the example.
-class ArgExample extends _Help {
+class ArgExample extends Help {
 
   final String example;
 
@@ -62,7 +48,7 @@ class ArgExample extends _Help {
 
 /// An annotation for specifying metadata about positional command line
 /// parameters.
-class Positional extends _Help {
+class Positional extends Help {
 
   final String name;
 
@@ -80,12 +66,8 @@ class Rest extends Positional {
       : super(name: name, help: help);
 }
 
-class _BaseCommand extends _Help {
-  const _BaseCommand({String help}) : super(help: help);
-}
-
 /// An annotation which marks a class as representing a script command.
-class Command extends _BaseCommand {
+class Command extends BaseCommand {
   final CallStyle callStyle;
 
   const Command({String help, this.callStyle}) : super(help: help);
@@ -93,6 +75,6 @@ class Command extends _BaseCommand {
 
 /// An annotation which can be used on a class to mark it as representing a
 /// script command.
-class SubCommand extends _BaseCommand {
+class SubCommand extends BaseCommand {
   const SubCommand({String help}) : super(help: help);
 }

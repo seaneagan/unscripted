@@ -51,7 +51,7 @@ class TerminalUsageFormatter extends UsageFormatter {
     if(parser.commands.isNotEmpty) {
       blocks.add(['Available commands', '''
 ${parser.commands.keys.map((command) => '  $command\n').join()}
-Use "${_formatRootCommand()} $_HELP [command]" for more information about a command.''']);
+Use "${_formatRootCommand()} $HELP [command]" for more information about a command.''']);
     }
 
     var usageString = usageParts.join(' ');

@@ -44,7 +44,7 @@ class Usage {
 
   _addHelpFlag(ArgParser parser) {
     parser.addFlag(
-        _HELP,
+        HELP,
         abbr: 'h',
         help: 'Print this usage information.', negatable: false);
   }
@@ -65,8 +65,8 @@ class Usage {
     parser.addCommand(name);
     var command = commands[name] = new _SubCommandUsage(this, name);
     _addHelpFlag(command.parser);
-    if(name != _HELP && !commands.keys.contains(_HELP)) {
-      addCommand(_HELP);
+    if(name != HELP && !commands.keys.contains(HELP)) {
+      addCommand(HELP);
     }
     return command;
   }
@@ -89,7 +89,7 @@ class Usage {
         (rest == null ? 0 : rest.min == null ? 0 : rest.min);
     var count = results.rest.length;
     if(count < min) {
-      List<_Help> positionalHelp = _positionals.toList();
+      List<Help> positionalHelp = _positionals.toList();
       if(rest != null) positionalHelp.add(rest);
 
       var missingPositional = positionalHelp[count].help;
