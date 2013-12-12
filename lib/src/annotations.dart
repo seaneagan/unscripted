@@ -1,8 +1,7 @@
 
 part of unscripted;
 
-/// An annotation to use on named method parameters,
-/// marking them as command line options.
+/// An annotation which marks named method parameters as command line options.
 ///
 /// See the corresponding method parameters to [ArgParser.addOption]
 /// for descriptions of the fields.
@@ -22,8 +21,7 @@ class Option extends Arg {
       : super(help: help, abbr: abbr);
 }
 
-/// An annotation to use on named method parameters,
-/// marking them as command line flags.
+/// An annotation which marks named method parameters as command line flags.
 ///
 /// See the corresponding method parameters to [ArgParser.addFlag]
 /// for descriptions of the fields.
@@ -37,19 +35,26 @@ class Flag extends Arg {
       : super(help: help, abbr: abbr);
 }
 
-/// An annotation which gives an example of arguments that can be passed to a
-/// command, along with help text for the example.
+/// An annotation which gives example arguments that can be passed to a
+/// [Command] or [SubCommand].
 class ArgExample extends Help {
 
+  /// The example arguments.
+  ///
+  /// Note:  This should not include the name of the command or sub-command
+  /// itself, just the arguments.
   final String example;
 
   const ArgExample(this.example, {String help}) : super(help: help);
 }
 
-/// An annotation for specifying metadata about positional command line
-/// parameters.
+/// An annotation which marks required positional parameters as
+/// positional command line parameters.
 class Positional extends Help {
 
+  /// The name with which to identify the parameter to in usage text.  By
+  /// default the name of the dart parameter is used converted from camelCase
+  /// to dash-erized.
   final String name;
 
   const Positional({this.name, String help}) : super(help: help);
@@ -73,8 +78,8 @@ class Command extends BaseCommand {
   const Command({String help, this.callStyle}) : super(help: help);
 }
 
-/// An annotation which can be used on a class to mark it as representing a
-/// script command.
+/// An annotation which marks an instance method of a [Command] as a
+/// sub-command.
 class SubCommand extends BaseCommand {
   const SubCommand({String help}) : super(help: help);
 }

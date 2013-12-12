@@ -82,30 +82,18 @@ part of unscripted;
 /// Parameter and command names which are camelCased are mapped to their
 /// dash-erized command line equivalents.  For example, `fooBar` would map to
 /// `foo-bar`.
-improvise(model) {
-  if(model is Type) return new ClassScript(model);
+Script improvise(model) {
   if(model is Function) return new FunctionScript(model);
+  if(model is Type) return new ClassScript(model);
   throw new ArgumentError('model must be a Type or Function');
 }
 
-/// A wrapper around a command line script.
+/// Represents a command line script.
 ///
-/// Automatically adds a `--help` option to the given [parser]:
+/// The main way to interact with a [Script] is to [execute] it.
 ///
-/// * `foo.dart --help`
-/// * `foo.dart -h`
 ///
-/// ... and supports sub-commands as well:
 ///
-/// * `foo.dart help`
-/// * `foo.dart command --help`
-/// * `foo.dart help command`
-///
-/// The help output includes a [description].
-///
-/// When the script is [execute]d, if invalid options are passed, it will
-/// display the help information.  On script failure, the [exitCode] will be
-/// set to `1`.
 abstract class Script {
 
   Usage get usage;
@@ -116,8 +104,15 @@ abstract class Script {
   /// Executes this script.
   ///
   /// * Parses the [arguments].
-  /// * On success passes the [ArgResults] to [handleResults].
-  /// * On failure, outputs the error and help information.
+  /// * Outputs help info and exits if:
+  ///   * The arguments were invalid
+  ///   * Help was requested via any of:
+  ///     * `foo.dart --help`
+  ///     * `foo.dart -h`
+  ///     * `foo.dart help`
+  ///     * `foo.dart command --help`
+  ///     * `foo.dart help command`
+  /// * Otherwise, passes the [ArgResults] to [handleResults].
   execute(List<String> arguments) {
 
     ArgResults results;
