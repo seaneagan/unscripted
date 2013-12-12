@@ -32,7 +32,7 @@
 <h3>Functions</h3>
 <div class="method"><h4 id="improvise">
 <button class="show-code">Code</button>
-dynamic <strong>improvise</strong>(model) <a class="anchor-link" href="#improvise"
+<a href="unscripted/Script.html">Script</a> <strong>improvise</strong>(model) <a class="anchor-link" href="#improvise"
               title="Permalink to improvise">#</a></h4>
 <div class="doc">
 <p>Derives and returns a <a class="crossref" href="unscripted/Script.html">Script</a> from 
@@ -112,9 +112,9 @@ class Commands {
 dash-erized command line equivalents.  For example, <code>fooBar</code> would map to
 <code>foo-bar</code>.</p>
 <pre class="source">
-improvise(model) {
- if(model is Type) return new ClassScript(model);
+Script improvise(model) {
  if(model is Function) return new FunctionScript(model);
+ if(model is Type) return new ClassScript(model);
  throw new ArgumentError('model must be a Type or Function');
 }
 </pre>
@@ -203,7 +203,7 @@ improvise(model) {
         <div class="clear"></div>
         </div>
         <div class="footer">
-          <div>This page was generated at 2013-12-12 21:59:23.104</div>
+          <div>This page was generated at 2013-12-12 22:37:11.237</div>
         </div>
         <script async src="client-live-nav.js"></script>
         </body></html>

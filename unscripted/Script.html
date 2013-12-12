@@ -32,13 +32,8 @@
         
 <button id="show-inherited" class="show-inherited">Hide inherited</button>
 <div class="doc">
-<p>A wrapper around a command line script.</p>
-<p>Automatically adds a <code>--help</code> option to the given <code>parser</code>:</p><ul><li><code>foo.dart --help</code></li><li><code>foo.dart -h</code></li></ul>
-<p>... and supports sub-commands as well:</p><ul><li><code>foo.dart help</code></li><li><code>foo.dart command --help</code></li><li><code>foo.dart help command</code></li></ul>
-<p>The help output includes a <code>description</code>.</p>
-<p>When the script is <a class="crossref" href="../unscripted/Script.html#execute">execute</a>d, if invalid options are passed, it will
-display the help information.  On script failure, the <a class="crossref" href="../dart.io.html#exitCode=">exitCode</a> will be
-set to <code>1</code>.</p>
+<p>Represents a command line script.</p>
+<p>The main way to interact with a <a class="crossref" href="../unscripted/Script.html">Script</a> is to <a class="crossref" href="../unscripted/Script.html#execute">execute</a> it.</p>
 <pre class="source">
 abstract class Script {
 
@@ -50,8 +45,15 @@ abstract class Script {
  /// Executes this script.
  ///
  /// * Parses the [arguments].
- /// * On success passes the [ArgResults] to [handleResults].
- /// * On failure, outputs the error and help information.
+ /// * Outputs help info and exits if:
+ ///   * The arguments were invalid
+ ///   * Help was requested via any of:
+ ///     * `foo.dart --help`
+ ///     * `foo.dart -h`
+ ///     * `foo.dart help`
+ ///     * `foo.dart command --help`
+ ///     * `foo.dart help command`
+ /// * Otherwise, passes the [ArgResults] to [handleResults].
  execute(List&lt;String&gt; arguments) {
 
    ArgResults results;
@@ -116,7 +118,13 @@ dynamic <strong>execute</strong>(<a href="http://api.dartlang.org/dart_core/List
               title="Permalink to Script.execute">#</a></h4>
 <div class="doc">
 <p>Executes this script.</p><ul><li>Parses the 
-<span class="param">arguments</span>.</li><li>On success passes the <a class="crossref" href="../args/ArgResults.html">ArgResults</a> to <a class="crossref" href="../unscripted/Script.html#handleResults">handleResults</a>.</li><li>On failure, outputs the error and help information.</li></ul>
+<span class="param">arguments</span>.</li><li>Outputs help info and exits if:</li><li>The arguments were invalid</li><li>
+<p>Help was requested via any of:
+<em> <code>foo.dart --help</code>
+</em> <code>foo.dart -h</code>
+<em> <code>foo.dart help</code>
+</em> <code>foo.dart command --help</code>
+* <code>foo.dart help command</code></p></li><li>Otherwise, passes the <a class="crossref" href="../args/ArgResults.html">ArgResults</a> to <a class="crossref" href="../unscripted/Script.html#handleResults">handleResults</a>.</li></ul>
 <pre class="source">
 execute(List&lt;String&gt; arguments) {
 
@@ -179,7 +187,7 @@ printHelp([List&lt;String&gt; commandPath]) {
         <div class="clear"></div>
         </div>
         <div class="footer">
-          <div>This page was generated at 2013-12-12 21:59:23.329</div>
+          <div>This page was generated at 2013-12-12 22:37:11.451</div>
         </div>
         <script async src="../client-live-nav.js"></script>
         </body></html>

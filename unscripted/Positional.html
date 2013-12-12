@@ -32,11 +32,14 @@
         
 <button id="show-inherited" class="show-inherited">Hide inherited</button>
 <div class="doc">
-<p>An annotation for specifying metadata about positional command line
-parameters.</p>
+<p>An annotation which marks required positional parameters as
+positional command line parameters.</p>
 <pre class="source">
 class Positional extends Help {
 
+ /// The name with which to identify the parameter to in usage text.  By
+ /// default the name of the dart parameter is used converted from camelCase
+ /// to dash-erized.
  final String name;
 
  const Positional({this.name, String help}) : super(help: help);
@@ -89,6 +92,9 @@ final <a href="http://api.dartlang.org/dart_core/String.html">String</a>        
             title="Permalink to Positional.name">#</a>
         </h4>
         <div class="doc">
+<p>The name with which to identify the parameter to in usage text.  By
+default the name of the dart parameter is used converted from camelCase
+to dash-erized.</p>
 <pre class="source">
 final String name
 </pre>
@@ -99,7 +105,7 @@ final String name
         <div class="clear"></div>
         </div>
         <div class="footer">
-          <div>This page was generated at 2013-12-12 21:59:23.265</div>
+          <div>This page was generated at 2013-12-12 22:37:11.394</div>
         </div>
         <script async src="../client-live-nav.js"></script>
         </body></html>

@@ -32,11 +32,15 @@
         
 <button id="show-inherited" class="show-inherited">Hide inherited</button>
 <div class="doc">
-<p>An annotation which gives an example of arguments that can be passed to a
-command, along with help text for the example.</p>
+<p>An annotation which gives example arguments that can be passed to a
+<a class="crossref" href="../unscripted/Command.html">Command</a> or <a class="crossref" href="../unscripted/SubCommand.html">SubCommand</a>.</p>
 <pre class="source">
 class ArgExample extends Help {
 
+ /// The example arguments.
+ ///
+ /// Note:  This should not include the name of the command or sub-command
+ /// itself, just the arguments.
  final String example;
 
  const ArgExample(this.example, {String help}) : super(help: help);
@@ -74,6 +78,9 @@ final <a href="http://api.dartlang.org/dart_core/String.html">String</a>        
             title="Permalink to ArgExample.example">#</a>
         </h4>
         <div class="doc">
+<p>The example arguments.</p>
+<p>Note:  This should not include the name of the command or sub-command
+itself, just the arguments.</p>
 <pre class="source">
 final String example
 </pre>
@@ -96,7 +103,7 @@ final String help
         <div class="clear"></div>
         </div>
         <div class="footer">
-          <div>This page was generated at 2013-12-12 21:59:23.277</div>
+          <div>This page was generated at 2013-12-12 22:37:11.403</div>
         </div>
         <script async src="../client-live-nav.js"></script>
         </body></html>
