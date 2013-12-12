@@ -76,7 +76,7 @@ class Usage {
 
  _addHelpFlag(ArgParser parser) {
    parser.addFlag(
-       _HELP,
+       HELP,
        abbr: 'h',
        help: 'Print this usage information.', negatable: false);
  }
@@ -97,8 +97,8 @@ class Usage {
    parser.addCommand(name);
    var command = commands[name] = new _SubCommandUsage(this, name);
    _addHelpFlag(command.parser);
-   if(name != _HELP &amp;&amp; !commands.keys.contains(_HELP)) {
-     addCommand(_HELP);
+   if(name != HELP &amp;&amp; !commands.keys.contains(HELP)) {
+     addCommand(HELP);
    }
    return command;
  }
@@ -121,7 +121,7 @@ class Usage {
        (rest == null ? 0 : rest.min == null ? 0 : rest.min);
    var count = results.rest.length;
    if(count &lt; min) {
-     List&lt;_Help&gt; positionalHelp = _positionals.toList();
+     List&lt;Help&gt; positionalHelp = _positionals.toList();
      if(rest != null) positionalHelp.add(rest);
 
      var missingPositional = positionalHelp[count].help;
@@ -280,8 +280,8 @@ Usage addCommand(String name) {
  parser.addCommand(name);
  var command = commands[name] = new _SubCommandUsage(this, name);
  _addHelpFlag(command.parser);
- if(name != _HELP &amp;&amp; !commands.keys.contains(_HELP)) {
-   addCommand(_HELP);
+ if(name != HELP &amp;&amp; !commands.keys.contains(HELP)) {
+   addCommand(HELP);
  }
  return command;
 }
@@ -333,7 +333,7 @@ ArgResults validate(List&lt;String&gt; arguments) {
         <div class="clear"></div>
         </div>
         <div class="footer">
-          <div>This page was generated at 2013-12-12 21:16:23.383</div>
+          <div>This page was generated at 2013-12-12 21:55:34.166</div>
         </div>
         <script async src="../client-live-nav.js"></script>
         </body></html>

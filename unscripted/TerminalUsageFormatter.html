@@ -73,7 +73,7 @@ class TerminalUsageFormatter extends UsageFormatter {
    if(parser.commands.isNotEmpty) {
      blocks.add(['Available commands', '''
 ${parser.commands.keys.map((command) =&gt; '  $command\n').join()}
-Use "${_formatRootCommand()} $_HELP [command]" for more information about a command.''']);
+Use "${_formatRootCommand()} $HELP [command]" for more information about a command.''']);
    }
 
    var usageString = usageParts.join(' ');
@@ -195,7 +195,7 @@ String format() {
  if(parser.commands.isNotEmpty) {
    blocks.add(['Available commands', '''
 ${parser.commands.keys.map((command) =&gt; '  $command\n').join()}
-Use "${_formatRootCommand()} $_HELP [command]" for more information about a command.''']);
+Use "${_formatRootCommand()} $HELP [command]" for more information about a command.''']);
  }
 
  var usageString = usageParts.join(' ');
@@ -218,7 +218,7 @@ Use "${_formatRootCommand()} $_HELP [command]" for more information about a comm
         <div class="clear"></div>
         </div>
         <div class="footer">
-          <div>This page was generated at 2013-12-12 21:16:23.342</div>
+          <div>This page was generated at 2013-12-12 21:55:34.118</div>
         </div>
         <script async src="../client-live-nav.js"></script>
         </body></html>
