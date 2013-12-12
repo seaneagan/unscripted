@@ -64,7 +64,7 @@ class TerminalUsageFormatter extends UsageFormatter {
    var args = parser.commands.isEmpty ? optionsPlaceholder : 'command';
    usageParts.add(args);
 
-   var positionalNames = usage.positionals.map((positional) =&gt; '&lt;${positional.help}&gt;');
+   var positionalNames = usage.positionals.map((positional) =&gt; '&lt;${positional.name}&gt;');
    usageParts.addAll(positionalNames);
 
    var restHelp = usage.rest == null ? '' : usage.rest.help;
@@ -186,7 +186,7 @@ String format() {
  var args = parser.commands.isEmpty ? optionsPlaceholder : 'command';
  usageParts.add(args);
 
- var positionalNames = usage.positionals.map((positional) =&gt; '&lt;${positional.help}&gt;');
+ var positionalNames = usage.positionals.map((positional) =&gt; '&lt;${positional.name}&gt;');
  usageParts.addAll(positionalNames);
 
  var restHelp = usage.rest == null ? '' : usage.rest.help;
@@ -218,7 +218,7 @@ Use "${_formatRootCommand()} $_HELP [command]" for more information about a comm
         <div class="clear"></div>
         </div>
         <div class="footer">
-          <div>This page was generated at 2013-12-12 16:51:02.048</div>
+          <div>This page was generated at 2013-12-12 17:31:03.724</div>
         </div>
         <script async src="../client-live-nav.js"></script>
         </body></html>

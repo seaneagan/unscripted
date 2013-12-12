@@ -36,22 +36,23 @@
 as a rest argument.  If the parameter has a type annotation,
 it should be <code>List</code> or <code>List&lt;String&gt;</code>.</p>
 <pre class="source">
-class Rest extends _Help {
+class Rest extends Positional {
 
  final int min;
 
- const Rest({this.min: 1, String help}) : super(help: help);
+ const Rest({this.min: 1, String name, String help})
+     : super(name: name, help: help);
 }
 </pre>
 </div>
 <h3>Extends</h3>
 <p>
-<span class="type-box"><span class="icon-class"></span><a href="../unscripted/_Help.html">_Help</a></span>&nbsp;&gt;&nbsp;<span class="type-box"><span class="icon-class"></span><strong>Rest</strong></span></p>
+<span class="type-box"><span class="icon-class"></span><a href="../unscripted/_Help.html">_Help</a></span>&nbsp;&gt;&nbsp;<span class="type-box"><span class="icon-class"></span><a href="../unscripted/Positional.html">Positional</a></span>&nbsp;&gt;&nbsp;<span class="type-box"><span class="icon-class"></span><strong>Rest</strong></span></p>
 <div>
 <h3>Constructors</h3>
 <div class="method"><h4 id="">
 <button class="show-code">Code</button>
-const <strong>Rest</strong>({<a href="http://api.dartlang.org/dart_core/int.html">int</a> min: 1, <a href="http://api.dartlang.org/dart_core/String.html">String</a> help}) <a class="anchor-link" href="#"
+const <strong>Rest</strong>({<a href="http://api.dartlang.org/dart_core/int.html">int</a> min: 1, <a href="http://api.dartlang.org/dart_core/String.html">String</a> name, <a href="http://api.dartlang.org/dart_core/String.html">String</a> help}) <a class="anchor-link" href="#"
               title="Permalink to Rest.Rest">#</a></h4>
 <div class="doc">
 <div class="inherited">
@@ -61,7 +62,8 @@ through their identity. An <a class="crossref" href="../dart_core/Object.html">O
 only.</p>
 <div class="docs-inherited-from">docs inherited from <a href="http://api.dartlang.org/dart_core/Object.html">Object</a> </div></div>
 <pre class="source">
-const Rest({this.min: 1, String help}) : super(help: help);
+const Rest({this.min: 1, String name, String help})
+   : super(name: name, help: help);
 </pre>
 </div>
 </div>
@@ -92,12 +94,24 @@ final int min
 </pre>
 </div>
 </div>
+<div class="field inherited"><h4 id="name">
+<button class="show-code">Code</button>
+final <a href="http://api.dartlang.org/dart_core/String.html">String</a>         <strong>name</strong> <a class="anchor-link"
+            href="#name"
+            title="Permalink to Rest.name">#</a>
+        </h4>
+        <div class="inherited-from">inherited from <a href="../unscripted/Positional.html">Positional</a> </div><div class="doc">
+<pre class="source">
+final String name
+</pre>
+</div>
+</div>
 </div>
         </div>
         <div class="clear"></div>
         </div>
         <div class="footer">
-          <div>This page was generated at 2013-12-12 16:51:02.181</div>
+          <div>This page was generated at 2013-12-12 17:31:03.821</div>
         </div>
         <script async src="../client-live-nav.js"></script>
         </body></html>

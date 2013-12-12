@@ -61,8 +61,8 @@ class Usage {
    return parser;
  }
 
- addPositional(String help) {
-   _positionals.add(new Positional(help: help));
+ addPositional(String name, {String help}) {
+   _positionals.add(new Positional(name: name, help: help));
  }
 
  List&lt;Positional&gt; _positionals = [];
@@ -302,12 +302,12 @@ addExample(ArgExample example) {
 </div>
 <div class="method"><h4 id="addPositional">
 <button class="show-code">Code</button>
-dynamic <strong>addPositional</strong>(<a href="http://api.dartlang.org/dart_core/String.html">String</a> help) <a class="anchor-link" href="#addPositional"
+dynamic <strong>addPositional</strong>(<a href="http://api.dartlang.org/dart_core/String.html">String</a> name, {<a href="http://api.dartlang.org/dart_core/String.html">String</a> help}) <a class="anchor-link" href="#addPositional"
               title="Permalink to Usage.addPositional">#</a></h4>
 <div class="doc">
 <pre class="source">
-addPositional(String help) {
- _positionals.add(new Positional(help: help));
+addPositional(String name, {String help}) {
+ _positionals.add(new Positional(name: name, help: help));
 }
 </pre>
 </div>
@@ -333,7 +333,7 @@ ArgResults validate(List&lt;String&gt; arguments) {
         <div class="clear"></div>
         </div>
         <div class="footer">
-          <div>This page was generated at 2013-12-12 16:51:02.086</div>
+          <div>This page was generated at 2013-12-12 17:31:03.771</div>
         </div>
         <script async src="../client-live-nav.js"></script>
         </body></html>
