@@ -1,0 +1,142 @@
+        <!DOCTYPE html>
+        <html>
+        <head>
+                <meta charset="utf-8">
+        <title>CallStyle class / unscripted Library / Dart Documentation</title>
+        <link rel="stylesheet" type="text/css"
+            href="../styles.css">
+        <link href="//fonts.googleapis.com/css?family=Open+Sans:400,600,700,800" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" href="../favicon.ico">
+        
+        </head>
+        <body data-library="unscripted" data-type="CallStyle">
+        <div class="page">
+        <div class="header">
+          <a href="../index.html"><div class="logo"></div></a>
+          <a href="../index.html">Dart Documentation</a>
+         &rsaquo; <a href="../unscripted.html">unscripted</a> &rsaquo; <a href="../unscripted/CallStyle.html">CallStyle</a>        <div id="search-box">
+          <input type="search" name="q" id="q" autocomplete="off"
+              class="search-input" placeholder="Search API">
+        </div>
+        
+      </div>
+      <div class="drop-down" id="drop-down"></div>
+      
+        <div class="nav">
+        
+</div>
+<div class="content">
+        <h2><strong>CallStyle</strong>
+          class
+        </h2>
+        
+<button id="show-inherited" class="show-inherited">Hide inherited</button>
+<div class="doc">
+<pre class="source">
+class CallStyle {
+
+ static const _EXAMPLE_COMMAND = 'foo';
+
+ final String _name;
+
+ static const CallStyle NORMAL = const CallStyle._('NORMAL');
+ static const CallStyle SHEBANG = const CallStyle._('SHEBANG');
+ static const CallStyle SHELL = const CallStyle._('SHELL');
+
+ const CallStyle._(this._name);
+
+ String formatCommand(String command) {
+   switch(this) {
+     case NORMAL: return 'dart $command.dart';
+     case SHEBANG: return '$command.dart';
+     case SHELL: return command;
+   }
+ }
+
+ String get _example =&gt; formatCommand(_EXAMPLE_COMMAND);
+
+ String toString() =&gt; '$_name call style, example: $_example';
+
+}
+</pre>
+</div>
+<div>
+<h3>Static Properties</h3>
+<div class="field"><h4 id="NORMAL">
+<button class="show-code">Code</button>
+const <a href="../unscripted/CallStyle.html">CallStyle</a>         <strong>NORMAL</strong> <a class="anchor-link"
+            href="#NORMAL"
+            title="Permalink to CallStyle.NORMAL">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+static const CallStyle NORMAL = const CallStyle._('NORMAL')
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="SHEBANG">
+<button class="show-code">Code</button>
+const <a href="../unscripted/CallStyle.html">CallStyle</a>         <strong>SHEBANG</strong> <a class="anchor-link"
+            href="#SHEBANG"
+            title="Permalink to CallStyle.SHEBANG">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+static const CallStyle SHEBANG = const CallStyle._('SHEBANG')
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="SHELL">
+<button class="show-code">Code</button>
+const <a href="../unscripted/CallStyle.html">CallStyle</a>         <strong>SHELL</strong> <a class="anchor-link"
+            href="#SHELL"
+            title="Permalink to CallStyle.SHELL">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+static const CallStyle SHELL = const CallStyle._('SHELL')
+</pre>
+</div>
+</div>
+</div>
+<div>
+<h3>Methods</h3>
+<div class="method"><h4 id="formatCommand">
+<button class="show-code">Code</button>
+<a href="http://api.dartlang.org/dart_core/String.html">String</a> <strong>formatCommand</strong>(<a href="http://api.dartlang.org/dart_core/String.html">String</a> command) <a class="anchor-link" href="#formatCommand"
+              title="Permalink to CallStyle.formatCommand">#</a></h4>
+<div class="doc">
+<pre class="source">
+String formatCommand(String command) {
+ switch(this) {
+   case NORMAL: return 'dart $command.dart';
+   case SHEBANG: return '$command.dart';
+   case SHELL: return command;
+ }
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="toString">
+<button class="show-code">Code</button>
+<a href="http://api.dartlang.org/dart_core/String.html">String</a> <strong>toString</strong>() <a class="anchor-link" href="#toString"
+              title="Permalink to CallStyle.toString">#</a></h4>
+<div class="doc">
+<div class="inherited">
+<p>Returns a string representation of this object.</p>
+<div class="docs-inherited-from">docs inherited from <a href="http://api.dartlang.org/dart_core/Object.html">Object</a> </div></div>
+<pre class="source">
+String toString() =&gt; '$_name call style, example: $_example';
+</pre>
+</div>
+</div>
+</div>
+        </div>
+        <div class="clear"></div>
+        </div>
+        <div class="footer">
+          <div>This page was generated at 2013-12-12 16:51:02.153</div>
+        </div>
+        <script async src="../client-live-nav.js"></script>
+        </body></html>
+        

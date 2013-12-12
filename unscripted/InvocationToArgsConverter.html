@@ -1,0 +1,208 @@
+        <!DOCTYPE html>
+        <html>
+        <head>
+                <meta charset="utf-8">
+        <title>InvocationToArgsConverter class / unscripted Library / Dart Documentation</title>
+        <link rel="stylesheet" type="text/css"
+            href="../styles.css">
+        <link href="//fonts.googleapis.com/css?family=Open+Sans:400,600,700,800" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" href="../favicon.ico">
+        
+        </head>
+        <body data-library="unscripted" data-type="InvocationToArgsConverter">
+        <div class="page">
+        <div class="header">
+          <a href="../index.html"><div class="logo"></div></a>
+          <a href="../index.html">Dart Documentation</a>
+         &rsaquo; <a href="../unscripted.html">unscripted</a> &rsaquo; <a href="../unscripted/InvocationToArgsConverter.html">InvocationToArgsConverter</a>        <div id="search-box">
+          <input type="search" name="q" id="q" autocomplete="off"
+              class="search-input" placeholder="Search API">
+        </div>
+        
+      </div>
+      <div class="drop-down" id="drop-down"></div>
+      
+        <div class="nav">
+        
+</div>
+<div class="content">
+        <h2><strong>InvocationToArgsConverter</strong>
+          class
+        </h2>
+        
+<button id="show-inherited" class="show-inherited">Hide inherited</button>
+<div class="doc">
+<pre class="source">
+class InvocationToArgsConverter extends Converter&lt;Invocation, List&lt;String&gt;&gt; {
+
+ InvocationToArgsConverter();
+
+ List&lt;String&gt; convert(Invocation input) {
+   var positionals = input.positionalArguments.map((arg) =&gt; arg.toString());
+   var named = input.namedArguments.keys.expand((option) {
+     var value = input.namedArguments[option];
+     var optionName = MirrorSystem.getName(option);
+
+     var optionArg = '--$optionName';
+     return value is bool ?
+         [value ? optionArg : '--no-$optionName'] :
+         [optionArg, value.toString()];
+   });
+   return [named, positionals].expand((x) =&gt; x);
+ }
+}
+</pre>
+</div>
+<h3>Extends</h3>
+<p>
+<span class="type-box"><span class="icon-class"></span><a href="../dart_convert/Converter.html">Converter&lt;Invocation, List&lt;String&gt;&gt;</a></span>&nbsp;&gt;&nbsp;<span class="type-box"><span class="icon-class"></span><strong>InvocationToArgsConverter</strong></span></p>
+<div>
+<h3>Constructors</h3>
+<div class="method"><h4 id="">
+<button class="show-code">Code</button>
+new <strong>InvocationToArgsConverter</strong>() <a class="anchor-link" href="#"
+              title="Permalink to InvocationToArgsConverter.InvocationToArgsConverter">#</a></h4>
+<div class="doc">
+<div class="inherited">
+<p>Creates a <code>StreamTransformer</code>.</p>
+<p>The returned instance takes responsibility of implementing (<a class="crossref" href="../dart_convert/Converter.html#bind">bind</a>).
+When the user invokes <code>bind</code> it returns a new "bound" stream. Only when
+the user starts listening to the bound stream, the <code>listen</code> method
+invokes the given closure <code>transformer</code>.</p>
+<p>The <code>transformer</code> closure receives the stream, that was bound, as argument
+and returns a <code>StreamSubscription</code>. In almost all cases the closure
+listens itself to the stream that is given as argument.</p>
+<p>The result of invoking the <code>transformer</code> closure is a <code>StreamSubscription</code>.
+The bound stream-transformer (created by the <code>bind</code> method above) then sets
+the handlers it received as part of the <code>listen</code> call.</p>
+<p>Conceptually this can be summarized as follows:</p><ol><li>
+<p><code>var transformer = new StreamTransformer(transformerClosure);</code>
+  creates a <code>StreamTransformer</code> that supports the <code>bind</code> method.</p></li><li>
+<p><code>var boundStream = stream.transform(transformer);</code> binds the <code>stream</code>
+  and returns a bound stream that has a pointer to <code>stream</code>.</p></li><li>
+<p><code>boundStream.listen(f1, onError: f2, onDone: f3, cancelOnError: b)</code>
+  starts the listening and transformation. This is accomplished
+  in 2 steps: first the <code>boundStream</code> invokes the <code>transformerClosure</code> with
+  the <code>stream</code> it captured: <code>transformerClosure(stream, b)</code>.
+  The result <code>subscription</code>, a <code>StreamSubscription</code>, is then
+  updated to receive its handlers: <code>subscription.onData(f1)</code>,
+  <code>subscription.onError(f2)</code>, <code>subscription(f3)</code>. Finally the subscription
+  is returned as result of the <code>listen</code> call.</p></li></ol>
+<p>There are two common ways to create a StreamSubscription:</p><ol><li>
+<p>by creating a new class that implements <code>StreamSubscription</code>.
+   Note that the subscription should run callbacks in the <code>Zone</code> the
+   stream was listened to.</p></li><li>
+<p>by allocating a <code>StreamController</code> and to return the result of
+   listening to its stream.</p></li></ol>
+<p>Example use of a duplicating transformer:</p>
+<pre><code>stringStream.transform(new StreamTransformer&lt;String, String&gt;(
+    (Stream&lt;String&gt; input, bool cancelOnError) {
+      StreamController&lt;String&gt; controller;
+      StreamSubscription&lt;String&gt; subscription;
+      controller = new StreamController&lt;String&gt;(
+        onListen: () {
+          subscription = input.listen((data) {
+              // Duplicate the data.
+              controller.add(data);
+              controller.add(data);
+            },
+            onError: controller.addError,
+            onDone: controller.close,
+            cancelOnError: cancelOnError);
+        },
+        onPause: subscription.pause,
+        onResume: subscription.resume,
+        onCancel: subscription.cancel,
+        sync: true);
+      return controller.stream.listen(null);
+    });
+</code></pre>
+<div class="docs-inherited-from">docs inherited from <a href="http://api.dartlang.org/dart_async/StreamTransformer.html">StreamTransformer</a> </div></div>
+<pre class="source">
+InvocationToArgsConverter();
+</pre>
+</div>
+</div>
+</div>
+<div>
+<h3>Methods</h3>
+<div class="method inherited"><h4 id="bind">
+<button class="show-code">Code</button>
+<a href="http://api.dartlang.org/dart_async/Stream.html">Stream</a> <strong>bind</strong>(<a href="http://api.dartlang.org/dart_async/Stream.html">Stream</a> source) <a class="anchor-link" href="#bind"
+              title="Permalink to InvocationToArgsConverter.bind">#</a></h4>
+<div class="inherited-from">inherited from <a href="http://api.dartlang.org/dart_convert/Converter.html">Converter</a> </div><div class="doc">
+<pre class="source">
+Stream bind(Stream source) {
+ return new Stream.eventTransformed(
+     source,
+     (EventSink sink) =&gt; new _ConverterStreamEventSink(this, sink));
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="convert">
+<button class="show-code">Code</button>
+<a href="http://api.dartlang.org/dart_core/List.html">List</a>&lt;<a href="http://api.dartlang.org/dart_core/String.html">String</a>&gt; <strong>convert</strong>(<a href="http://api.dartlang.org/dart_core/Invocation.html">Invocation</a> input) <a class="anchor-link" href="#convert"
+              title="Permalink to InvocationToArgsConverter.convert">#</a></h4>
+<div class="doc">
+<div class="inherited">
+<p>Converts 
+<span class="param">input</span> and returns the result of the conversion.</p>
+<div class="docs-inherited-from">docs inherited from <a href="http://api.dartlang.org/dart_convert/Converter.html">Converter</a>&lt;<a href="http://api.dartlang.org/dart_core/Invocation.html">Invocation</a>, <a href="http://api.dartlang.org/dart_core/List.html">List</a>&lt;<a href="http://api.dartlang.org/dart_core/String.html">String</a>&gt;&gt; </div></div>
+<pre class="source">
+List&lt;String&gt; convert(Invocation input) {
+ var positionals = input.positionalArguments.map((arg) =&gt; arg.toString());
+ var named = input.namedArguments.keys.expand((option) {
+   var value = input.namedArguments[option];
+   var optionName = MirrorSystem.getName(option);
+
+   var optionArg = '--$optionName';
+   return value is bool ?
+       [value ? optionArg : '--no-$optionName'] :
+       [optionArg, value.toString()];
+ });
+ return [named, positionals].expand((x) =&gt; x);
+}
+</pre>
+</div>
+</div>
+<div class="method inherited"><h4 id="fuse">
+<button class="show-code">Code</button>
+<a href="http://api.dartlang.org/dart_convert/Converter.html">Converter</a>&lt;<a href="../unscripted/InvocationToArgsConverter.html">S</a>, dynamic&gt; <strong>fuse</strong>(<a href="http://api.dartlang.org/dart_convert/Converter.html">Converter</a>&lt;<a href="../unscripted/InvocationToArgsConverter.html">T</a>, dynamic&gt; other) <a class="anchor-link" href="#fuse"
+              title="Permalink to InvocationToArgsConverter.fuse">#</a></h4>
+<div class="inherited-from">inherited from <a href="http://api.dartlang.org/dart_convert/Converter.html">Converter</a> </div><div class="doc">
+<p>Fuses <code>this</code> with 
+<span class="param">other</span>.</p>
+<p>Encoding with the resulting converter is equivalent to converting with
+<code>this</code> before converting with <code>other</code>.</p>
+<pre class="source">
+Converter&lt;S, dynamic&gt; fuse(Converter&lt;T, dynamic&gt; other) {
+ return new _FusedConverter&lt;S, T, dynamic&gt;(this, other);
+}
+</pre>
+</div>
+</div>
+<div class="method inherited"><h4 id="startChunkedConversion">
+<button class="show-code">Code</button>
+<a href="http://api.dartlang.org/dart_convert/ChunkedConversionSink.html">ChunkedConversionSink</a> <strong>startChunkedConversion</strong>(<a href="http://api.dartlang.org/dart_convert/ChunkedConversionSink.html">ChunkedConversionSink</a> sink) <a class="anchor-link" href="#startChunkedConversion"
+              title="Permalink to InvocationToArgsConverter.startChunkedConversion">#</a></h4>
+<div class="inherited-from">inherited from <a href="http://api.dartlang.org/dart_convert/Converter.html">Converter</a> </div><div class="doc">
+<p>Starts a chunked conversion.</p>
+<pre class="source">
+ChunkedConversionSink startChunkedConversion(ChunkedConversionSink sink) {
+ throw new UnsupportedError(
+     "This converter does not support chunked conversions: $this");
+}
+</pre>
+</div>
+</div>
+</div>
+        </div>
+        <div class="clear"></div>
+        </div>
+        <div class="footer">
+          <div>This page was generated at 2013-12-12 16:51:02.138</div>
+        </div>
+        <script async src="../client-live-nav.js"></script>
+        </body></html>
+        

@@ -1,0 +1,167 @@
+        <!DOCTYPE html>
+        <html>
+        <head>
+                <meta charset="utf-8">
+        <title>Script abstract class / unscripted Library / Dart Documentation</title>
+        <link rel="stylesheet" type="text/css"
+            href="../styles.css">
+        <link href="//fonts.googleapis.com/css?family=Open+Sans:400,600,700,800" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" href="../favicon.ico">
+        
+        </head>
+        <body data-library="unscripted" data-type="Script">
+        <div class="page">
+        <div class="header">
+          <a href="../index.html"><div class="logo"></div></a>
+          <a href="../index.html">Dart Documentation</a>
+         &rsaquo; <a href="../unscripted.html">unscripted</a> &rsaquo; <a href="../unscripted/Script.html">Script</a>        <div id="search-box">
+          <input type="search" name="q" id="q" autocomplete="off"
+              class="search-input" placeholder="Search API">
+        </div>
+        
+      </div>
+      <div class="drop-down" id="drop-down"></div>
+      
+        <div class="nav">
+        
+</div>
+<div class="content">
+        <h2><strong>Script</strong>
+          abstract class
+        </h2>
+        
+<button id="show-inherited" class="show-inherited">Hide inherited</button>
+<div class="doc">
+<p>A wrapper around a command line script.</p>
+<p>Automatically adds a <code>--help</code> option to the given <code>parser</code>:</p><ul><li><code>foo.dart --help</code></li><li><code>foo.dart -h</code></li></ul>
+<p>... and supports sub-commands as well:</p><ul><li><code>foo.dart help</code></li><li><code>foo.dart command --help</code></li><li><code>foo.dart help command</code></li></ul>
+<p>The help output includes a <code>description</code>.</p>
+<p>When the script is <a class="crossref" href="../unscripted/Script.html#execute">execute</a>d, if invalid options are passed, it will
+display the help information.  On script failure, the <a class="crossref" href="../dart.io.html#exitCode=">exitCode</a> will be
+set to <code>1</code>.</p>
+<pre class="source">
+abstract class Script {
+
+ Usage get usage;
+
+ UsageFormatter getUsageFormatter(Usage usage) =&gt;
+     new TerminalUsageFormatter(usage);
+
+ /// Executes this script.
+ ///
+ /// * Parses the [arguments].
+ /// * On success passes the [ArgResults] to [handleResults].
+ /// * On failure, outputs the error and help information.
+ execute(List&lt;String&gt; arguments) {
+
+   ArgResults results;
+
+   try {
+     results = usage.validate(arguments);
+   } catch(e) {
+     print('$e\n');
+     _printHelp();
+     return;
+   }
+
+   if(_checkHelp(results)) return;
+   handleResults(results);
+
+ }
+
+ /// Handles successfully parsed [results].
+ handleResults(ArgResults results);
+
+ /// Prints help information for this script.
+ // TODO: Integrate with Loggers.
+ _printHelp([List&lt;String&gt; commandPath]) {
+   var helpUsage = (commandPath == null ? [] : commandPath)
+       .fold(usage, (usage, subCommand) =&gt;
+           usage.commands[subCommand]);
+   print(getUsageFormatter(helpUsage).format());
+ }
+
+ bool _checkHelp(ArgResults results) {
+   var path = _getHelpPath(results);
+   if(path != null) {
+     _printHelp(path);
+     return true;
+   }
+   return false;
+ }
+}
+</pre>
+</div>
+<div>
+<h3>Properties</h3>
+<div class="field"><h4 id="usage">
+<button class="show-code">Code</button>
+final <a href="../unscripted/Usage.html">Usage</a>         <strong>usage</strong> <a class="anchor-link"
+            href="#usage"
+            title="Permalink to Script.usage">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+Usage get usage;
+</pre>
+</div>
+</div>
+</div>
+<div>
+<h3>Methods</h3>
+<div class="method"><h4 id="execute">
+<button class="show-code">Code</button>
+dynamic <strong>execute</strong>(<a href="http://api.dartlang.org/dart_core/List.html">List</a>&lt;<a href="http://api.dartlang.org/dart_core/String.html">String</a>&gt; arguments) <a class="anchor-link" href="#execute"
+              title="Permalink to Script.execute">#</a></h4>
+<div class="doc">
+<p>Executes this script.</p><ul><li>Parses the 
+<span class="param">arguments</span>.</li><li>On success passes the <a class="crossref" href="../args/ArgResults.html">ArgResults</a> to <a class="crossref" href="../unscripted/Script.html#handleResults">handleResults</a>.</li><li>On failure, outputs the error and help information.</li></ul>
+<pre class="source">
+execute(List&lt;String&gt; arguments) {
+
+ ArgResults results;
+
+ try {
+   results = usage.validate(arguments);
+ } catch(e) {
+   print('$e\n');
+   _printHelp();
+   return;
+ }
+
+ if(_checkHelp(results)) return;
+ handleResults(results);
+
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="getUsageFormatter">
+<button class="show-code">Code</button>
+<a href="../unscripted/UsageFormatter.html">UsageFormatter</a> <strong>getUsageFormatter</strong>(<a href="../unscripted/Usage.html">Usage</a> usage) <a class="anchor-link" href="#getUsageFormatter"
+              title="Permalink to Script.getUsageFormatter">#</a></h4>
+<div class="doc">
+<pre class="source">
+UsageFormatter getUsageFormatter(Usage usage) =&gt;
+   new TerminalUsageFormatter(usage);
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="handleResults">
+abstract dynamic <strong>handleResults</strong>(ArgResults results) <a class="anchor-link" href="#handleResults"
+              title="Permalink to Script.handleResults">#</a></h4>
+<div class="doc">
+<p>Handles successfully parsed 
+<span class="param">results</span>.</p>
+</div>
+</div>
+</div>
+        </div>
+        <div class="clear"></div>
+        </div>
+        <div class="footer">
+          <div>This page was generated at 2013-12-12 16:51:02.280</div>
+        </div>
+        <script async src="../client-live-nav.js"></script>
+        </body></html>
+        

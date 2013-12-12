@@ -1,0 +1,158 @@
+        <!DOCTYPE html>
+        <html>
+        <head>
+                <meta charset="utf-8">
+        <title>unscripted Library / Dart Documentation</title>
+        <link rel="stylesheet" type="text/css"
+            href="styles.css">
+        <link href="//fonts.googleapis.com/css?family=Open+Sans:400,600,700,800" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" href="favicon.ico">
+        
+        </head>
+        <body data-library="unscripted">
+        <div class="page">
+        <div class="header">
+          <a href="index.html"><div class="logo"></div></a>
+          <a href="index.html">Dart Documentation</a>
+         &rsaquo; <a href="unscripted.html">unscripted</a>        <div id="search-box">
+          <input type="search" name="q" id="q" autocomplete="off"
+              class="search-input" placeholder="Search API">
+        </div>
+        
+      </div>
+      <div class="drop-down" id="drop-down"></div>
+      
+        <div class="nav">
+        
+</div>
+<div class="content">
+<h2><strong>unscripted</strong> library</h2>
+<div class="doc"><p>Flip the (command line) script.</p></div>
+<div>
+<h3>Functions</h3>
+<div class="method"><h4 id="improvise">
+<button class="show-code">Code</button>
+dynamic <strong>improvise</strong>(model) <a class="anchor-link" href="#improvise"
+              title="Permalink to improvise">#</a></h4>
+<div class="doc">
+<pre class="source">
+improvise(model) {
+ if(model is Type) return new ClassScript(model);
+ if(model is Function) return new FunctionScript(model);
+ throw new ArgumentError('model must be a Type or Function');
+}
+</pre>
+</div>
+</div>
+</div>
+<div>
+<h3>Abstract Classes</h3>
+          <div class="type">
+          <h4>
+            <a href="unscripted/Script.html"><strong>Script</strong></a>
+          </h4>
+          </div>
+          
+          <div class="type">
+          <h4>
+            <a href="unscripted/UsageFormatter.html"><strong>UsageFormatter</strong></a>
+          </h4>
+          </div>
+          
+</div>
+<div>
+<h3>Classes</h3>
+          <div class="type">
+          <h4>
+            <a href="unscripted/ArgExample.html"><strong>ArgExample</strong></a>
+          </h4>
+          </div>
+          
+          <div class="type">
+          <h4>
+            <a href="unscripted/ArgResultsToInvocationConverter.html"><strong>ArgResultsToInvocationConverter</strong></a>
+          </h4>
+          </div>
+          
+          <div class="type">
+          <h4>
+            <a href="unscripted/CallStyle.html"><strong>CallStyle</strong></a>
+          </h4>
+          </div>
+          
+          <div class="type">
+          <h4>
+            <a href="unscripted/ClassScript.html"><strong>ClassScript</strong></a>
+          </h4>
+          </div>
+          
+          <div class="type">
+          <h4>
+            <a href="unscripted/Command.html"><strong>Command</strong></a>
+          </h4>
+          </div>
+          
+          <div class="type">
+          <h4>
+            <a href="unscripted/Flag.html"><strong>Flag</strong></a>
+          </h4>
+          </div>
+          
+          <div class="type">
+          <h4>
+            <a href="unscripted/FunctionScript.html"><strong>FunctionScript</strong></a>
+          </h4>
+          </div>
+          
+          <div class="type">
+          <h4>
+            <a href="unscripted/InvocationToArgsConverter.html"><strong>InvocationToArgsConverter</strong></a>
+          </h4>
+          </div>
+          
+          <div class="type">
+          <h4>
+            <a href="unscripted/Option.html"><strong>Option</strong></a>
+          </h4>
+          </div>
+          
+          <div class="type">
+          <h4>
+            <a href="unscripted/Positional.html"><strong>Positional</strong></a>
+          </h4>
+          </div>
+          
+          <div class="type">
+          <h4>
+            <a href="unscripted/Rest.html"><strong>Rest</strong></a>
+          </h4>
+          </div>
+          
+          <div class="type">
+          <h4>
+            <a href="unscripted/SubCommand.html"><strong>SubCommand</strong></a>
+          </h4>
+          </div>
+          
+          <div class="type">
+          <h4>
+            <a href="unscripted/TerminalUsageFormatter.html"><strong>TerminalUsageFormatter</strong></a>
+          </h4>
+          </div>
+          
+          <div class="type">
+          <h4>
+            <a href="unscripted/Usage.html"><strong>Usage</strong></a>
+          </h4>
+          </div>
+          
+</div>
+        </div>
+        <div class="clear"></div>
+        </div>
+        <div class="footer">
+          <div>This page was generated at 2013-12-12 16:51:02.019</div>
+        </div>
+        <script async src="client-live-nav.js"></script>
+        </body></html>
+        

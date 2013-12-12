@@ -1,0 +1,184 @@
+        <!DOCTYPE html>
+        <html>
+        <head>
+                <meta charset="utf-8">
+        <title>FunctionScript class / unscripted Library / Dart Documentation</title>
+        <link rel="stylesheet" type="text/css"
+            href="../styles.css">
+        <link href="//fonts.googleapis.com/css?family=Open+Sans:400,600,700,800" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" href="../favicon.ico">
+        
+        </head>
+        <body data-library="unscripted" data-type="FunctionScript">
+        <div class="page">
+        <div class="header">
+          <a href="../index.html"><div class="logo"></div></a>
+          <a href="../index.html">Dart Documentation</a>
+         &rsaquo; <a href="../unscripted.html">unscripted</a> &rsaquo; <a href="../unscripted/FunctionScript.html">FunctionScript</a>        <div id="search-box">
+          <input type="search" name="q" id="q" autocomplete="off"
+              class="search-input" placeholder="Search API">
+        </div>
+        
+      </div>
+      <div class="drop-down" id="drop-down"></div>
+      
+        <div class="nav">
+        
+</div>
+<div class="content">
+        <h2><strong>FunctionScript</strong>
+          class
+        </h2>
+        
+<button id="show-inherited" class="show-inherited">Hide inherited</button>
+<div class="doc">
+<p>A <a class="crossref" href="../unscripted/Script.html">Script</a> whose interface and behavior is defined by a <a class="crossref" href="../dart_core/Function.html">Function</a>.</p>
+<p>The function's parameters must be marked with a <a class="crossref" href="../dart_core/bool.html">bool</a> type annotation or a
+<a class="crossref" href="../unscripted/Flag.html">Flag</a> metadata annotation to mark them as a flag, or with a <a class="crossref" href="../dart_core/String.html">String</a> or
+<code>dynamic</code> type annotation or <a class="crossref" href="../unscripted/Option.html">Option</a> metadata annotation to mark them as an
+option.</p>
+<p>When <a class="crossref" href="../unscripted/Script.html#execute">execute</a>d, the command line arguments are injected into their
+corresponding function arguments.</p>
+<pre class="source">
+class FunctionScript extends _DeclarationScript {
+
+ final Function _function;
+
+ MethodMirror get _declaration =&gt;
+     (reflect(_function) as ClosureMirror).function;
+
+ MethodMirror get _method =&gt; _declaration;
+
+ Usage get usage =&gt; _getUsageFromFunction(_declaration);
+
+ FunctionScript(this._function, {String description})
+     : super();
+
+ handleResults(ArgResults results) {
+   var positionalParameterInfo = _getPositionalParameterInfo(_declaration);
+   var restParameterIndex = positionalParameterInfo[1] ?
+       positionalParameterInfo[0] :
+       null;
+   var invocation = new ArgResultsToInvocationConverter(
+       restParameterIndex).convert(results);
+   Function.apply(
+       _function,
+       invocation.positionalArguments,
+       invocation.namedArguments);
+ }
+}
+</pre>
+</div>
+<h3>Extends</h3>
+<p>
+<span class="type-box"><span class="icon-class"></span><a href="../unscripted/Script.html">Script</a></span>&nbsp;&gt;&nbsp;<span class="type-box"><span class="icon-class"></span><a href="../unscripted/_DeclarationScript.html">_DeclarationScript</a></span>&nbsp;&gt;&nbsp;<span class="type-box"><span class="icon-class"></span><strong>FunctionScript</strong></span></p>
+<div>
+<h3>Constructors</h3>
+<div class="method"><h4 id="">
+<button class="show-code">Code</button>
+new <strong>FunctionScript</strong>(<a href="http://api.dartlang.org/dart_core/Function.html">Function</a> _function, {<a href="http://api.dartlang.org/dart_core/String.html">String</a> description}) <a class="anchor-link" href="#"
+              title="Permalink to FunctionScript.FunctionScript">#</a></h4>
+<div class="doc">
+<div class="inherited">
+<p>Creates a new <a class="crossref" href="../dart_core/Object.html">Object</a> instance.</p>
+<p><a class="crossref" href="../dart_core/Object.html">Object</a> instances have no meaningful state, and are only useful
+through their identity. An <a class="crossref" href="../dart_core/Object.html">Object</a> instance is equal to itself
+only.</p>
+<div class="docs-inherited-from">docs inherited from <a href="http://api.dartlang.org/dart_core/Object.html">Object</a> </div></div>
+<pre class="source">
+FunctionScript(this._function, {String description})
+   : super();
+</pre>
+</div>
+</div>
+</div>
+<div>
+<h3>Properties</h3>
+<div class="field"><h4 id="usage">
+<button class="show-code">Code</button>
+final <a href="../unscripted/Usage.html">Usage</a>         <strong>usage</strong> <a class="anchor-link"
+            href="#usage"
+            title="Permalink to FunctionScript.usage">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+Usage get usage =&gt; _getUsageFromFunction(_declaration);
+</pre>
+</div>
+</div>
+</div>
+<div>
+<h3>Methods</h3>
+<div class="method inherited"><h4 id="execute">
+<button class="show-code">Code</button>
+dynamic <strong>execute</strong>(<a href="http://api.dartlang.org/dart_core/List.html">List</a>&lt;<a href="http://api.dartlang.org/dart_core/String.html">String</a>&gt; arguments) <a class="anchor-link" href="#execute"
+              title="Permalink to FunctionScript.execute">#</a></h4>
+<div class="inherited-from">inherited from <a href="../unscripted/Script.html">Script</a> </div><div class="doc">
+<p>Executes this script.</p><ul><li>Parses the 
+<span class="param">arguments</span>.</li><li>On success passes the <a class="crossref" href="../args/ArgResults.html">ArgResults</a> to <a class="crossref" href="../unscripted/Script.html#handleResults">handleResults</a>.</li><li>On failure, outputs the error and help information.</li></ul>
+<pre class="source">
+execute(List&lt;String&gt; arguments) {
+
+ ArgResults results;
+
+ try {
+   results = usage.validate(arguments);
+ } catch(e) {
+   print('$e\n');
+   _printHelp();
+   return;
+ }
+
+ if(_checkHelp(results)) return;
+ handleResults(results);
+
+}
+</pre>
+</div>
+</div>
+<div class="method inherited"><h4 id="getUsageFormatter">
+<button class="show-code">Code</button>
+<a href="../unscripted/UsageFormatter.html">UsageFormatter</a> <strong>getUsageFormatter</strong>(<a href="../unscripted/Usage.html">Usage</a> usage) <a class="anchor-link" href="#getUsageFormatter"
+              title="Permalink to FunctionScript.getUsageFormatter">#</a></h4>
+<div class="inherited-from">inherited from <a href="../unscripted/Script.html">Script</a> </div><div class="doc">
+<pre class="source">
+UsageFormatter getUsageFormatter(Usage usage) =&gt;
+   new TerminalUsageFormatter(usage);
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="handleResults">
+<button class="show-code">Code</button>
+dynamic <strong>handleResults</strong>(ArgResults results) <a class="anchor-link" href="#handleResults"
+              title="Permalink to FunctionScript.handleResults">#</a></h4>
+<div class="doc">
+<div class="inherited">
+<p>Handles successfully parsed 
+<span class="param">results</span>.</p>
+<div class="docs-inherited-from">docs inherited from <a href="../unscripted/Script.html">Script</a> </div></div>
+<pre class="source">
+handleResults(ArgResults results) {
+ var positionalParameterInfo = _getPositionalParameterInfo(_declaration);
+ var restParameterIndex = positionalParameterInfo[1] ?
+     positionalParameterInfo[0] :
+     null;
+ var invocation = new ArgResultsToInvocationConverter(
+     restParameterIndex).convert(results);
+ Function.apply(
+     _function,
+     invocation.positionalArguments,
+     invocation.namedArguments);
+}
+</pre>
+</div>
+</div>
+</div>
+        </div>
+        <div class="clear"></div>
+        </div>
+        <div class="footer">
+          <div>This page was generated at 2013-12-12 16:51:02.258</div>
+        </div>
+        <script async src="../client-live-nav.js"></script>
+        </body></html>
+        

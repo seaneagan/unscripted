@@ -1,0 +1,340 @@
+        <!DOCTYPE html>
+        <html>
+        <head>
+                <meta charset="utf-8">
+        <title>Usage class / unscripted Library / Dart Documentation</title>
+        <link rel="stylesheet" type="text/css"
+            href="../styles.css">
+        <link href="//fonts.googleapis.com/css?family=Open+Sans:400,600,700,800" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" href="../favicon.ico">
+        
+        </head>
+        <body data-library="unscripted" data-type="Usage">
+        <div class="page">
+        <div class="header">
+          <a href="../index.html"><div class="logo"></div></a>
+          <a href="../index.html">Dart Documentation</a>
+         &rsaquo; <a href="../unscripted.html">unscripted</a> &rsaquo; <a href="../unscripted/Usage.html">Usage</a>        <div id="search-box">
+          <input type="search" name="q" id="q" autocomplete="off"
+              class="search-input" placeholder="Search API">
+        </div>
+        
+      </div>
+      <div class="drop-down" id="drop-down"></div>
+      
+        <div class="nav">
+        
+</div>
+<div class="content">
+        <h2><strong>Usage</strong>
+          class
+        </h2>
+        
+<button id="show-inherited" class="show-inherited">Hide inherited</button>
+<div class="doc">
+<p>Adds a standard --help (-h) option to <a class="crossref" href="../unscripted/Usage.html#parser">parser</a>.
+If <a class="crossref" href="../unscripted/Usage.html#parser">parser</a> has any sub-commands also add a help sub-command,
+and recursively add help to all sub-commands' parsers.</p>
+<pre class="source">
+class Usage {
+
+ /// A simple description of what this script does, for use in help text.
+ String description;
+
+ Rest rest;
+
+ CallStyle callStyle = CallStyle.NORMAL;
+
+ // TODO: Make public ?
+ bool _allowTrailingOptions = false;
+
+ /// The parser associated with this usage.
+ ArgParser get parser {
+   if(_parser == null) {
+     _parser = _getParser();
+   }
+   return _parser;
+ }
+ ArgParser _getParser() {
+   var parser = new ArgParser();
+   _addHelpFlag(parser);
+   return parser;
+ }
+
+ addPositional(String help) {
+   _positionals.add(new Positional(help: help));
+ }
+
+ List&lt;Positional&gt; _positionals = [];
+ List&lt;Positional&gt; _positionalsView;
+ List&lt;Positional&gt; get positionals {
+   if(_positionalsView == null) {
+     _positionalsView = new UnmodifiableListView(_positionals);
+   }
+   return _positionalsView;
+ }
+
+ _addHelpFlag(ArgParser parser) {
+   parser.addFlag(
+       _HELP,
+       abbr: 'h',
+       help: 'Print this usage information.', negatable: false);
+ }
+
+ ArgParser _parser;
+
+ Usage();
+
+ List&lt;String&gt; get commandPath =&gt; [];
+ List&lt;ArgExample&gt; examples = [];
+ Map&lt;String, Usage&gt; commands = {};
+
+ addExample(ArgExample example) {
+   examples.add(example);
+ }
+
+ Usage addCommand(String name) {
+   parser.addCommand(name);
+   var command = commands[name] = new _SubCommandUsage(this, name);
+   _addHelpFlag(command.parser);
+   if(name != _HELP &amp;&amp; !commands.keys.contains(_HELP)) {
+     addCommand(_HELP);
+   }
+   return command;
+ }
+
+ ArgResults validate(List&lt;String&gt; arguments) {
+   var results = parser.parse(arguments, allowTrailingOptions: _allowTrailingOptions);
+
+   _checkResults(results);
+
+   return results;
+ }
+
+ _checkResults(ArgResults results) {
+
+   // Ignore other arguments if user wants help.
+   if(_getHelpPath(results) != null) return;
+
+   // Check positional count.
+   var min = _positionals.length +
+       (rest == null ? 0 : rest.min == null ? 0 : rest.min);
+   var count = results.rest.length;
+   if(count &lt; min) {
+     List&lt;_Help&gt; positionalHelp = _positionals.toList();
+     if(rest != null) positionalHelp.add(rest);
+
+     var missingPositional = positionalHelp[count].help;
+
+     var message = missingPositional == null ?
+         'This script requires at least $min positional argument(s)'
+         ', but received $count.' :
+         'Missing the &lt;$missingPositional&gt; positional ';
+
+     throw new FormatException(message);
+   }
+ }
+
+}
+</pre>
+</div>
+<div>
+<h3>Constructors</h3>
+<div class="method"><h4 id="">
+<button class="show-code">Code</button>
+new <strong>Usage</strong>() <a class="anchor-link" href="#"
+              title="Permalink to Usage.Usage">#</a></h4>
+<div class="doc">
+<div class="inherited">
+<p>Creates a new <a class="crossref" href="../dart_core/Object.html">Object</a> instance.</p>
+<p><a class="crossref" href="../dart_core/Object.html">Object</a> instances have no meaningful state, and are only useful
+through their identity. An <a class="crossref" href="../dart_core/Object.html">Object</a> instance is equal to itself
+only.</p>
+<div class="docs-inherited-from">docs inherited from <a href="http://api.dartlang.org/dart_core/Object.html">Object</a> </div></div>
+<pre class="source">
+Usage();
+</pre>
+</div>
+</div>
+</div>
+<div>
+<h3>Properties</h3>
+<div class="field"><h4 id="callStyle">
+<button class="show-code">Code</button>
+<a href="../unscripted/CallStyle.html">CallStyle</a>         <strong>callStyle</strong> <a class="anchor-link"
+            href="#callStyle"
+            title="Permalink to Usage.callStyle">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+CallStyle callStyle = CallStyle.NORMAL
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="commandPath">
+<button class="show-code">Code</button>
+final <a href="http://api.dartlang.org/dart_core/List.html">List</a>&lt;<a href="http://api.dartlang.org/dart_core/String.html">String</a>&gt;         <strong>commandPath</strong> <a class="anchor-link"
+            href="#commandPath"
+            title="Permalink to Usage.commandPath">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+List&lt;String&gt; get commandPath =&gt; [];
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="commands">
+<button class="show-code">Code</button>
+<a href="http://api.dartlang.org/dart_core/Map.html">Map</a>&lt;<a href="http://api.dartlang.org/dart_core/String.html">String</a>, <a href="../unscripted/Usage.html">Usage</a>&gt;         <strong>commands</strong> <a class="anchor-link"
+            href="#commands"
+            title="Permalink to Usage.commands">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+Map&lt;String, Usage&gt; commands = {}
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="description">
+<button class="show-code">Code</button>
+<a href="http://api.dartlang.org/dart_core/String.html">String</a>         <strong>description</strong> <a class="anchor-link"
+            href="#description"
+            title="Permalink to Usage.description">#</a>
+        </h4>
+        <div class="doc">
+<p>A simple description of what this script does, for use in help text.</p>
+<pre class="source">
+String description
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="examples">
+<button class="show-code">Code</button>
+<a href="http://api.dartlang.org/dart_core/List.html">List</a>&lt;<a href="../unscripted/ArgExample.html">ArgExample</a>&gt;         <strong>examples</strong> <a class="anchor-link"
+            href="#examples"
+            title="Permalink to Usage.examples">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+List&lt;ArgExample&gt; examples = []
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="parser">
+<button class="show-code">Code</button>
+final ArgParser         <strong>parser</strong> <a class="anchor-link"
+            href="#parser"
+            title="Permalink to Usage.parser">#</a>
+        </h4>
+        <div class="doc">
+<p>The parser associated with this usage.</p>
+<pre class="source">
+ArgParser get parser {
+ if(_parser == null) {
+   _parser = _getParser();
+ }
+ return _parser;
+}
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="positionals">
+<button class="show-code">Code</button>
+final <a href="http://api.dartlang.org/dart_core/List.html">List</a>&lt;<a href="../unscripted/Positional.html">Positional</a>&gt;         <strong>positionals</strong> <a class="anchor-link"
+            href="#positionals"
+            title="Permalink to Usage.positionals">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+List&lt;Positional&gt; get positionals {
+ if(_positionalsView == null) {
+   _positionalsView = new UnmodifiableListView(_positionals);
+ }
+ return _positionalsView;
+}
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="rest">
+<button class="show-code">Code</button>
+<a href="../unscripted/Rest.html">Rest</a>         <strong>rest</strong> <a class="anchor-link"
+            href="#rest"
+            title="Permalink to Usage.rest">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+Rest rest
+</pre>
+</div>
+</div>
+</div>
+<div>
+<h3>Methods</h3>
+<div class="method"><h4 id="addCommand">
+<button class="show-code">Code</button>
+<a href="../unscripted/Usage.html">Usage</a> <strong>addCommand</strong>(<a href="http://api.dartlang.org/dart_core/String.html">String</a> name) <a class="anchor-link" href="#addCommand"
+              title="Permalink to Usage.addCommand">#</a></h4>
+<div class="doc">
+<pre class="source">
+Usage addCommand(String name) {
+ parser.addCommand(name);
+ var command = commands[name] = new _SubCommandUsage(this, name);
+ _addHelpFlag(command.parser);
+ if(name != _HELP &amp;&amp; !commands.keys.contains(_HELP)) {
+   addCommand(_HELP);
+ }
+ return command;
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="addExample">
+<button class="show-code">Code</button>
+dynamic <strong>addExample</strong>(<a href="../unscripted/ArgExample.html">ArgExample</a> example) <a class="anchor-link" href="#addExample"
+              title="Permalink to Usage.addExample">#</a></h4>
+<div class="doc">
+<pre class="source">
+addExample(ArgExample example) {
+ examples.add(example);
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="addPositional">
+<button class="show-code">Code</button>
+dynamic <strong>addPositional</strong>(<a href="http://api.dartlang.org/dart_core/String.html">String</a> help) <a class="anchor-link" href="#addPositional"
+              title="Permalink to Usage.addPositional">#</a></h4>
+<div class="doc">
+<pre class="source">
+addPositional(String help) {
+ _positionals.add(new Positional(help: help));
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="validate">
+<button class="show-code">Code</button>
+ArgResults <strong>validate</strong>(<a href="http://api.dartlang.org/dart_core/List.html">List</a>&lt;<a href="http://api.dartlang.org/dart_core/String.html">String</a>&gt; arguments) <a class="anchor-link" href="#validate"
+              title="Permalink to Usage.validate">#</a></h4>
+<div class="doc">
+<pre class="source">
+ArgResults validate(List&lt;String&gt; arguments) {
+ var results = parser.parse(arguments, allowTrailingOptions: _allowTrailingOptions);
+
+ _checkResults(results);
+
+ return results;
+}
+</pre>
+</div>
+</div>
+</div>
+        </div>
+        <div class="clear"></div>
+        </div>
+        <div class="footer">
+          <div>This page was generated at 2013-12-12 16:51:02.086</div>
+        </div>
+        <script async src="../client-live-nav.js"></script>
+        </body></html>
+        

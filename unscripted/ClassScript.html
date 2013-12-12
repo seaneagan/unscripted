@@ -1,0 +1,241 @@
+        <!DOCTYPE html>
+        <html>
+        <head>
+                <meta charset="utf-8">
+        <title>ClassScript class / unscripted Library / Dart Documentation</title>
+        <link rel="stylesheet" type="text/css"
+            href="../styles.css">
+        <link href="//fonts.googleapis.com/css?family=Open+Sans:400,600,700,800" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" href="../favicon.ico">
+        
+        </head>
+        <body data-library="unscripted" data-type="ClassScript">
+        <div class="page">
+        <div class="header">
+          <a href="../index.html"><div class="logo"></div></a>
+          <a href="../index.html">Dart Documentation</a>
+         &rsaquo; <a href="../unscripted.html">unscripted</a> &rsaquo; <a href="../unscripted/ClassScript.html">ClassScript</a>        <div id="search-box">
+          <input type="search" name="q" id="q" autocomplete="off"
+              class="search-input" placeholder="Search API">
+        </div>
+        
+      </div>
+      <div class="drop-down" id="drop-down"></div>
+      
+        <div class="nav">
+        
+</div>
+<div class="content">
+        <h2><strong>ClassScript</strong>
+          class
+        </h2>
+        
+<button id="show-inherited" class="show-inherited">Hide inherited</button>
+<div class="doc">
+<p>A <a class="crossref" href="../unscripted/Script.html">Script</a> whose interface and behavior is defined by a class.</p>
+<p>The class must have an unnamed constructor, and it's parameters define the
+top-level options for this script.  Methods of the class can be annotated
+as <a class="crossref" href="../unscripted/SubCommand.html">SubCommand</a>s.  The parameters of these methods define the sub-command's
+options.</p>
+<p>When <a class="crossref" href="../unscripted/Script.html#execute">execute</a>d, the base command line arguments (before the command)
+are injected into their corresponding constructor arguments, to create
+an instance of the class.  Then, the method corresponding to the
+sub-command that was specified on the command line is invoked on the
+instance.</p>
+<p>If no sub-command was specified, then <code>onNoSubCommand</code> is invoked.</p>
+<pre class="source">
+class ClassScript extends _DeclarationScript {
+
+ Type _class;
+
+ ClassMirror get _declaration =&gt; reflectClass(_class);
+
+ MethodMirror get _method =&gt; _getUnnamedConstructor(_declaration);
+
+ Usage get usage =&gt; _getUsageFromClass(_class);
+
+ ClassScript(this._class)
+     : super();
+
+ handleResults(ArgResults results) {
+   var classMirror = _declaration;
+
+   // Handle constructor.
+   var constructorInvocation = new ArgResultsToInvocationConverter(
+       _getRestParameterIndex(_getUnnamedConstructor(classMirror))).convert(results);
+
+   var instanceMirror = classMirror.newInstance(
+       const Symbol(''),
+       constructorInvocation.positionalArguments,
+       constructorInvocation.namedArguments);
+
+   // Handle command.
+   var commandResults = results.command;
+   if(commandResults == null) {
+     defaultCommand(results);
+     return;
+   }
+   var commandName = commandResults.name;
+   var commandSymbol = new Symbol(dashesToCamelCase.encode(commandName));
+   var commandMethod = classMirror.declarations[commandSymbol] as MethodMirror;
+   var commandConverter = new ArgResultsToInvocationConverter(
+       _getRestParameterIndex(commandMethod), memberName: commandSymbol);
+   var commandInvocation = commandConverter.convert(commandResults);
+   instanceMirror.delegate(commandInvocation);
+ }
+
+ /// Called if no sub-command was provided.
+ ///
+ /// The default implementation treats this as an error, and prints help
+ /// information.
+ defaultCommand(ArgResults results) {
+   print('A sub-command must be specified.\n');
+   _printHelp();
+ }
+
+}
+</pre>
+</div>
+<h3>Extends</h3>
+<p>
+<span class="type-box"><span class="icon-class"></span><a href="../unscripted/Script.html">Script</a></span>&nbsp;&gt;&nbsp;<span class="type-box"><span class="icon-class"></span><a href="../unscripted/_DeclarationScript.html">_DeclarationScript</a></span>&nbsp;&gt;&nbsp;<span class="type-box"><span class="icon-class"></span><strong>ClassScript</strong></span></p>
+<div>
+<h3>Constructors</h3>
+<div class="method"><h4 id="">
+<button class="show-code">Code</button>
+new <strong>ClassScript</strong>(<a href="http://api.dartlang.org/dart_core/Type.html">Type</a> _class) <a class="anchor-link" href="#"
+              title="Permalink to ClassScript.ClassScript">#</a></h4>
+<div class="doc">
+<div class="inherited">
+<p>Creates a new <a class="crossref" href="../dart_core/Object.html">Object</a> instance.</p>
+<p><a class="crossref" href="../dart_core/Object.html">Object</a> instances have no meaningful state, and are only useful
+through their identity. An <a class="crossref" href="../dart_core/Object.html">Object</a> instance is equal to itself
+only.</p>
+<div class="docs-inherited-from">docs inherited from <a href="http://api.dartlang.org/dart_core/Object.html">Object</a> </div></div>
+<pre class="source">
+ClassScript(this._class)
+   : super();
+</pre>
+</div>
+</div>
+</div>
+<div>
+<h3>Properties</h3>
+<div class="field"><h4 id="usage">
+<button class="show-code">Code</button>
+final <a href="../unscripted/Usage.html">Usage</a>         <strong>usage</strong> <a class="anchor-link"
+            href="#usage"
+            title="Permalink to ClassScript.usage">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+Usage get usage =&gt; _getUsageFromClass(_class);
+</pre>
+</div>
+</div>
+</div>
+<div>
+<h3>Methods</h3>
+<div class="method"><h4 id="defaultCommand">
+<button class="show-code">Code</button>
+dynamic <strong>defaultCommand</strong>(ArgResults results) <a class="anchor-link" href="#defaultCommand"
+              title="Permalink to ClassScript.defaultCommand">#</a></h4>
+<div class="doc">
+<p>Called if no sub-command was provided.</p>
+<p>The default implementation treats this as an error, and prints help
+information.</p>
+<pre class="source">
+defaultCommand(ArgResults results) {
+ print('A sub-command must be specified.\n');
+ _printHelp();
+}
+</pre>
+</div>
+</div>
+<div class="method inherited"><h4 id="execute">
+<button class="show-code">Code</button>
+dynamic <strong>execute</strong>(<a href="http://api.dartlang.org/dart_core/List.html">List</a>&lt;<a href="http://api.dartlang.org/dart_core/String.html">String</a>&gt; arguments) <a class="anchor-link" href="#execute"
+              title="Permalink to ClassScript.execute">#</a></h4>
+<div class="inherited-from">inherited from <a href="../unscripted/Script.html">Script</a> </div><div class="doc">
+<p>Executes this script.</p><ul><li>Parses the 
+<span class="param">arguments</span>.</li><li>On success passes the <a class="crossref" href="../args/ArgResults.html">ArgResults</a> to <a class="crossref" href="../unscripted/Script.html#handleResults">handleResults</a>.</li><li>On failure, outputs the error and help information.</li></ul>
+<pre class="source">
+execute(List&lt;String&gt; arguments) {
+
+ ArgResults results;
+
+ try {
+   results = usage.validate(arguments);
+ } catch(e) {
+   print('$e\n');
+   _printHelp();
+   return;
+ }
+
+ if(_checkHelp(results)) return;
+ handleResults(results);
+
+}
+</pre>
+</div>
+</div>
+<div class="method inherited"><h4 id="getUsageFormatter">
+<button class="show-code">Code</button>
+<a href="../unscripted/UsageFormatter.html">UsageFormatter</a> <strong>getUsageFormatter</strong>(<a href="../unscripted/Usage.html">Usage</a> usage) <a class="anchor-link" href="#getUsageFormatter"
+              title="Permalink to ClassScript.getUsageFormatter">#</a></h4>
+<div class="inherited-from">inherited from <a href="../unscripted/Script.html">Script</a> </div><div class="doc">
+<pre class="source">
+UsageFormatter getUsageFormatter(Usage usage) =&gt;
+   new TerminalUsageFormatter(usage);
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="handleResults">
+<button class="show-code">Code</button>
+dynamic <strong>handleResults</strong>(ArgResults results) <a class="anchor-link" href="#handleResults"
+              title="Permalink to ClassScript.handleResults">#</a></h4>
+<div class="doc">
+<div class="inherited">
+<p>Handles successfully parsed 
+<span class="param">results</span>.</p>
+<div class="docs-inherited-from">docs inherited from <a href="../unscripted/Script.html">Script</a> </div></div>
+<pre class="source">
+handleResults(ArgResults results) {
+ var classMirror = _declaration;
+
+ // Handle constructor.
+ var constructorInvocation = new ArgResultsToInvocationConverter(
+     _getRestParameterIndex(_getUnnamedConstructor(classMirror))).convert(results);
+
+ var instanceMirror = classMirror.newInstance(
+     const Symbol(''),
+     constructorInvocation.positionalArguments,
+     constructorInvocation.namedArguments);
+
+ // Handle command.
+ var commandResults = results.command;
+ if(commandResults == null) {
+   defaultCommand(results);
+   return;
+ }
+ var commandName = commandResults.name;
+ var commandSymbol = new Symbol(dashesToCamelCase.encode(commandName));
+ var commandMethod = classMirror.declarations[commandSymbol] as MethodMirror;
+ var commandConverter = new ArgResultsToInvocationConverter(
+     _getRestParameterIndex(commandMethod), memberName: commandSymbol);
+ var commandInvocation = commandConverter.convert(commandResults);
+ instanceMirror.delegate(commandInvocation);
+}
+</pre>
+</div>
+</div>
+</div>
+        </div>
+        <div class="clear"></div>
+        </div>
+        <div class="footer">
+          <div>This page was generated at 2013-12-12 16:51:02.248</div>
+        </div>
+        <script async src="../client-live-nav.js"></script>
+        </body></html>
+        
