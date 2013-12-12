@@ -24,23 +24,21 @@ part of unscripted;
 /// When the returned script is [executed][Script.execute], the command line
 /// arguments are injected into their corresponding function arguments.
 ///
-/// ```dart
-/// main(arguments) => improvise(greet).execute(arguments);
+///     main(arguments) => improvise(greet).execute(arguments);
 ///
-/// @Command(help: 'Outputs a greeting')
-/// @ArgExample('--exclaim --salutation Howdy Mr. John Doe', help: 'enthusiastic')
-/// greet(
-///     @Positional(help: "such as 'Mr.' or 'Mrs.'")
-///     String title,
-///     @Rest(help: "One or more names to greet, e.g. 'Jack' or 'Jack Jill'")
-///     List<String> who,
-///     {String salutation : 'Hello',
-///      bool exclaim : false}) {
+///     @Command(help: 'Outputs a greeting')
+///     @ArgExample('--exclaim --salutation Howdy Mr. John Doe', help: 'enthusiastic')
+///     greet(
+///         @Positional(help: "such as 'Mr.' or 'Mrs.'")
+///         String title,
+///         @Rest(help: "One or more names to greet, e.g. 'Jack' or 'Jack Jill'")
+///         List<String> who,
+///         {String salutation : 'Hello',
+///          bool exclaim : false}) {
 ///
-///   print('$salutation $title ${who.join(' ')}${exclaim ? '!' : ''}');
+///       print('$salutation $title ${who.join(' ')}${exclaim ? '!' : ''}');
 ///
-/// }
-/// ```
+///     }
 ///
 /// For scripts with sub-commands, the model should be a class ([Type]), which
 /// must have an unnamed constructor, whose parameters define the
@@ -57,31 +55,29 @@ part of unscripted;
 /// on the instance which will have access to any global options through
 /// instance variables that were set in the constructor.
 ///
-/// ```dart
-/// main(arguments) => improvise(Commands).execute(arguments);
+///     main(arguments) => improvise(Commands).execute(arguments);
 ///
-/// @Command(help: 'Does command-ish stuff')
-/// class Commands {
+///     @Command(help: 'Does command-ish stuff')
+///     class Commands {
 ///
-///   @SubCommand(help: 'Does foo')
-///   @ArgExample('--foo-flag')
-///   foo({bool fooFlag}) {
-///     print('foo');
-///     print('fooFlag: $fooFlag');
-///   }
+///       @SubCommand(help: 'Does foo')
+///       @ArgExample('--foo-flag')
+///       foo({bool fooFlag}) {
+///         print('foo');
+///         print('fooFlag: $fooFlag');
+///       }
 ///
-///   @SubCommand()
-///   bar() {
-///     print('bar');
-///   }
+///       @SubCommand()
+///       bar() {
+///         print('bar');
+///       }
 ///
-///   @SubCommand()
-///   baz(@Rest(help: '<items>') items) {
-///     print(items.join(', '));
-///     print('baz');
-///   }
-/// }
-/// ```
+///       @SubCommand()
+///       baz(@Rest(help: '<items>') items) {
+///         print(items.join(', '));
+///         print('baz');
+///       }
+///     }
 ///
 /// Parameter and command names which are camelCased are mapped to their
 /// dash-erized command line equivalents.  For example, `fooBar` would map to
