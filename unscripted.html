@@ -30,11 +30,399 @@
 <div class="doc"><p>Flip the (command line) script.</p></div>
 <div>
 <h3>Functions</h3>
+<div class="method"><h4 id="getUnnamedConstructor">
+<button class="show-code">Code</button>
+<a href="http://api.dartlang.org/dart_mirrors/MethodMirror.html">MethodMirror</a> <strong>getUnnamedConstructor</strong>(<a href="http://api.dartlang.org/dart_mirrors/ClassMirror.html">ClassMirror</a> classMirror) <a class="anchor-link" href="#getUnnamedConstructor"
+              title="Permalink to getUnnamedConstructor">#</a></h4>
+<div class="doc">
+<pre class="source">
+MethodMirror getUnnamedConstructor(ClassMirror classMirror) {
+ var constructors = classMirror.declarations.values
+ .where((d) =&gt; d is MethodMirror &amp;&amp; d.isConstructor);
+
+ return constructors.firstWhere((constructor) =&gt;
+     constructor.constructorName == const Symbol(''), orElse: () =&gt; null);
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="getRestParameterIndex">
+<button class="show-code">Code</button>
+dynamic <strong>getRestParameterIndex</strong>(<a href="http://api.dartlang.org/dart_mirrors/MethodMirror.html">MethodMirror</a> methodMirror) <a class="anchor-link" href="#getRestParameterIndex"
+              title="Permalink to getRestParameterIndex">#</a></h4>
+<div class="doc">
+<pre class="source">
+getRestParameterIndex(MethodMirror methodMirror) {
+ var positionalParameterInfo = getPositionalParameterInfo(methodMirror);
+ return positionalParameterInfo[1] ?
+     positionalParameterInfo[0] :
+       null;
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="getPositionalParameterInfo">
+<button class="show-code">Code</button>
+<a href="http://api.dartlang.org/dart_core/List.html">List</a> <strong>getPositionalParameterInfo</strong>(<a href="http://api.dartlang.org/dart_mirrors/MethodMirror.html">MethodMirror</a> methodMirror) <a class="anchor-link" href="#getPositionalParameterInfo"
+              title="Permalink to getPositionalParameterInfo">#</a></h4>
+<div class="doc">
+<pre class="source">
+List getPositionalParameterInfo(MethodMirror methodMirror) {
+ var positionals = methodMirror.parameters.where((parameter) =&gt;
+     !parameter.isNamed);
+
+ // TODO: Support optional positionals.
+ if(positionals.any((positional) =&gt; positional.isOptional)) {
+   throw new UnimplementedError('Cannot use optional positional parameters.');
+ }
+ var requiredPositionals =
+     positionals.where((parameter) =&gt; !parameter.isOptional);
+
+ var isRest = false;
+ if(requiredPositionals.isNotEmpty) {
+
+   var lastFuncPositional = requiredPositionals.last;
+
+   var isRestAnnotated = lastFuncPositional.metadata
+       .map((annotation) =&gt; annotation.reflectee)
+       .any((metadata) =&gt; metadata is Rest);
+   // TODO: How to check if the type is List or List&lt;String&gt; ?
+   // var isList = lastFuncPositional.type == reflectClass(List);
+   isRest = isRestAnnotated;// || isList;
+ }
+
+ return [requiredPositionals.length - (isRest ? 1 : 0), isRest];
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="getHelpPath">
+<button class="show-code">Code</button>
+<a href="http://api.dartlang.org/dart_core/List.html">List</a>&lt;<a href="http://api.dartlang.org/dart_core/String.html">String</a>&gt; <strong>getHelpPath</strong>(ArgResults results) <a class="anchor-link" href="#getHelpPath"
+              title="Permalink to getHelpPath">#</a></h4>
+<div class="doc">
+<pre class="source">
+List&lt;String&gt; getHelpPath(ArgResults results) {
+ var path = [];
+ var subResults = results;
+ while(true) {
+   if(subResults.options.contains(_HELP) &amp;&amp; subResults[_HELP]) return path;
+   if(subResults.command == null) return null;
+   if(subResults.command.name == _HELP) {
+     var helpCommand = subResults.command;
+     if(helpCommand.rest.isNotEmpty) path.add(helpCommand.rest.first);
+     return path;
+   }
+   subResults = subResults.command;
+   path.add(subResults.name);
+ }
+ return path;
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="addArgToParser">
+<button class="show-code">Code</button>
+void <strong>addArgToParser</strong>(ArgParser parser, <a href="http://api.dartlang.org/dart_core/String.html">String</a> name, defaultValue, <a href="unscripted/_Arg.html">_Arg</a> arg) <a class="anchor-link" href="#addArgToParser"
+              title="Permalink to addArgToParser">#</a></h4>
+<div class="doc">
+<pre class="source">
+void addArgToParser(ArgParser parser, String name, defaultValue, _Arg arg) {
+
+ var parserMirror = reflect(parser);
+
+ var namedParameters = {};
+
+ InstanceMirror argMirror = reflect(arg);
+
+ setNamedParameter(Symbol name) {
+   var fieldValue = argMirror.getField(name).reflectee;
+
+   if(fieldValue != null) {
+     namedParameters[name] = fieldValue;
+   }
+ }
+
+ mergeProperties(Type type) {
+   reflectClass(type)
+     .declarations
+     .values
+     .where((DeclarationMirror d) =&gt; d is MethodMirror &amp;&amp; d.isGetter)
+     .map((methodMirror) =&gt; methodMirror.simpleName)
+     .forEach(setNamedParameter);
+ }
+
+ mergeProperties(_Arg);
+
+ var suffix;
+
+ if(arg is Option) {
+
+   suffix = 'Option';
+
+   mergeProperties(Option);
+ }
+
+ if(arg is Flag) {
+
+   suffix = 'Flag';
+
+   mergeProperties(Flag);
+ }
+
+ if(defaultValue != null) {
+   namedParameters[#defaultsTo] = defaultValue;
+ }
+
+ var parserMethod = 'add$suffix';
+
+ parserMirror.invoke(new Symbol(parserMethod), [name], namedParameters);
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="getFirstMetadataMatch">
+<button class="show-code">Code</button>
+dynamic <strong>getFirstMetadataMatch</strong>(<a href="http://api.dartlang.org/dart_mirrors/DeclarationMirror.html">DeclarationMirror</a> declaration, <a href="http://api.dartlang.org/dart_core/bool.html">bool</a> match(metadata)) <a class="anchor-link" href="#getFirstMetadataMatch"
+              title="Permalink to getFirstMetadataMatch">#</a></h4>
+<div class="doc">
+<pre class="source">
+getFirstMetadataMatch(DeclarationMirror declaration, bool match(metadata)) {
+ return declaration.metadata
+     .map((annotation) =&gt; annotation.reflectee)
+       .firstWhere(match, orElse: () =&gt; null);
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="getUsageFromClass">
+<button class="show-code">Code</button>
+<a href="unscripted/Usage.html">Usage</a> <strong>getUsageFromClass</strong>(<a href="http://api.dartlang.org/dart_core/Type.html">Type</a> theClass) <a class="anchor-link" href="#getUsageFromClass"
+              title="Permalink to getUsageFromClass">#</a></h4>
+<div class="doc">
+<pre class="source">
+Usage getUsageFromClass(Type theClass) {
+
+ var classMirror = reflectClass(theClass);
+
+ var unnamedConstructor = getUnnamedConstructor(classMirror);
+
+ var usage = getUsageFromFunction(unnamedConstructor);
+
+ // TODO: Include inherited methods, when supported by 'dart:mirrors'.
+ var methods = classMirror.declarations.values
+     .where((d) =&gt;
+         d is MethodMirror &amp;&amp;
+         d.isRegularMethod &amp;&amp;
+         !d.isStatic);
+
+ Map&lt;MethodMirror, SubCommand&gt; subCommands = {};
+
+ methods.forEach((methodMirror) {
+   var subCommand = methodMirror.metadata
+       .map((im) =&gt; im.reflectee)
+       .firstWhere(
+           (v) =&gt; v is SubCommand,
+           orElse: () =&gt; null);
+
+   if(subCommand != null) {
+     subCommands[methodMirror] = subCommand;
+   }
+ });
+
+ var commands = {};
+
+ subCommands.forEach((methodMirror, subCommand) {
+   var commandName = dashesToCamelCase
+       .decode(MirrorSystem.getName(methodMirror.simpleName));
+   var subCommandUsage = getUsageFromFunction(
+       methodMirror,
+       usage: usage.addCommand(commandName));
+ });
+
+ var constructors = classMirror.declarations.values
+     .where((d) =&gt; d is MethodMirror &amp;&amp; d.isConstructor);
+
+ return usage;
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="getUsageFromFunction">
+<button class="show-code">Code</button>
+<a href="unscripted/Usage.html">Usage</a> <strong>getUsageFromFunction</strong>(<a href="http://api.dartlang.org/dart_mirrors/MethodMirror.html">MethodMirror</a> methodMirror, {<a href="unscripted/Usage.html">Usage</a> usage}) <a class="anchor-link" href="#getUsageFromFunction"
+              title="Permalink to getUsageFromFunction">#</a></h4>
+<div class="doc">
+<pre class="source">
+Usage getUsageFromFunction(MethodMirror methodMirror, {Usage usage}) {
+
+ if(usage == null) usage = new Usage();
+
+ usage.rest = getRestFromMethod(methodMirror);
+
+ _addCommandMetadata(usage, methodMirror);
+
+ var parameters = methodMirror.parameters;
+
+ var required = parameters
+     .where((parameter) =&gt; !parameter.isOptional).toList();
+ if(usage.rest != null) required.removeLast();
+
+ var positionals = required.map((parameter) {
+   Positional positional = getFirstMetadataMatch(
+       parameter, (metadata) =&gt; metadata is Positional);
+
+   String positionalName = MirrorSystem.getName(parameter.simpleName).toUpperCase();
+   String positionalHelp;
+   if(positional != null) {
+     if(positional.name != null) {
+       positionalName = positional.name;
+     }
+     positionalHelp = positional.help;
+   }
+   return new Positional(name: positionalName, help: positionalHelp);
+ });
+
+ positionals.forEach((positional) =&gt;
+     usage.addPositional(positional.name, help: positional.help));
+
+ parameters.where((parameter) =&gt; parameter.isNamed).forEach((parameter) {
+
+   _Arg arg;
+   var type = parameter.type;
+   var defaultValue;
+
+   if(type == reflectClass(String)) {
+     arg = new Option();
+   } else if(type == reflectClass(bool)) {
+     arg = new Flag();
+   }
+   // TODO: handle List, List&lt;String&gt; as Options with allowMultiple = true.
+
+   InstanceMirror argAnnotation = parameter.metadata.firstWhere((annotation) =&gt;
+       annotation.reflectee is _Arg, orElse: () =&gt; null);
+
+   if(argAnnotation != null) {
+     arg = argAnnotation.reflectee;
+   }
+
+   var name = MirrorSystem.getName(parameter.simpleName);
+
+   if(parameter.hasDefaultValue) {
+     defaultValue = parameter.defaultValue.reflectee;
+   }
+
+   if(arg == null) {
+     throw 'Parameter $name is not a Flag, Option, Rest, List, String, bool';
+   }
+
+   addArgToParser(usage.parser, dashesToCamelCase.decode(name), defaultValue, arg);
+ });
+
+ return usage;
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="getRestFromMethod">
+<button class="show-code">Code</button>
+<a href="unscripted/Rest.html">Rest</a> <strong>getRestFromMethod</strong>(<a href="http://api.dartlang.org/dart_mirrors/MethodMirror.html">MethodMirror</a> method) <a class="anchor-link" href="#getRestFromMethod"
+              title="Permalink to getRestFromMethod">#</a></h4>
+<div class="doc">
+<pre class="source">
+Rest getRestFromMethod(MethodMirror method) {
+ var firstParameter = method.parameters.firstWhere(
+     (parameter) =&gt; !parameter.isOptional,
+     orElse: () =&gt; null);
+ if(firstParameter != null) {
+   return getFirstMetadataMatch(firstParameter,
+       (metadata) =&gt; metadata is Rest);
+ }
+   return null;
+}
+</pre>
+</div>
+</div>
 <div class="method"><h4 id="improvise">
 <button class="show-code">Code</button>
 dynamic <strong>improvise</strong>(model) <a class="anchor-link" href="#improvise"
               title="Permalink to improvise">#</a></h4>
 <div class="doc">
+<p>Derives and returns a <a class="crossref" href="unscripted/Script.html">Script</a> from 
+<span class="param">model</span>.</p>
+<p>The model is just an ordinary programming construct, particularly either a
+closure (<a class="crossref" href="dart_core/Function.html">Function</a>) or class (<a class="crossref" href="dart_core/Type.html">Type</a>), annotated with command line
+interface metadata.  The model itself can be annotated as a <a class="crossref" href="unscripted/Command.html">Command</a>.  The
+returned script automatically includes adds '--help' / '-h' flags, and
+prints help information when these flags are passed, or when the script was
+invoked incorrectly.</p>
+<p>For simple scripts without sub-commands, the model should be a <a class="crossref" href="dart_core/Function.html">Function</a>.
+The function's parameters define the command line parameters
+accepted by the script.  Named parameters with <a class="crossref" href="dart_core/bool.html">bool</a> type annotations or
+<a class="crossref" href="unscripted/Flag.html">Flag</a> metadata annotations are considered flags.  Named parameters with a
+<a class="crossref" href="dart_core/String.html">String</a> or <code>dynamic</code> type annotations or <a class="crossref" href="unscripted/Option.html">Option</a> metadata annotations are
+considered options.  Required positional parameters are mapped to
+positional command line parameters.  Optional positional parameters are not
+allowed.  However, a <a class="crossref" href="unscripted/Rest.html">Rest</a> metadata annotation can be placed on the last
+positional parameter to represent all remaining positional arguments past
+to the script.</p>
+<p>When the returned script is [executed][Script.execute], the command line
+arguments are injected into their corresponding function arguments.</p>
+<p><code></code>`dart
+main(arguments) => improvise(greet).execute(arguments);</p>
+<p>@Command(help: 'Outputs a greeting')
+@ArgExample('--exclaim --salutation Howdy Mr. John Doe', help: 'enthusiastic')
+greet(</p>
+<pre><code>@Positional(help: "such as 'Mr.' or 'Mrs.'")
+String title,
+@Rest(help: "One or more names to greet, e.g. 'Jack' or 'Jack Jill'")
+List&lt;String&gt; who,
+{String salutation : 'Hello',
+ bool exclaim : false}) {
+</code></pre>
+<p>  print('$salutation $title ${who.join(' ')}${exclaim ? '!' : ''}');</p>
+<p>}
+<code></code>`</p>
+<p>For scripts with sub-commands, the model should be a class (<a class="crossref" href="dart_core/Type.html">Type</a>), which
+must have an unnamed constructor, whose parameters define the
+top-level options for this script.  Methods of the class can be annotated
+as <a class="crossref" href="unscripted/SubCommand.html">SubCommand</a>s.  These methods define and implement the sub-commands
+of the script.  A 'help' sub-command is also added which can be invoked bare
+or with the name of a sub-command for which to print help.</p>
+<p>When the returned script is [executed][Script.execute], the base command line
+arguments (before the command) are injected into their corresponding
+constructor arguments, to create an instance of the class.  Then, the method
+corresponding to the sub-command and associated arguments that were
+specified on the command line are used to invoke the corresponding method
+on the instance which will have access to any global options through
+instance variables that were set in the constructor.</p>
+<p><code></code>`dart
+main(arguments) => improvise(Commands).execute(arguments);</p>
+<p>@Command(help: 'Does command-ish stuff')
+class Commands {</p>
+<p>  @SubCommand(help: 'Does foo')
+  @ArgExample('--foo-flag')
+  foo({bool fooFlag}) {</p>
+<pre><code>print('foo');
+print('fooFlag: $fooFlag');
+</code></pre>
+<p>  }</p>
+<p>  @SubCommand()
+  bar() {</p>
+<pre><code>print('bar');
+</code></pre>
+<p>  }</p>
+<p>  @SubCommand()
+  baz(@Rest(help: '&lt;items>') items) {</p>
+<pre><code>print(items.join(', '));
+print('baz');
+</code></pre>
+<p>  }
+}
+<code></code>`</p>
+<p>Parameter and command names which are camelCased are mapped to their
+dash-erized command line equivalents.  For example, <code>fooBar</code> would map to
+<code>foo-bar</code>.</p>
 <pre class="source">
 improvise(model) {
  if(model is Type) return new ClassScript(model);
@@ -76,12 +464,6 @@ improvise(model) {
           
           <div class="type">
           <h4>
-            <a href="unscripted/ClassScript.html"><strong>ClassScript</strong></a>
-          </h4>
-          </div>
-          
-          <div class="type">
-          <h4>
             <a href="unscripted/Command.html"><strong>Command</strong></a>
           </h4>
           </div>
@@ -89,12 +471,6 @@ improvise(model) {
           <div class="type">
           <h4>
             <a href="unscripted/Flag.html"><strong>Flag</strong></a>
-          </h4>
-          </div>
-          
-          <div class="type">
-          <h4>
-            <a href="unscripted/FunctionScript.html"><strong>FunctionScript</strong></a>
           </h4>
           </div>
           
@@ -139,7 +515,7 @@ improvise(model) {
         <div class="clear"></div>
         </div>
         <div class="footer">
-          <div>This page was generated at 2013-12-12 17:31:03.695</div>
+          <div>This page was generated at 2013-12-12 21:16:23.313</div>
         </div>
         <script async src="client-live-nav.js"></script>
         </body></html>
