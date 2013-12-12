@@ -55,21 +55,22 @@ positional parameter to represent all remaining positional arguments past
 to the script.</p>
 <p>When the returned script is [executed][Script.execute], the command line
 arguments are injected into their corresponding function arguments.</p>
-<p><code></code>`dart
-main(arguments) => improvise(greet).execute(arguments);</p>
-<p>@Command(help: 'Outputs a greeting')
+<pre><code>main(arguments) =&gt; improvise(greet).execute(arguments);
+
+@Command(help: 'Outputs a greeting')
 @ArgExample('--exclaim --salutation Howdy Mr. John Doe', help: 'enthusiastic')
-greet(</p>
-<pre><code>@Positional(help: "such as 'Mr.' or 'Mrs.'")
-String title,
-@Rest(help: "One or more names to greet, e.g. 'Jack' or 'Jack Jill'")
-List&lt;String&gt; who,
-{String salutation : 'Hello',
- bool exclaim : false}) {
+greet(
+    @Positional(help: "such as 'Mr.' or 'Mrs.'")
+    String title,
+    @Rest(help: "One or more names to greet, e.g. 'Jack' or 'Jack Jill'")
+    List&lt;String&gt; who,
+    {String salutation : 'Hello',
+     bool exclaim : false}) {
+
+  print('$salutation $title ${who.join(' ')}${exclaim ? '!' : ''}');
+
+}
 </code></pre>
-<p>  print('$salutation $title ${who.join(' ')}${exclaim ? '!' : ''}');</p>
-<p>}
-<code></code>`</p>
 <p>For scripts with sub-commands, the model should be a class (<a class="crossref" href="dart_core/Type.html">Type</a>), which
 must have an unnamed constructor, whose parameters define the
 top-level options for this script.  Methods of the class can be annotated
@@ -83,30 +84,30 @@ corresponding to the sub-command and associated arguments that were
 specified on the command line are used to invoke the corresponding method
 on the instance which will have access to any global options through
 instance variables that were set in the constructor.</p>
-<p><code></code>`dart
-main(arguments) => improvise(Commands).execute(arguments);</p>
-<p>@Command(help: 'Does command-ish stuff')
-class Commands {</p>
-<p>  @SubCommand(help: 'Does foo')
+<pre><code>main(arguments) =&gt; improvise(Commands).execute(arguments);
+
+@Command(help: 'Does command-ish stuff')
+class Commands {
+
+  @SubCommand(help: 'Does foo')
   @ArgExample('--foo-flag')
-  foo({bool fooFlag}) {</p>
-<pre><code>print('foo');
-print('fooFlag: $fooFlag');
-</code></pre>
-<p>  }</p>
-<p>  @SubCommand()
-  bar() {</p>
-<pre><code>print('bar');
-</code></pre>
-<p>  }</p>
-<p>  @SubCommand()
-  baz(@Rest(help: '&lt;items>') items) {</p>
-<pre><code>print(items.join(', '));
-print('baz');
-</code></pre>
-<p>  }
+  foo({bool fooFlag}) {
+    print('foo');
+    print('fooFlag: $fooFlag');
+  }
+
+  @SubCommand()
+  bar() {
+    print('bar');
+  }
+
+  @SubCommand()
+  baz(@Rest(help: '&lt;items&gt;') items) {
+    print(items.join(', '));
+    print('baz');
+  }
 }
-<code></code>`</p>
+</code></pre>
 <p>Parameter and command names which are camelCased are mapped to their
 dash-erized command line equivalents.  For example, <code>fooBar</code> would map to
 <code>foo-bar</code>.</p>
@@ -202,7 +203,7 @@ improvise(model) {
         <div class="clear"></div>
         </div>
         <div class="footer">
-          <div>This page was generated at 2013-12-12 21:55:34.094</div>
+          <div>This page was generated at 2013-12-12 21:59:23.104</div>
         </div>
         <script async src="client-live-nav.js"></script>
         </body></html>
