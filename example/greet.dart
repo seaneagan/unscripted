@@ -1,19 +1,15 @@
-#!/usr/bin/env dart
-
 import 'package:unscripted/unscripted.dart';
 
 main(arguments) => improvise(greet).execute(arguments);
 
 @Command(help: 'Outputs a greeting')
-@ArgExample('--exclaim --salutation Howdy Mr. John Doe', help: 'enthusiastic')
+@ArgExample('--salutation Welcome --exclaim Bob', help: 'enthusiastic')
 greet(
-    @Positional(help: "such as 'Mr.' or 'Mrs.'")
-    String title,
     @Rest(help: "One or more names to greet, e.g. 'Jack' or 'Jack Jill'")
-    List<String> who,
-    {String salutation : 'Hello',
-     bool exclaim : false}) {
+    List<String> who, // A "rest parameter.
+    {String salutation : 'Hello', // An option.
+     bool exclaim : false}) { // A flag.
 
-  print('$salutation $title ${who.join(' ')}${exclaim ? '!' : ''}');
+  print('$salutation ${who.join(' ')}${exclaim ? '!' : ''}');
 
 }
