@@ -95,17 +95,17 @@ abstract class Script {
 
   /// Executes this script.
   ///
-  /// * Parses the [arguments].
-  /// * Outputs help info and exits if:
-  ///   * The arguments were invalid
-  ///   * Help was requested via any of:
-  ///     * `foo.dart --help`
-  ///     * `foo.dart -h`
-  ///     * `foo.dart help`
-  ///     * `foo.dart command --help`
-  ///     * `foo.dart help command`
-  /// * Otherwise, performs script specific logic on the successfully parsed
-  /// arguments.
+  /// First the [arguments] are parsed.  If the arguments were invalid *or*
+  /// the user requested help via any of:
+  ///
+  /// * `foo.dart --help`
+  /// * `foo.dart -h`
+  /// * `foo.dart help`
+  /// * `foo.dart command --help`
+  /// * `foo.dart help command`
+  ///
+  /// ... then help text is printed and the method returns.  Otherwise,
+  /// script specific logic is performed on the successfully parsed arguments.
   execute(List<String> arguments);
 
 }
