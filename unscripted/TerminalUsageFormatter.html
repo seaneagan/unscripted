@@ -67,8 +67,16 @@ class TerminalUsageFormatter extends UsageFormatter {
    var positionalNames = usage.positionals.map((positional) =&gt; '&lt;${positional.name}&gt;');
    usageParts.addAll(positionalNames);
 
-   var restHelp = usage.rest == null ? '' : usage.rest.help;
-   if(restHelp != null &amp;&amp; restHelp.isNotEmpty) usageParts.add(restHelp);
+   var restName = usage.rest == null ? '' : usage.rest.name;
+
+   if(restName != null &amp;&amp; restName.isNotEmpty) {
+     if(usage.rest.min &gt; 0) {
+       restName = '&lt;$restName&gt;';
+     } else {
+       restName = '[$restName]';
+     }
+     usageParts.add(restName);
+   }
 
    if(parser.commands.isNotEmpty) {
      blocks.add(['Available commands', '''
@@ -189,8 +197,16 @@ String format() {
  var positionalNames = usage.positionals.map((positional) =&gt; '&lt;${positional.name}&gt;');
  usageParts.addAll(positionalNames);
 
- var restHelp = usage.rest == null ? '' : usage.rest.help;
- if(restHelp != null &amp;&amp; restHelp.isNotEmpty) usageParts.add(restHelp);
+ var restName = usage.rest == null ? '' : usage.rest.name;
+
+ if(restName != null &amp;&amp; restName.isNotEmpty) {
+   if(usage.rest.min &gt; 0) {
+     restName = '&lt;$restName&gt;';
+   } else {
+     restName = '[$restName]';
+   }
+   usageParts.add(restName);
+ }
 
  if(parser.commands.isNotEmpty) {
    blocks.add(['Available commands', '''
@@ -218,7 +234,7 @@ Use "${_formatRootCommand()} $HELP [command]" for more information about a comma
         <div class="clear"></div>
         </div>
         <div class="footer">
-          <div>This page was generated at 2013-12-13 22:52:07.725</div>
+          <div>This page was generated at 2013-12-16 18:49:33.906</div>
         </div>
         <script async src="../client-live-nav.js"></script>
         </body></html>
