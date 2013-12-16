@@ -25,8 +25,6 @@ More detailed usage is available in the [API docs][api_docs].
 
 ##Usage
 
-###Basic
-
 Let's say we want to write a simple script to output a greeting to one or more
 people with a few options sprinkled in to customize the output to make it
 interesting.  The status quo dart script for this is too long to embed here,
@@ -62,11 +60,13 @@ dart greet.dart --salutation Welcome --exclaim Bob
 Welcome Bob!
 ```
 
-Unscripted also automatically defines and handles a '--help'/'-h' option,
+###Automatic --help
+
+Unscripted also automatically defines and handles a --help/-h option,
 allowing for:
 
 ```shell
-dart greet.dart --help
+$ dart greet.dart --help
 Outputs a greeting
 
 Usage:
@@ -120,7 +120,7 @@ Config path: $configPath''');
 We can call this script as follows:
 
 ```shell
-dart server.dart start --config-path my-config.xml --clean
+$ dart server.dart start --config-path my-config.xml --clean
 Starting the server.
 Config path: my-config.xml
 ```
@@ -129,6 +129,7 @@ A 'help' sub-command is also added, which can be used as a synonym for '--help',
 which outputs all the basic help info *plus* a list of available commands:
 
 ```shell
+$ dart server.dart help
 Available commands:
 
   start
@@ -141,7 +142,7 @@ Use "dart server.dart help [command]" for more information about a command.
 and as indicated there, sub-command help is also available:
 
 ```shell
-dart server.dart help stop
+$ dart server.dart help stop
 Stop the server
 
 Usage:
