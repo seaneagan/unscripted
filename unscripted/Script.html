@@ -37,11 +37,6 @@
 <pre class="source">
 abstract class Script {
 
- Usage get usage;
-
- UsageFormatter getUsageFormatter(Usage usage) =&gt;
-     new TerminalUsageFormatter(usage);
-
  /// Executes this script.
  ///
  /// * Parses the [arguments].
@@ -53,68 +48,20 @@ abstract class Script {
  ///     * `foo.dart help`
  ///     * `foo.dart command --help`
  ///     * `foo.dart help command`
- /// * Otherwise, passes the [ArgResults] to [handleResults].
- execute(List&lt;String&gt; arguments) {
+ /// * Otherwise, performs script specific logic on the successfully parsed
+ /// arguments.
+ execute(List&lt;String&gt; arguments);
 
-   ArgResults results;
-
-   try {
-     results = usage.validate(arguments);
-   } catch(e) {
-     print('$e\n');
-     printHelp();
-     return;
-   }
-
-   if(_checkHelp(results)) return;
-   handleResults(results);
-
- }
-
- /// Handles successfully parsed [results].
- handleResults(ArgResults results);
-
- /// Prints help information for the associated command or sub-command thereof
- /// at [commandPath].
- // TODO: Integrate with Loggers.
- printHelp([List&lt;String&gt; commandPath]) {
-   var helpUsage = (commandPath == null ? [] : commandPath)
-       .fold(usage, (usage, subCommand) =&gt;
-           usage.commands[subCommand]);
-   print(getUsageFormatter(helpUsage).format());
- }
-
- bool _checkHelp(ArgResults results) {
-   var path = getHelpPath(results);
-   if(path != null) {
-     printHelp(path);
-     return true;
-   }
-   return false;
- }
 }
 </pre>
 </div>
-<div>
-<h3>Properties</h3>
-<div class="field"><h4 id="usage">
-<button class="show-code">Code</button>
-final <a href="../unscripted/Usage.html">Usage</a>         <strong>usage</strong> <a class="anchor-link"
-            href="#usage"
-            title="Permalink to Script.usage">#</a>
-        </h4>
-        <div class="doc">
-<pre class="source">
-Usage get usage;
-</pre>
-</div>
-</div>
-</div>
+<h3>Subclasses</h3>
+<p>
+<span class="type-box"><span class="icon-class"></span><a href="../unscripted.declaration_script/ScriptImpl.html">ScriptImpl</a></span></p>
 <div>
 <h3>Methods</h3>
 <div class="method"><h4 id="execute">
-<button class="show-code">Code</button>
-dynamic <strong>execute</strong>(<a href="http://api.dartlang.org/dart_core/List.html">List</a>&lt;<a href="http://api.dartlang.org/dart_core/String.html">String</a>&gt; arguments) <a class="anchor-link" href="#execute"
+abstract dynamic <strong>execute</strong>(<a href="http://api.dartlang.org/dart_core/List.html">List</a>&lt;<a href="http://api.dartlang.org/dart_core/String.html">String</a>&gt; arguments) <a class="anchor-link" href="#execute"
               title="Permalink to Script.execute">#</a></h4>
 <div class="doc">
 <p>Executes this script.</p><ul><li>Parses the 
@@ -124,62 +71,9 @@ dynamic <strong>execute</strong>(<a href="http://api.dartlang.org/dart_core/List
 </em> <code>foo.dart -h</code>
 <em> <code>foo.dart help</code>
 </em> <code>foo.dart command --help</code>
-* <code>foo.dart help command</code></p></li><li>Otherwise, passes the <a class="crossref" href="../args/ArgResults.html">ArgResults</a> to <a class="crossref" href="../unscripted/Script.html#handleResults">handleResults</a>.</li></ul>
-<pre class="source">
-execute(List&lt;String&gt; arguments) {
-
- ArgResults results;
-
- try {
-   results = usage.validate(arguments);
- } catch(e) {
-   print('$e\n');
-   printHelp();
-   return;
- }
-
- if(_checkHelp(results)) return;
- handleResults(results);
-
-}
-</pre>
-</div>
-</div>
-<div class="method"><h4 id="getUsageFormatter">
-<button class="show-code">Code</button>
-<a href="../unscripted/UsageFormatter.html">UsageFormatter</a> <strong>getUsageFormatter</strong>(<a href="../unscripted/Usage.html">Usage</a> usage) <a class="anchor-link" href="#getUsageFormatter"
-              title="Permalink to Script.getUsageFormatter">#</a></h4>
-<div class="doc">
-<pre class="source">
-UsageFormatter getUsageFormatter(Usage usage) =&gt;
-   new TerminalUsageFormatter(usage);
-</pre>
-</div>
-</div>
-<div class="method"><h4 id="handleResults">
-abstract dynamic <strong>handleResults</strong>(ArgResults results) <a class="anchor-link" href="#handleResults"
-              title="Permalink to Script.handleResults">#</a></h4>
-<div class="doc">
-<p>Handles successfully parsed 
-<span class="param">results</span>.</p>
-</div>
-</div>
-<div class="method"><h4 id="printHelp">
-<button class="show-code">Code</button>
-dynamic <strong>printHelp</strong>([<a href="http://api.dartlang.org/dart_core/List.html">List</a>&lt;<a href="http://api.dartlang.org/dart_core/String.html">String</a>&gt; commandPath]) <a class="anchor-link" href="#printHelp"
-              title="Permalink to Script.printHelp">#</a></h4>
-<div class="doc">
-<p>Prints help information for the associated command or sub-command thereof
-at 
-<span class="param">commandPath</span>.</p>
-<pre class="source">
-printHelp([List&lt;String&gt; commandPath]) {
- var helpUsage = (commandPath == null ? [] : commandPath)
-     .fold(usage, (usage, subCommand) =&gt;
-         usage.commands[subCommand]);
- print(getUsageFormatter(helpUsage).format());
-}
-</pre>
+* <code>foo.dart help command</code></p></li><li>
+<p>Otherwise, performs script specific logic on the successfully parsed
+arguments.</p></li></ul>
 </div>
 </div>
 </div>
@@ -187,7 +81,7 @@ printHelp([List&lt;String&gt; commandPath]) {
         <div class="clear"></div>
         </div>
         <div class="footer">
-          <div>This page was generated at 2013-12-16 21:26:33.343</div>
+          <div>This page was generated at 2013-12-16 21:49:16.544</div>
         </div>
         <script async src="../client-live-nav.js"></script>
         </body></html>
