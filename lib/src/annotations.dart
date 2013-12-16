@@ -65,6 +65,8 @@ class Positional extends Help {
 /// it should be `List` or `List<String>`.
 class Rest extends Positional {
 
+  /// The minimum amount of arguments that should be passed to the rest
+  /// parameter to avoid an error being thrown.
   final int min;
 
   const Rest({this.min: 1, String name, String help})

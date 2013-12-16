@@ -11,6 +11,7 @@ const String HELP = 'help';
 
 /// A base class for script annotations which include help.
 class Help {
+  /// The help text to include for this part of the command line interface.
   final String help;
 
   const Help({this.help});

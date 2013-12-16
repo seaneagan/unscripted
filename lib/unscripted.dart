@@ -1,11 +1,12 @@
 
-/// Flip the (command line) script.
+/// Design command line interfaces through normal programming interfaces
+/// annotated with command line specific metadata.
 library unscripted;
 
 import 'dart:collection';
 import 'dart:io';
 import 'package:args/args.dart';
-import 'package:path/path.dart';
+import 'package:path/path.dart' as path;
 import 'package:unscripted/src/script_impl.dart';
 import 'package:unscripted/src/util.dart';
 

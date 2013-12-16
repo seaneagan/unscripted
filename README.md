@@ -3,10 +3,9 @@ unscripted
 
 [![Build Status](https://drone.io/github.com/seaneagan/unscripted/status.png)](https://drone.io/github.com/seaneagan/unscripted/latest)
 
-Unscripted is a [pub package][pkg] for dart which enables the design of command
-line interfaces using the same programming constructs used to design regular
-Dart APIs, such as methods, parameters, classes, and constructors, merely
-annotating these as necessary with command line specific metadata.
+Unscripted is a [pub package][pkg] for dart which enables the design and 
+implementation of command line interfaces through normal programming interfaces, 
+such as methods or classes, annotated with command line specific metadata.
 
 Command line parameters, just like dart method parameters, come in two varieties,
 named and positional.  This makes for a nice mapping between command line scripts
@@ -54,9 +53,9 @@ greet(
 We can call this script as follows:
 
 ```shell
-dart greet.dart Bob
+$ dart greet.dart Bob
 Hello Bob
-dart greet.dart --salutation Welcome --exclaim Bob
+$ dart greet.dart --salutation Welcome --exclaim Bob
 Welcome Bob!
 ```
 

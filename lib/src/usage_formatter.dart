@@ -84,7 +84,7 @@ Use "${_formatRootCommand()} $HELP [command]" for more information about a comma
   }
 
   String _formatRootCommand() {
-    var commandName = basenameWithoutExtension(Platform.script.path);
+    var commandName = path.basenameWithoutExtension(path.fromUri(Platform.script));
     return usage.callStyle.formatCommand(commandName);
   }
 
