@@ -36,8 +36,6 @@
 <pre class="source">
 class CallStyle {
 
- static const _EXAMPLE_COMMAND = 'foo';
-
  final String _name;
 
  /// Called with the dart executable.
@@ -55,18 +53,6 @@ class CallStyle {
  static const CallStyle SHELL = const CallStyle._('SHELL');
 
  const CallStyle._(this._name);
-
- String formatCommand(String command) {
-   switch(this) {
-     case NORMAL: return 'dart $command.dart';
-     case SHEBANG: return '$command.dart';
-     case SHELL: return command;
-   }
- }
-
- String get _example =&gt; formatCommand(_EXAMPLE_COMMAND);
-
- String toString() =&gt; '$_name call style, example: $_example';
 
 }
 </pre>
@@ -123,43 +109,11 @@ static const CallStyle SHELL = const CallStyle._('SHELL')
 </div>
 </div>
 </div>
-<div>
-<h3>Methods</h3>
-<div class="method"><h4 id="formatCommand">
-<button class="show-code">Code</button>
-<a href="http://api.dartlang.org/dart_core/String.html">String</a> <strong>formatCommand</strong>(<a href="http://api.dartlang.org/dart_core/String.html">String</a> command) <a class="anchor-link" href="#formatCommand"
-              title="Permalink to CallStyle.formatCommand">#</a></h4>
-<div class="doc">
-<pre class="source">
-String formatCommand(String command) {
- switch(this) {
-   case NORMAL: return 'dart $command.dart';
-   case SHEBANG: return '$command.dart';
-   case SHELL: return command;
- }
-}
-</pre>
-</div>
-</div>
-<div class="method"><h4 id="toString">
-<button class="show-code">Code</button>
-<a href="http://api.dartlang.org/dart_core/String.html">String</a> <strong>toString</strong>() <a class="anchor-link" href="#toString"
-              title="Permalink to CallStyle.toString">#</a></h4>
-<div class="doc">
-<div class="inherited">
-<p>Returns a string representation of this object.</p>
-<div class="docs-inherited-from">docs inherited from <a href="http://api.dartlang.org/dart_core/Object.html">Object</a> </div></div>
-<pre class="source">
-String toString() =&gt; '$_name call style, example: $_example';
-</pre>
-</div>
-</div>
-</div>
         </div>
         <div class="clear"></div>
         </div>
         <div class="footer">
-          <div>This page was generated at 2013-12-16 21:49:16.420</div>
+          <div>This page was generated at 2013-12-16 21:57:27.673</div>
         </div>
         <script async src="../client-live-nav.js"></script>
         </body></html>
