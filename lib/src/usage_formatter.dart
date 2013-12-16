@@ -1,5 +1,5 @@
 
-part of unscripted;
+part of unscripted.usage;
 
 abstract class UsageFormatter {
 

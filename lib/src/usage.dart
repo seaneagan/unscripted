@@ -1,5 +1,15 @@
 
-part of unscripted;
+library unscripted.usage;
+
+import 'dart:collection';
+import 'dart:io';
+
+import 'package:path/path.dart' as path;
+import 'package:args/args.dart';
+import 'package:unscripted/unscripted.dart';
+import 'package:unscripted/src/util.dart';
+
+part 'usage_formatter.dart';
 
 /// Adds a standard --help (-h) option to [parser].
 /// If [parser] has any sub-commands also add a help sub-command,

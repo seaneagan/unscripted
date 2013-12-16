@@ -6,6 +6,7 @@ import 'dart:mirrors';
 import 'package:args/args.dart' show ArgParser, ArgResults;
 import 'package:unscripted/unscripted.dart';
 import 'package:unscripted/src/string_codecs.dart';
+import 'package:unscripted/src/usage.dart';
 
 const String HELP = 'help';
 

@@ -91,15 +91,7 @@ Script improvise(model) {
 /// Represents a command line script.
 ///
 /// The main way to interact with a [Script] is to [execute] it.
-///
-///
-///
 abstract class Script {
-
-  Usage get usage;
-
-  UsageFormatter getUsageFormatter(Usage usage) =>
-      new TerminalUsageFormatter(usage);
 
   /// Executes this script.
   ///
@@ -112,43 +104,8 @@ abstract class Script {
   ///     * `foo.dart help`
   ///     * `foo.dart command --help`
   ///     * `foo.dart help command`
-  /// * Otherwise, passes the [ArgResults] to [handleResults].
-  execute(List<String> arguments) {
+  /// * Otherwise, performs script specific logic on the successfully parsed
+  /// arguments.
+  execute(List<String> arguments);
 
-    ArgResults results;
-
-    try {
-      results = usage.validate(arguments);
-    } catch(e) {
-      print('$e\n');
-      printHelp();
-      return;
-    }
-
-    if(_checkHelp(results)) return;
-    handleResults(results);
-
-  }
-
-  /// Handles successfully parsed [results].
-  handleResults(ArgResults results);
-
-  /// Prints help information for the associated command or sub-command thereof
-  /// at [commandPath].
-  // TODO: Integrate with Loggers.
-  printHelp([List<String> commandPath]) {
-    var helpUsage = (commandPath == null ? [] : commandPath)
-        .fold(usage, (usage, subCommand) =>
-            usage.commands[subCommand]);
-    print(getUsageFormatter(helpUsage).format());
-  }
-
-  bool _checkHelp(ArgResults results) {
-    var path = getHelpPath(results);
-    if(path != null) {
-      printHelp(path);
-      return true;
-    }
-    return false;
-  }
 }

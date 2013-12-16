@@ -7,18 +7,66 @@ import 'package:args/args.dart' show ArgResults;
 import 'package:unscripted/unscripted.dart';
 import 'package:unscripted/src/string_codecs.dart';
 import 'package:unscripted/src/args_codec.dart';
+import 'package:unscripted/src/usage.dart';
 import 'package:unscripted/src/util.dart';
 
-abstract class _DeclarationScript extends Script {
+abstract class ScriptImpl implements Script {
+
+  Usage get usage;
+
+  UsageFormatter getUsageFormatter(Usage usage) =>
+      new TerminalUsageFormatter(usage);
+
+  execute(List<String> arguments) {
+
+    ArgResults results;
+
+    try {
+      results = usage.validate(arguments);
+    } catch(e) {
+      print('$e\n');
+      _printHelp();
+      return;
+    }
+
+    if(_checkHelp(results)) return;
+    _handleResults(results);
+
+  }
+
+  /// Handles successfully parsed [results].
+  _handleResults(ArgResults results);
+
+  /// Prints help information for the associated command or sub-command thereof
+  /// at [commandPath].
+  // TODO: Integrate with Loggers.
+  _printHelp([List<String> commandPath]) {
+    var helpUsage = (commandPath == null ? [] : commandPath)
+        .fold(usage, (usage, subCommand) =>
+            usage.commands[subCommand]);
+    print(getUsageFormatter(helpUsage).format());
+  }
+
+  bool _checkHelp(ArgResults results) {
+    var path = getHelpPath(results);
+    if(path != null) {
+      _printHelp(path);
+      return true;
+    }
+    return false;
+  }
+}
+
+abstract class DeclarationScript extends ScriptImpl {
 
   DeclarationMirror get _declaration;
 
   MethodMirror get _method;
 
-  _DeclarationScript();
+  DeclarationScript();
 }
 
-class FunctionScript extends _DeclarationScript {
+class FunctionScript extends DeclarationScript {
 
   final Function _function;
 
@@ -32,7 +80,7 @@ class FunctionScript extends _DeclarationScript {
   FunctionScript(this._function, {String description})
       : super();
 
-  handleResults(ArgResults results) {
+  _handleResults(ArgResults results) {
     var positionalParameterInfo = getPositionalParameterInfo(_declaration);
     var restParameterIndex = positionalParameterInfo[1] ?
         positionalParameterInfo[0] :
@@ -46,7 +94,7 @@ class FunctionScript extends _DeclarationScript {
   }
 }
 
-class ClassScript extends _DeclarationScript {
+class ClassScript extends DeclarationScript {
 
   Type _class;
 
@@ -59,7 +107,7 @@ class ClassScript extends _DeclarationScript {
   ClassScript(this._class)
       : super();
 
-  handleResults(ArgResults results) {
+  _handleResults(ArgResults results) {
     var classMirror = _declaration;
 
     // Handle constructor.
@@ -74,7 +122,7 @@ class ClassScript extends _DeclarationScript {
     // Handle command.
     var commandResults = results.command;
     if(commandResults == null) {
-      defaultCommand(results);
+      _defaultCommand(results);
       return;
     }
     var commandName = commandResults.name;
@@ -90,9 +138,9 @@ class ClassScript extends _DeclarationScript {
   ///
   /// The default implementation treats this as an error, and prints help
   /// information.
-  defaultCommand(ArgResults results) {
+  _defaultCommand(ArgResults results) {
     print('A sub-command must be specified.\n');
-    printHelp();
+    _printHelp();
   }
 
 }
