@@ -27,7 +27,8 @@
 </div>
 <div class="content">
 <h2><strong>unscripted</strong> library</h2>
-<div class="doc"><p>Flip the (command line) script.</p></div>
+<div class="doc"><p>Design command line interfaces through normal programming interfaces
+annotated with command line specific metadata.</p></div>
 <div>
 <h3>Functions</h3>
 <div class="method"><h4 id="improvise">
@@ -37,77 +38,76 @@
 <div class="doc">
 <p>Derives and returns a <a class="crossref" href="unscripted/Script.html">Script</a> from 
 <span class="param">model</span>.</p>
-<p>The model is just an ordinary programming construct, particularly either a
+<p>The model is either a
 closure (<a class="crossref" href="dart_core/Function.html">Function</a>) or class (<a class="crossref" href="dart_core/Type.html">Type</a>), annotated with command line
 interface metadata.  The model itself can be annotated as a <a class="crossref" href="unscripted/Command.html">Command</a>.  The
-returned script automatically includes adds '--help' / '-h' flags, and
+returned script automatically includes '--help' / '-h' flags, and
 prints help information when these flags are passed, or when the script was
 invoked incorrectly.</p>
-<p>For simple scripts without sub-commands, the model should be a <a class="crossref" href="dart_core/Function.html">Function</a>.
-The function's parameters define the command line parameters
-accepted by the script.  Named parameters with <a class="crossref" href="dart_core/bool.html">bool</a> type annotations or
-<a class="crossref" href="unscripted/Flag.html">Flag</a> metadata annotations are considered flags.  Named parameters with a
-<a class="crossref" href="dart_core/String.html">String</a> or <code>dynamic</code> type annotations or <a class="crossref" href="unscripted/Option.html">Option</a> metadata annotations are
-considered options.  Required positional parameters are mapped to
-positional command line parameters.  Optional positional parameters are not
-allowed.  However, a <a class="crossref" href="unscripted/Rest.html">Rest</a> metadata annotation can be placed on the last
-positional parameter to represent all remaining positional arguments past
-to the script.</p>
+<p>For scripts without sub-commands, the model should be a <a class="crossref" href="dart_core/Function.html">Function</a>.
+The function's parameters define the script's command line parameters.
+Named parameters with <a class="crossref" href="dart_core/bool.html">bool</a> type annotations or <a class="crossref" href="unscripted/Flag.html">Flag</a> metadata annotations
+are considered flags.  Named parameters with <a class="crossref" href="dart_core/String.html">String</a> or <code>dynamic</code> type
+annotations or <a class="crossref" href="unscripted/Option.html">Option</a> metadata annotations are considered options.
+Required positional parameters are mapped to positional command line
+parameters.  Optional positional parameters are not allowed.  However, a
+<a class="crossref" href="unscripted/Rest.html">Rest</a> metadata annotation can be placed on the last positional parameter
+to represent all remaining positional arguments passed to the script.</p>
 <p>When the returned script is [executed][Script.execute], the command line
 arguments are injected into their corresponding function arguments.</p>
 <pre><code>main(arguments) =&gt; improvise(greet).execute(arguments);
 
+// Optional command-line metadata:
 @Command(help: 'Outputs a greeting')
-@ArgExample('--exclaim --salutation Howdy Mr. John Doe', help: 'enthusiastic')
+@ArgExample('--salutation Welcome --exclaim Bob', help: 'enthusiastic')
 greet(
-    @Positional(help: "such as 'Mr.' or 'Mrs.'")
-    String title,
-    @Rest(help: "One or more names to greet, e.g. 'Jack' or 'Jack Jill'")
-    List&lt;String&gt; who,
-    {String salutation : 'Hello',
-     bool exclaim : false}) {
+    @Rest(help: "Name(s) to greet")
+    List&lt;String&gt; who, // A rest parameter, must be last positional.
+    {String salutation : 'Hello', // An option, use `@Option(...)` for metadata.
+     bool exclaim : false}) { // A flag, use `@Flag(...)` for metadata.
 
-  print('$salutation $title ${who.join(' ')}${exclaim ? '!' : ''}');
+  print('$salutation ${who.join(' ')}${exclaim ? '!' : ''}');
 
 }
 </code></pre>
-<p>For scripts with sub-commands, the model should be a class (<a class="crossref" href="dart_core/Type.html">Type</a>), which
+<p>For scripts with sub-commands, the model must be a class (<a class="crossref" href="dart_core/Type.html">Type</a>), which
 must have an unnamed constructor, whose parameters define the
-top-level options for this script.  Methods of the class can be annotated
+top-level options for the script.  Methods of the class can be annotated
 as <a class="crossref" href="unscripted/SubCommand.html">SubCommand</a>s.  These methods define and implement the sub-commands
 of the script.  A 'help' sub-command is also added which can be invoked bare
 or with the name of a sub-command for which to print help.</p>
-<p>When the returned script is [executed][Script.execute], the base command line
-arguments (before the command) are injected into their corresponding
-constructor arguments, to create an instance of the class.  Then, the method
-corresponding to the sub-command and associated arguments that were
-specified on the command line are used to invoke the corresponding method
-on the instance which will have access to any global options through
-instance variables that were set in the constructor.</p>
-<pre><code>main(arguments) =&gt; improvise(Commands).execute(arguments);
+<p>When the returned script is [executed][Script.execute], the global command
+line arguments are injected into their corresponding constructor arguments
+to create an instance of the class.  Then, the method corresponding to the
+sub-command and associated arguments that were specified on the command line
+are used to invoke the corresponding method on the instance which will have
+access to any global options through instance variables that were set in
+the constructor.</p>
+<pre><code>main(arguments) =&gt; improvise(Server).execute(arguments);
 
-@Command(help: 'Does command-ish stuff')
-class Commands {
+@Command(help: 'Manages a server')
+class Server {
 
-  @SubCommand(help: 'Does foo')
-  @ArgExample('--foo-flag')
-  foo({bool fooFlag}) {
-    print('foo');
-    print('fooFlag: $fooFlag');
+  final String configPath;
+
+  Server({this.configPath: 'config.xml'});
+
+  @SubCommand(help: 'Start the server')
+  start({bool clean}) {
+    print('''
+Starting the server.
+Config path: $configPath''');
   }
 
-  @SubCommand()
-  bar() {
-    print('bar');
+  @SubCommand(help: 'Stop the server')
+  stop() {
+    print('Stopping the server.');
   }
 
-  @SubCommand()
-  baz(@Rest(help: '&lt;items&gt;') items) {
-    print(items.join(', '));
-    print('baz');
-  }
 }
 </code></pre>
+<p>Commands and SubCommands can also be annotated with <a class="crossref" href="unscripted/ArgExample.html">ArgExample</a>s, to
+document in the help text example arguments that they can receive.</p>
 <p>Parameter and command names which are camelCased are mapped to their
 dash-erized command line equivalents.  For example, <code>fooBar</code> would map to
 <code>foo-bar</code>.</p>
@@ -203,7 +203,7 @@ Script improvise(model) {
         <div class="clear"></div>
         </div>
         <div class="footer">
-          <div>This page was generated at 2013-12-16 19:14:19.482</div>
+          <div>This page was generated at 2013-12-16 21:26:33.139</div>
         </div>
         <script async src="client-live-nav.js"></script>
         </body></html>

@@ -38,6 +38,8 @@ it should be <code>List</code> or <code>List&lt;String&gt;</code>.</p>
 <pre class="source">
 class Rest extends Positional {
 
+ /// The minimum amount of arguments that should be passed to the rest
+ /// parameter to avoid an error being thrown.
  final int min;
 
  const Rest({this.min: 1, String name, String help})
@@ -77,6 +79,7 @@ final <a href="http://api.dartlang.org/dart_core/String.html">String</a>        
             title="Permalink to Rest.help">#</a>
         </h4>
         <div class="inherited-from">inherited from Help </div><div class="doc">
+<p>The help text to include for this part of the command line interface.</p>
 <pre class="source">
 final String help
 </pre>
@@ -89,6 +92,8 @@ final <a href="http://api.dartlang.org/dart_core/int.html">int</a>         <stro
             title="Permalink to Rest.min">#</a>
         </h4>
         <div class="doc">
+<p>The minimum amount of arguments that should be passed to the rest
+parameter to avoid an error being thrown.</p>
 <pre class="source">
 final int min
 </pre>
@@ -114,7 +119,7 @@ final String name
         <div class="clear"></div>
         </div>
         <div class="footer">
-          <div>This page was generated at 2013-12-16 19:14:19.619</div>
+          <div>This page was generated at 2013-12-16 21:26:33.272</div>
         </div>
         <script async src="../client-live-nav.js"></script>
         </body></html>
