@@ -34,7 +34,7 @@ Rest getRestFromMethod(MethodMirror method) {
   if(lastParameter != null) {
     Rest rest = getFirstMetadataMatch(lastParameter,
         (metadata) => metadata is Rest);
-    if(rest.name == null) {
+    if(rest != null  && rest.name == null) {
       rest = new Rest(
           min: rest.min,
           help: rest.help,
