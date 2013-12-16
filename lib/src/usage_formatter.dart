@@ -45,8 +45,16 @@ class TerminalUsageFormatter extends UsageFormatter {
     var positionalNames = usage.positionals.map((positional) => '<${positional.name}>');
     usageParts.addAll(positionalNames);
 
-    var restHelp = usage.rest == null ? '' : usage.rest.help;
-    if(restHelp != null && restHelp.isNotEmpty) usageParts.add(restHelp);
+    var restName = usage.rest == null ? '' : usage.rest.name;
+
+    if(restName != null && restName.isNotEmpty) {
+      if(usage.rest.min > 0) {
+        restName = '<$restName>';
+      } else {
+        restName = '[$restName]';
+      }
+      usageParts.add(restName);
+    }
 
     if(parser.commands.isNotEmpty) {
       blocks.add(['Available commands', '''

@@ -28,22 +28,38 @@ class BaseCommand extends Help {
 }
 
 Rest getRestFromMethod(MethodMirror method) {
-  var firstParameter = method.parameters.firstWhere(
+  var lastParameter = method.parameters.lastWhere(
       (parameter) => !parameter.isOptional,
       orElse: () => null);
-  if(firstParameter != null) {
-    return getFirstMetadataMatch(firstParameter,
+  if(lastParameter != null) {
+    Rest rest = getFirstMetadataMatch(lastParameter,
         (metadata) => metadata is Rest);
+    if(rest.name == null) {
+      rest = new Rest(
+          min: rest.min,
+          help: rest.help,
+          name: getDefaultPositionalName(lastParameter.simpleName));
+    }
+    return rest;
   }
-    return null;
+  return null;
+}
+
+getDefaultPositionalName(Symbol symbol) {
+  return MirrorSystem.getName(symbol).toUpperCase();
 }
 
 Usage getUsageFromFunction(MethodMirror methodMirror, {Usage usage}) {
 
   if(usage == null) usage = new Usage();
 
-  usage.rest = getRestFromMethod(methodMirror);
+  var rest = getRestFromMethod(methodMirror);
+  if(rest != null) {
+    if(rest.name == null) {
 
+    }
+    usage.rest = rest;
+  }
   _addCommandMetadata(usage, methodMirror);
 
   var parameters = methodMirror.parameters;
@@ -56,7 +72,7 @@ Usage getUsageFromFunction(MethodMirror methodMirror, {Usage usage}) {
     Positional positional = getFirstMetadataMatch(
         parameter, (metadata) => metadata is Positional);
 
-    String positionalName = MirrorSystem.getName(parameter.simpleName).toUpperCase();
+    String positionalName = getDefaultPositionalName(parameter.simpleName);
     String positionalHelp;
     if(positional != null) {
       if(positional.name != null) {

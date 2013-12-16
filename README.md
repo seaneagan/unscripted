@@ -3,10 +3,10 @@ unscripted
 
 [![Build Status](https://drone.io/github.com/seaneagan/unscripted/status.png)](https://drone.io/github.com/seaneagan/unscripted/latest)
 
-Unscripted is a pub package for dart which enables one to design a command line
-interface using the same programming constructs they would use to design
-a regular Dart API, such as methods, parameters, classes, and constructors,
-merely annotating these as necessary with command line specific metadata.
+Unscripted is a [pub package][pkg] for dart which enables the design of command
+line interfaces using the same programming constructs used to design regular
+Dart APIs, such as methods, parameters, classes, and constructors, merely
+annotating these as necessary with command line specific metadata.
 
 Command line parameters, just like dart method parameters, come in two varieties,
 named and positional.  This makes for a nice mapping between command line scripts
@@ -15,26 +15,38 @@ It also applies the concept of dependency injection to inject command line
 arguments into dart methods.  This removes the need for boilerplate logic
 around command line arguments to define, parse, validate and assign them to
 local variables.  This allows making command line interface changes solely
-via dart refactoring tools or even simple edits, and makes for less untested
+via dart refactoring tools or even simple one-liners, and makes for less untested
 code.
+
+The quickest way to get started is to copy one of the examples below
+(also available [here][examples]) and edit as necessary.
+
+More detailed usage is available in the [API docs][api_docs].
 
 ##Usage
 
-A basic script (without sub-commands) can be defined using a closure.  Assume we
-have the following 'greet.dart' script:
+###Basic
+
+Let's say we want to write a simple script to output a greeting to one or more
+people with a few options sprinkled in to customize the output to make it
+interesting.  The status quo dart script for this is too long to embed here,
+but might look something like [this][old_greet].  With unscripted, we can get
+rid a lot of boilerplate, retaining only the `greet` method, annotating it
+with a bit of command line metadata:
 
 ```dart
 import 'package:unscripted/unscripted.dart';
 
 main(arguments) => improvise(greet).execute(arguments);
 
+// Optional command-line metadata:
 @Command(help: 'Outputs a greeting')
 @ArgExample('--salutation Welcome --exclaim Bob', help: 'enthusiastic')
 greet(
-    @Rest(help: "One or more names to greet, e.g. 'Jack' or 'Jack Jill'")
-    List<String> who, // A "rest parameter.
-    {String salutation : 'Hello', // An option.
-     bool exclaim : false}) { // A flag.
+    @Rest(help: "Name(s) to greet")
+    List<String> who, // A rest parameter, must be last positional.
+    {String salutation : 'Hello', // An option, use `@Option(...)` for metadata.
+     bool exclaim : false}) { // A flag, use `@Flag(...)` for metadata.
 
   print('$salutation ${who.join(' ')}${exclaim ? '!' : ''}');
 
@@ -72,10 +84,11 @@ Examples:
 dart greet.dart --salutation Welcome --exclaim Bob # enthusiastic
 ```
 
-###Sub-Command support
+###Sub-Commands
 
 Sub-commands are also supported.  In this case the script is defined as a
-class, whose instance methods can be annotated as sub-commands:
+class, whose instance methods can be annotated as sub-commands.  Assume we have
+the following 'server.dart':
 
 ```dart
 import 'package:unscripted/unscripted.dart';
@@ -113,19 +126,9 @@ Config path: my-config.xml
 ```
 
 A 'help' sub-command is also added, which can be used as a synonym for '--help',
-in which case it outputs a list of available commands:
+which outputs all the basic help info *plus* a list of available commands:
 
 ```shell
-dart server.dart help
-Usage:
-
-dart server.dart command
-
-Options:
-
--h, --help           Print this usage information.
-    --config-path    (defaults to "config.xml")
-
 Available commands:
 
   start
@@ -135,7 +138,7 @@ Available commands:
 Use "dart server.dart help [command]" for more information about a command.
 ```
 
-or for a specific sub-command
+and as indicated there, sub-command help is also available:
 
 ```shell
 dart server.dart help stop
@@ -150,7 +153,8 @@ Options:
 -h, --help    Print this usage information.
 ```
 
-For more detailed usage, check out the [API docs][api_docs].
-
-[api_docs]: https://seaneagan.github.io/unscripted/unscripted.html
-[improvise]: https://seaneagan.github.io/unscripted/unscripted.html#improvise
+[pkg]: http://pub.dartlang.org/packages/unscripted
+[api_docs]: https://seaneagan.github.com/unscripted/unscripted.html
+[improvise]: https://seaneagan.github.com/unscripted/unscripted.html#improvise
+[examples]: https://github.com/seaneagan/unscripted/tree/master/example
+[old_greet]: https://github.com/seaneagan/unscripted/tree/master/example/old_greet.dart
