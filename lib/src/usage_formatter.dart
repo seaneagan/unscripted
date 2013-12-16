@@ -85,7 +85,12 @@ Use "${_formatRootCommand()} $HELP [command]" for more information about a comma
 
   String _formatRootCommand() {
     var commandName = path.basenameWithoutExtension(path.fromUri(Platform.script));
-    return usage.callStyle.formatCommand(commandName);
+
+    switch(usage.callStyle) {
+      case CallStyle.NORMAL: return 'dart $commandName.dart';
+      case CallStyle.SHEBANG: return '$commandName.dart';
+      case CallStyle.SHELL: return commandName;
+    }
   }
 
   String _formatCommands() =>
