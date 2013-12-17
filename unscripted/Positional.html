@@ -42,7 +42,13 @@ class Positional extends Help {
  /// to dash-erized.
  final String name;
 
- const Positional({this.name, String help}) : super(help: help);
+ /// A function which parses the option value into the form accepted by the
+ /// [Script].  It should throw to indicate that the argument is invalid.
+ final Function parser;
+
+ const Positional({String help, parser(String arg), this.name})
+     : this.parser = parser,
+     super(help: help);
 }
 </pre>
 </div>
@@ -56,7 +62,7 @@ class Positional extends Help {
 <h3>Constructors</h3>
 <div class="method"><h4 id="">
 <button class="show-code">Code</button>
-const <strong>Positional</strong>({<a href="http://api.dartlang.org/dart_core/String.html">String</a> name, <a href="http://api.dartlang.org/dart_core/String.html">String</a> help}) <a class="anchor-link" href="#"
+const <strong>Positional</strong>({<a href="http://api.dartlang.org/dart_core/String.html">String</a> help, parser(<a href="http://api.dartlang.org/dart_core/String.html">String</a> arg), <a href="http://api.dartlang.org/dart_core/String.html">String</a> name}) <a class="anchor-link" href="#"
               title="Permalink to Positional.Positional">#</a></h4>
 <div class="doc">
 <div class="inherited">
@@ -66,7 +72,9 @@ through their identity. An <a class="crossref" href="../dart_core/Object.html">O
 only.</p>
 <div class="docs-inherited-from">docs inherited from <a href="http://api.dartlang.org/dart_core/Object.html">Object</a> </div></div>
 <pre class="source">
-const Positional({this.name, String help}) : super(help: help);
+const Positional({String help, parser(String arg), this.name})
+   : this.parser = parser,
+   super(help: help);
 </pre>
 </div>
 </div>
@@ -101,12 +109,26 @@ final String name
 </pre>
 </div>
 </div>
+<div class="field"><h4 id="parser">
+<button class="show-code">Code</button>
+final <a href="http://api.dartlang.org/dart_core/Function.html">Function</a>         <strong>parser</strong> <a class="anchor-link"
+            href="#parser"
+            title="Permalink to Positional.parser">#</a>
+        </h4>
+        <div class="doc">
+<p>A function which parses the option value into the form accepted by the
+<a class="crossref" href="../unscripted/Script.html">Script</a>.  It should throw to indicate that the argument is invalid.</p>
+<pre class="source">
+final Function parser
+</pre>
+</div>
+</div>
 </div>
         </div>
         <div class="clear"></div>
         </div>
         <div class="footer">
-          <div>This page was generated at 2013-12-17 19:29:46.505</div>
+          <div>This page was generated at 2013-12-17 22:30:20.814</div>
         </div>
         <script async src="../client-live-nav.js"></script>
         </body></html>

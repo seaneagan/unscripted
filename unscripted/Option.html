@@ -41,15 +41,20 @@ class Option extends Arg {
  final Map&lt;dynamic, String&gt; allowedHelp;
  final bool allowMultiple;
  final bool hide;
+ /// A function which parses the option value into the form accepted by the
+ /// [Script].  It should throw to indicate that the argument is invalid.
+ final Function parser;
 
  const Option({
      String help,
      String abbr,
+     parser(String arg),
      this.allowed,
      this.allowedHelp,
      this.allowMultiple,
      this.hide})
-     : super(help: help, abbr: abbr);
+     : this.parser = parser,
+       super(help: help, abbr: abbr);
 }
 </pre>
 </div>
@@ -60,7 +65,7 @@ class Option extends Arg {
 <h3>Constructors</h3>
 <div class="method"><h4 id="">
 <button class="show-code">Code</button>
-const <strong>Option</strong>({<a href="http://api.dartlang.org/dart_core/String.html">String</a> help, <a href="http://api.dartlang.org/dart_core/String.html">String</a> abbr, <a href="http://api.dartlang.org/dart_core/List.html">List</a>&lt;<a href="http://api.dartlang.org/dart_core/String.html">String</a>&gt; allowed, <a href="http://api.dartlang.org/dart_core/Map.html">Map</a>&lt;dynamic, <a href="http://api.dartlang.org/dart_core/String.html">String</a>&gt; allowedHelp, <a href="http://api.dartlang.org/dart_core/bool.html">bool</a> allowMultiple, <a href="http://api.dartlang.org/dart_core/bool.html">bool</a> hide}) <a class="anchor-link" href="#"
+const <strong>Option</strong>({<a href="http://api.dartlang.org/dart_core/String.html">String</a> help, <a href="http://api.dartlang.org/dart_core/String.html">String</a> abbr, parser(<a href="http://api.dartlang.org/dart_core/String.html">String</a> arg), <a href="http://api.dartlang.org/dart_core/List.html">List</a>&lt;<a href="http://api.dartlang.org/dart_core/String.html">String</a>&gt; allowed, <a href="http://api.dartlang.org/dart_core/Map.html">Map</a>&lt;dynamic, <a href="http://api.dartlang.org/dart_core/String.html">String</a>&gt; allowedHelp, <a href="http://api.dartlang.org/dart_core/bool.html">bool</a> allowMultiple, <a href="http://api.dartlang.org/dart_core/bool.html">bool</a> hide}) <a class="anchor-link" href="#"
               title="Permalink to Option.Option">#</a></h4>
 <div class="doc">
 <div class="inherited">
@@ -73,11 +78,13 @@ only.</p>
 const Option({
    String help,
    String abbr,
+   parser(String arg),
    this.allowed,
    this.allowedHelp,
    this.allowMultiple,
    this.hide})
-   : super(help: help, abbr: abbr);
+   : this.parser = parser,
+     super(help: help, abbr: abbr);
 </pre>
 </div>
 </div>
@@ -157,12 +164,26 @@ final bool hide
 </pre>
 </div>
 </div>
+<div class="field"><h4 id="parser">
+<button class="show-code">Code</button>
+final <a href="http://api.dartlang.org/dart_core/Function.html">Function</a>         <strong>parser</strong> <a class="anchor-link"
+            href="#parser"
+            title="Permalink to Option.parser">#</a>
+        </h4>
+        <div class="doc">
+<p>A function which parses the option value into the form accepted by the
+<a class="crossref" href="../unscripted/Script.html">Script</a>.  It should throw to indicate that the argument is invalid.</p>
+<pre class="source">
+final Function parser
+</pre>
+</div>
+</div>
 </div>
         </div>
         <div class="clear"></div>
         </div>
         <div class="footer">
-          <div>This page was generated at 2013-12-17 19:29:46.605</div>
+          <div>This page was generated at 2013-12-17 22:30:20.873</div>
         </div>
         <script async src="../client-live-nav.js"></script>
         </body></html>
