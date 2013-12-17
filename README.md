@@ -4,8 +4,9 @@ unscripted
 [![Build Status](https://drone.io/github.com/seaneagan/unscripted/status.png)](https://drone.io/github.com/seaneagan/unscripted/latest)
 
 Unscripted is a [pub package][pkg] for dart which enables you to
-[sketch][sketch] command-line interfaces using normal programming constructs
-such as methods or classes, annotated with command-line specific metadata.
+[sketch][sketch] command-line scripts as ordinary programming constructs, such 
+as methods and classes, annotated with command-line specific metadata as 
+necessary.
 
 Command-line parameters, just like dart method parameters, come in two varieties,
 named and positional.  This makes for a nice mapping between command-line scripts
