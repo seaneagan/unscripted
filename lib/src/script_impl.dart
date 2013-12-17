@@ -81,12 +81,8 @@ class FunctionScript extends DeclarationScript {
       : super();
 
   _handleResults(ArgResults results) {
-    var positionalParameterInfo = getPositionalParameterInfo(_declaration);
-    var restParameterIndex = positionalParameterInfo[1] ?
-        positionalParameterInfo[0] :
-        null;
-    var invocation = new ArgResultsToInvocationConverter(
-        restParameterIndex).convert(results);
+    var invocation = new ArgResultsToInvocationConverter(_method)
+        .convert(results);
     Function.apply(
         _function,
         invocation.positionalArguments,
@@ -111,8 +107,8 @@ class ClassScript extends DeclarationScript {
     var classMirror = _declaration;
 
     // Handle constructor.
-    var constructorInvocation = new ArgResultsToInvocationConverter(
-        getRestParameterIndex(getUnnamedConstructor(classMirror))).convert(results);
+    var constructorInvocation = new ArgResultsToInvocationConverter(_method)
+        .convert(results);
 
     var instanceMirror = classMirror.newInstance(
         const Symbol(''),
@@ -129,7 +125,7 @@ class ClassScript extends DeclarationScript {
     var commandSymbol = new Symbol(dashesToCamelCase.encode(commandName));
     var commandMethod = classMirror.declarations[commandSymbol] as MethodMirror;
     var commandConverter = new ArgResultsToInvocationConverter(
-        getRestParameterIndex(commandMethod), memberName: commandSymbol);
+        commandMethod, memberName: commandSymbol);
     var commandInvocation = commandConverter.convert(commandResults);
     instanceMirror.delegate(commandInvocation);
   }

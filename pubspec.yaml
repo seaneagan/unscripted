@@ -6,5 +6,6 @@ description: Write command-line scripts as ordinary methods and classes.
 documentation: http://seaneagan.github.com/unscripted
 dependencies:
   args: any
+  sequence_zip: any
 dev_dependencies:
   unittest: any

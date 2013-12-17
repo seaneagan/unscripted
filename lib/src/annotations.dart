@@ -10,15 +10,20 @@ class Option extends Arg {
   final Map<dynamic, String> allowedHelp;
   final bool allowMultiple;
   final bool hide;
+  /// A function which parses the option value into the form accepted by the
+  /// [Script].  It should throw to indicate that the argument is invalid.
+  final Function parser;
 
   const Option({
       String help,
       String abbr,
+      parser(String arg),
       this.allowed,
       this.allowedHelp,
       this.allowMultiple,
       this.hide})
-      : super(help: help, abbr: abbr);
+      : this.parser = parser,
+        super(help: help, abbr: abbr);
 }
 
 /// An annotation which marks named method parameters as command line flags.
@@ -57,7 +62,13 @@ class Positional extends Help {
   /// to dash-erized.
   final String name;
 
-  const Positional({this.name, String help}) : super(help: help);
+  /// A function which parses the option value into the form accepted by the
+  /// [Script].  It should throw to indicate that the argument is invalid.
+  final Function parser;
+
+  const Positional({String help, parser(String arg), this.name})
+      : this.parser = parser,
+      super(help: help);
 }
 
 /// An annotation which marks the last positional parameter of a method
@@ -69,8 +80,8 @@ class Rest extends Positional {
   /// parameter to avoid an error being thrown.
   final int min;
 
-  const Rest({this.min: 1, String name, String help})
-      : super(name: name, help: help);
+  const Rest({String name, String help, parser(String arg), this.min: 1})
+      : super(name: name, parser: parser, help: help);
 }
 
 /// An annotation which marks a class as representing a script command.

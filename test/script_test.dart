@@ -95,6 +95,44 @@ main() {
 
     });
 
+    group('parser', () {
+      test('for Option - valid input', () {
+        var optionValue;
+        new FunctionScript(({@Option(parser: int.parse) int option}) {
+          optionValue = option;
+        }).execute(['--option', '123']);
+        expect(optionValue, 123);
+      });
+
+      test('for Option - invalid input throws', () {
+        expect(() {
+          new FunctionScript(({@Option(parser: int.parse) int option}) {
+          }).execute(['--option', 'abc']);
+        }, throwsA(new isInstanceOf<FormatException>()));
+      });
+
+      test('for Positional - valid input', () {
+        var positionalValue;
+        var restValue;
+        new FunctionScript((
+            @Positional(parser: int.parse) int option,
+            @Rest(parser: int.parse) List<int> rest) {
+          positionalValue = option;
+          restValue = rest;
+        }).execute(['123', '4', '5', '6']);
+        expect(positionalValue, 123);
+        expect(restValue, [4, 5, 6]);
+      });
+
+      test('for Positional - invalid input throws', () {
+        expect(() {
+          new FunctionScript((@Positional(parser: int.parse) int option) {
+          }).execute(['abc']);
+        }, throwsA(new isInstanceOf<FormatException>()));
+      });
+
+    });
+
     group('ClassScript', () {
 
       Script unit;
