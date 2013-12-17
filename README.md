@@ -71,7 +71,7 @@ Outputs a greeting
 
 Usage:
 
-dart greet.dart [options] One or more names to greet, e.g. 'Jack' or 'Jack Jill'
+dart greet.dart [options] <WHO>
 
 Options:
 
