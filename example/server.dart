@@ -2,7 +2,7 @@
 
 import 'package:unscripted/unscripted.dart';
 
-main(arguments) => improvise(Server).execute(arguments);
+main(arguments) => sketch(Server).execute(arguments);
 
 @Command(help: 'Manages a server')
 class Server {

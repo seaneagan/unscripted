@@ -2,7 +2,7 @@ name: unscripted
 author: Sean Eagan <seaneagan1@gmail.com>
 version: 0.0.2
 homepage: http://github.com/seaneagan/unscripted
-description: Design command line interfaces through normal programming interfaces annotated with command line specific metadata.
+description: Sketch command-line interfaces using normal programming constructs annotated with command-line specific metadata.
 documentation: http://seaneagan.github.com/unscripted
 dependencies:
   args: any

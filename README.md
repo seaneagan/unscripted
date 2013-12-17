@@ -3,17 +3,17 @@ unscripted
 
 [![Build Status](https://drone.io/github.com/seaneagan/unscripted/status.png)](https://drone.io/github.com/seaneagan/unscripted/latest)
 
-Unscripted is a [pub package][pkg] for dart which enables the design and 
-implementation of command line interfaces through normal programming interfaces, 
-such as methods or classes, annotated with command line specific metadata.
+Unscripted is a [pub package][pkg] for dart which enables you to
+[sketch][sketch] command-line interfaces using normal programming constructs
+such as methods or classes, annotated with command-line specific metadata.
 
-Command line parameters, just like dart method parameters, come in two varieties,
-named and positional.  This makes for a nice mapping between command line scripts
+Command-line parameters, just like dart method parameters, come in two varieties,
+named and positional.  This makes for a nice mapping between command-line scripts
 and dart methods.  Unscripted uses reflection to transform between the two.
-It also applies the concept of dependency injection to inject command line
+It also applies the concept of dependency injection to inject command-line
 arguments into dart methods.  This removes the need for boilerplate logic
-around command line arguments to define, parse, validate and assign them to
-local variables.  This allows making command line interface changes solely
+around command-line arguments to define, parse, validate and assign them to
+local variables.  This allows making command-line interface changes solely
 via dart refactoring tools or even simple one-liners, and makes for less untested
 code.
 
@@ -29,12 +29,12 @@ people with a few options sprinkled in to customize the output to make it
 interesting.  The status quo dart script for this is too long to embed here,
 but might look something like [this][old_greet].  With unscripted, we can get
 rid a lot of boilerplate, retaining only the `greet` method, annotating it
-with a bit of command line metadata:
+with a bit of command-line metadata:
 
 ```dart
 import 'package:unscripted/unscripted.dart';
 
-main(arguments) => improvise(greet).execute(arguments);
+main(arguments) => sketch(greet).execute(arguments);
 
 // Optional command-line metadata:
 @Command(help: 'Outputs a greeting')
@@ -92,7 +92,7 @@ the following 'server.dart':
 ```dart
 import 'package:unscripted/unscripted.dart';
 
-main(arguments) => improvise(Server).execute(arguments);
+main(arguments) => sketch(Server).execute(arguments);
 
 @Command(help: 'Manages a server')
 class Server {
@@ -155,6 +155,6 @@ Options:
 
 [pkg]: http://pub.dartlang.org/packages/unscripted
 [api_docs]: https://seaneagan.github.com/unscripted/unscripted.html
-[improvise]: https://seaneagan.github.com/unscripted/unscripted.html#improvise
+[sketch]: https://seaneagan.github.com/unscripted/unscripted.html#sketch
 [examples]: https://github.com/seaneagan/unscripted/tree/master/example
 [old_greet]: https://github.com/seaneagan/unscripted/tree/master/example/old_greet.dart

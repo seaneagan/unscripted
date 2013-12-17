@@ -1,7 +1,7 @@
 
 import 'package:unscripted/unscripted.dart';
 
-main(arguments) => improvise(greet).execute(arguments);
+main(arguments) => sketch(greet).execute(arguments);
 
 // Optional command-line metadata:
 @Command(help: 'Outputs a greeting')

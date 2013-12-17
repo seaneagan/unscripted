@@ -1,29 +1,28 @@
 
 part of unscripted;
 
-/// Derives and returns a [Script] from [model].
+/// "Sketches" a [Script] from [model].
 ///
-/// The model is either a
-/// closure ([Function]) or class ([Type]), annotated with command line
-/// interface metadata.  The model itself can be annotated as a [Command].  The
-/// returned script automatically includes '--help' / '-h' flags, and
-/// prints help information when these flags are passed, or when the script was
-/// invoked incorrectly.
+/// The model is either a closure ([Function]) or class ([Type]), annotated
+/// with command-line specific metadata.  The model itself can be annotated as
+/// a [Command].  The returned script automatically includes '--help' / '-h'
+/// flags, and prints help information when these flags are passed, or when the
+/// script was invoked incorrectly.
 ///
 /// For scripts without sub-commands, the model should be a [Function].
-/// The function's parameters define the script's command line parameters.
+/// The function's parameters define the script's command-line parameters.
 /// Named parameters with [bool] type annotations or [Flag] metadata annotations
 /// are considered flags.  Named parameters with [String] or [dynamic] type
 /// annotations or [Option] metadata annotations are considered options.
-/// Required positional parameters are mapped to positional command line
+/// Required positional parameters are mapped to positional command-line
 /// parameters.  Optional positional parameters are not allowed.  However, a
 /// [Rest] metadata annotation can be placed on the last positional parameter
 /// to represent all remaining positional arguments passed to the script.
 ///
-/// When the returned script is [executed][Script.execute], the command line
+/// When the returned script is [executed][Script.execute], the command-line
 /// arguments are injected into their corresponding function arguments.
 ///
-///     main(arguments) => improvise(greet).execute(arguments);
+///     main(arguments) => sketch(greet).execute(arguments);
 ///
 ///     // Optional command-line metadata:
 ///     @Command(help: 'Outputs a greeting')
@@ -48,12 +47,12 @@ part of unscripted;
 /// When the returned script is [executed][Script.execute], the global command
 /// line arguments are injected into their corresponding constructor arguments
 /// to create an instance of the class.  Then, the method corresponding to the
-/// sub-command and associated arguments that were specified on the command line
+/// sub-command and associated arguments that were specified on the command-line
 /// are used to invoke the corresponding method on the instance which will have
 /// access to any global options through instance variables that were set in
 /// the constructor.
 ///
-///     main(arguments) => improvise(Server).execute(arguments);
+///     main(arguments) => sketch(Server).execute(arguments);
 ///
 ///     @Command(help: 'Manages a server')
 ///     class Server {
@@ -80,32 +79,25 @@ part of unscripted;
 /// document in the help text example arguments that they can receive.
 ///
 /// Parameter and command names which are camelCased are mapped to their
-/// dash-erized command line equivalents.  For example, `fooBar` would map to
+/// dash-erized command-line equivalents.  For example, `fooBar` would map to
 /// `foo-bar`.
-Script improvise(model) {
+Script sketch(model) {
   if(model is Function) return new FunctionScript(model);
   if(model is Type) return new ClassScript(model);
   throw new ArgumentError('model must be a Type or Function');
 }
 
-/// Represents a command line script.
+/// Represents a command-line script.
 ///
-/// The main way to interact with a [Script] is to [execute] it.
+/// The main way to interact with a script is to [execute] it.
 abstract class Script {
 
   /// Executes this script.
   ///
-  /// First the [arguments] are parsed.  If the arguments were invalid *or*
-  /// the user requested help via any of:
-  ///
-  /// * `foo.dart --help`
-  /// * `foo.dart -h`
-  /// * `foo.dart help`
-  /// * `foo.dart command --help`
-  /// * `foo.dart help command`
-  ///
-  /// ... then help text is printed and the method returns.  Otherwise,
-  /// script specific logic is performed on the successfully parsed arguments.
+  /// First, the [arguments] are parsed.  If the arguments were invalid *or*
+  /// if help was requested, help text is printed and the method returns.
+  /// Otherwise, script-specific logic is executed on the successfully parsed
+  /// arguments.
   execute(List<String> arguments);
 
 }
