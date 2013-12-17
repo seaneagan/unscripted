@@ -32,24 +32,17 @@
         
 <button id="show-inherited" class="show-inherited">Hide inherited</button>
 <div class="doc">
-<p>Represents a command line script.</p>
-<p>The main way to interact with a <a class="crossref" href="../unscripted/Script.html">Script</a> is to <a class="crossref" href="../unscripted/Script.html#execute">execute</a> it.</p>
+<p>Represents a command-line script.</p>
+<p>The main way to interact with a script is to <a class="crossref" href="../unscripted/Script.html#execute">execute</a> it.</p>
 <pre class="source">
 abstract class Script {
 
  /// Executes this script.
  ///
- /// First the [arguments] are parsed.  If the arguments were invalid *or*
- /// the user requested help via any of:
- ///
- /// * `foo.dart --help`
- /// * `foo.dart -h`
- /// * `foo.dart help`
- /// * `foo.dart command --help`
- /// * `foo.dart help command`
- ///
- /// ... then help text is printed and the method returns.  Otherwise,
- /// script specific logic is performed on the successfully parsed arguments.
+ /// First, the [arguments] are parsed.  If the arguments were invalid *or*
+ /// if help was requested, help text is printed and the method returns.
+ /// Otherwise, script-specific logic is executed on the successfully parsed
+ /// arguments.
  execute(List&lt;String&gt; arguments);
 
 }
@@ -65,11 +58,11 @@ abstract dynamic <strong>execute</strong>(<a href="http://api.dartlang.org/dart_
               title="Permalink to Script.execute">#</a></h4>
 <div class="doc">
 <p>Executes this script.</p>
-<p>First the 
+<p>First, the 
 <span class="param">arguments</span> are parsed.  If the arguments were invalid <em>or</em>
-the user requested help via any of:</p><ul><li><code>foo.dart --help</code></li><li><code>foo.dart -h</code></li><li><code>foo.dart help</code></li><li><code>foo.dart command --help</code></li><li><code>foo.dart help command</code></li></ul>
-<p>... then help text is printed and the method returns.  Otherwise,
-script specific logic is performed on the successfully parsed arguments.</p>
+if help was requested, help text is printed and the method returns.
+Otherwise, script-specific logic is executed on the successfully parsed
+arguments.</p>
 </div>
 </div>
 </div>
@@ -77,7 +70,7 @@ script specific logic is performed on the successfully parsed arguments.</p>
         <div class="clear"></div>
         </div>
         <div class="footer">
-          <div>This page was generated at 2013-12-16 22:15:39.880</div>
+          <div>This page was generated at 2013-12-17 17:46:56.366</div>
         </div>
         <script async src="../client-live-nav.js"></script>
         </body></html>

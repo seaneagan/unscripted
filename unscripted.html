@@ -31,31 +31,30 @@
 annotated with command line specific metadata.</p></div>
 <div>
 <h3>Functions</h3>
-<div class="method"><h4 id="improvise">
+<div class="method"><h4 id="sketch">
 <button class="show-code">Code</button>
-<a href="unscripted/Script.html">Script</a> <strong>improvise</strong>(model) <a class="anchor-link" href="#improvise"
-              title="Permalink to improvise">#</a></h4>
+<a href="unscripted/Script.html">Script</a> <strong>sketch</strong>(model) <a class="anchor-link" href="#sketch"
+              title="Permalink to sketch">#</a></h4>
 <div class="doc">
-<p>Derives and returns a <a class="crossref" href="unscripted/Script.html">Script</a> from 
+<p>"Sketches" a <a class="crossref" href="unscripted/Script.html">Script</a> from 
 <span class="param">model</span>.</p>
-<p>The model is either a
-closure (<a class="crossref" href="dart_core/Function.html">Function</a>) or class (<a class="crossref" href="dart_core/Type.html">Type</a>), annotated with command line
-interface metadata.  The model itself can be annotated as a <a class="crossref" href="unscripted/Command.html">Command</a>.  The
-returned script automatically includes '--help' / '-h' flags, and
-prints help information when these flags are passed, or when the script was
-invoked incorrectly.</p>
+<p>The model is either a closure (<a class="crossref" href="dart_core/Function.html">Function</a>) or class (<a class="crossref" href="dart_core/Type.html">Type</a>), annotated
+with command-line specific metadata.  The model itself can be annotated as
+a <a class="crossref" href="unscripted/Command.html">Command</a>.  The returned script automatically includes '--help' / '-h'
+flags, and prints help information when these flags are passed, or when the
+script was invoked incorrectly.</p>
 <p>For scripts without sub-commands, the model should be a <a class="crossref" href="dart_core/Function.html">Function</a>.
-The function's parameters define the script's command line parameters.
+The function's parameters define the script's command-line parameters.
 Named parameters with <a class="crossref" href="dart_core/bool.html">bool</a> type annotations or <a class="crossref" href="unscripted/Flag.html">Flag</a> metadata annotations
 are considered flags.  Named parameters with <a class="crossref" href="dart_core/String.html">String</a> or <code>dynamic</code> type
 annotations or <a class="crossref" href="unscripted/Option.html">Option</a> metadata annotations are considered options.
-Required positional parameters are mapped to positional command line
+Required positional parameters are mapped to positional command-line
 parameters.  Optional positional parameters are not allowed.  However, a
 <a class="crossref" href="unscripted/Rest.html">Rest</a> metadata annotation can be placed on the last positional parameter
 to represent all remaining positional arguments passed to the script.</p>
-<p>When the returned script is [executed][Script.execute], the command line
+<p>When the returned script is [executed][Script.execute], the command-line
 arguments are injected into their corresponding function arguments.</p>
-<pre><code>main(arguments) =&gt; improvise(greet).execute(arguments);
+<pre><code>main(arguments) =&gt; sketch(greet).execute(arguments);
 
 // Optional command-line metadata:
 @Command(help: 'Outputs a greeting')
@@ -79,11 +78,11 @@ or with the name of a sub-command for which to print help.</p>
 <p>When the returned script is [executed][Script.execute], the global command
 line arguments are injected into their corresponding constructor arguments
 to create an instance of the class.  Then, the method corresponding to the
-sub-command and associated arguments that were specified on the command line
+sub-command and associated arguments that were specified on the command-line
 are used to invoke the corresponding method on the instance which will have
 access to any global options through instance variables that were set in
 the constructor.</p>
-<pre><code>main(arguments) =&gt; improvise(Server).execute(arguments);
+<pre><code>main(arguments) =&gt; sketch(Server).execute(arguments);
 
 @Command(help: 'Manages a server')
 class Server {
@@ -109,10 +108,10 @@ Config path: $configPath''');
 <p>Commands and SubCommands can also be annotated with <a class="crossref" href="unscripted/ArgExample.html">ArgExample</a>s, to
 document in the help text example arguments that they can receive.</p>
 <p>Parameter and command names which are camelCased are mapped to their
-dash-erized command line equivalents.  For example, <code>fooBar</code> would map to
+dash-erized command-line equivalents.  For example, <code>fooBar</code> would map to
 <code>foo-bar</code>.</p>
 <pre class="source">
-Script improvise(model) {
+Script sketch(model) {
  if(model is Function) return new FunctionScript(model);
  if(model is Type) return new ClassScript(model);
  throw new ArgumentError('model must be a Type or Function');
@@ -185,7 +184,7 @@ Script improvise(model) {
         <div class="clear"></div>
         </div>
         <div class="footer">
-          <div>This page was generated at 2013-12-16 22:15:39.702</div>
+          <div>This page was generated at 2013-12-17 17:46:56.211</div>
         </div>
         <script async src="client-live-nav.js"></script>
         </body></html>
