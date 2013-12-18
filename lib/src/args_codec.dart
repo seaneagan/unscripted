@@ -43,12 +43,19 @@ class ArgResultsToInvocationConverter extends Converter<ArgResults, Invocation> 
     var positionalParams = params.where((param) => !param.isNamed);
     var positionalArgs = results.rest;
     var restParameterIndex = getRestParameterIndex(method);
-    if(restParameterIndex != null) {
+    if(restParameterIndex == null) {
+      var max = positionalParams.length;
+      var actual = positionalArgs.length;
+      if(actual > max){
+        throw new StateError('Received $actual positional command line '
+            'arguments, but only $max are allowed.');
+      }
+    } else {
       positionalParams = positionalParams.take(restParameterIndex).toList();
       positionalArgs = positionalArgs.take(restParameterIndex).toList();
     }
 
-    Function getParser(ParameterMirror parameter) {
+    Function getPositionalParser(ParameterMirror parameter) {
       Positional positional = getFirstMetadataMatch(parameter, (meta) => meta is Positional);
       if(positional != null) {
         return positional.parser;
@@ -56,7 +63,7 @@ class ArgResultsToInvocationConverter extends Converter<ArgResults, Invocation> 
       return null;
     }
 
-    var positionalParsers = positionalParams.map(getParser);
+    var positionalParsers = positionalParams.map(getPositionalParser);
 
     parseArg(parser, String arg) {
       return parser == null ? arg : parser(arg);
@@ -73,7 +80,7 @@ class ArgResultsToInvocationConverter extends Converter<ArgResults, Invocation> 
     var positionals = zipParsedArgs(positionalArgs, positionalParsers);
     if(restParameterIndex != null) {
       var rest = results.rest.skip(restParameterIndex);
-      var restParser = getParser(params[restParameterIndex]);
+      var restParser = getPositionalParser(params[restParameterIndex]);
       positionals.add(zipParsedArgs(rest, new Iterable.generate(rest.length, (_) => restParser)));
     }
 
@@ -89,8 +96,9 @@ class ArgResultsToInvocationConverter extends Converter<ArgResults, Invocation> 
         .where((parameter) => parameter.isNamed)
         .forEach((parameter) {
           Option option = getFirstMetadataMatch(parameter, (meta) => meta is Option);
-          if(option != null && option.parser != null) {
-            named[parameter.simpleName] = option.parser(named[parameter.simpleName]);
+          var arg = named[parameter.simpleName];
+          if(option != null && option.parser != null && arg != null) {
+            named[parameter.simpleName] = option.parser(arg);
           }
         });
 

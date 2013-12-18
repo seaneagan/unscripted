@@ -190,54 +190,42 @@ getFirstMetadataMatch(DeclarationMirror declaration, bool match(metadata)) {
 
 void addArgToParser(ArgParser parser, String name, defaultValue, Arg arg) {
 
-  var parserMirror = reflect(parser);
-
-  var namedParameters = {};
-
-  InstanceMirror argMirror = reflect(arg);
-
-  setNamedParameter(Symbol name) {
-    var fieldValue = argMirror.getField(name).reflectee;
-
-    if(fieldValue != null) {
-      namedParameters[name] = fieldValue;
-    }
-  }
-
-  mergeProperties(Type type) {
-    reflectClass(type)
-      .declarations
-      .values
-      .where((DeclarationMirror d) => d is MethodMirror && d.isGetter)
-      .map((methodMirror) => methodMirror.simpleName)
-      .forEach(setNamedParameter);
-  }
-
-  mergeProperties(Arg);
-
   var suffix;
 
+  var props = {
+    #abbr: arg.abbr,
+    #help: arg.help,
+    #defaultsTo: defaultValue
+  };
+
   if(arg is Option) {
-
     suffix = 'Option';
-
-    mergeProperties(Option);
+    props.addAll({
+      #allowed: arg.allowed,
+      #allowedHelp: arg.allowedHelp,
+      #allowMultiple: arg.allowMultiple,
+      #hide: arg.hide,
+    });
   }
 
   if(arg is Flag) {
-
     suffix = 'Flag';
-
-    mergeProperties(Flag);
+    props.addAll({
+      #negatable: arg.negatable
+    });
   }
 
-  if(defaultValue != null) {
-    namedParameters[#defaultsTo] = defaultValue;
-  }
+  var namedParameters = props.keys.fold({}, ((ret, prop) {
+    var value = props[prop];
+    if(value != null) {
+      ret[prop] = value;
+    }
+    return ret;
+  }));
 
   var parserMethod = 'add$suffix';
 
-  parserMirror.invoke(new Symbol(parserMethod), [name], namedParameters);
+  reflect(parser).invoke(new Symbol(parserMethod), [name], namedParameters);
 }
 
 List<String> getHelpPath(ArgResults results) {
