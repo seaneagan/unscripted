@@ -4,9 +4,11 @@ library unscripted.usage;
 import 'dart:collection';
 import 'dart:io';
 
+import 'package:unmodifiable_collection/unmodifiable_collection.dart';
 import 'package:path/path.dart' as path;
-import 'package:args/args.dart';
+import 'package:args/args.dart' show ArgParser, ArgResults;
 import 'package:unscripted/unscripted.dart';
+import 'package:unscripted/src/args_codec.dart';
 import 'package:unscripted/src/util.dart';
 
 part 'usage_formatter.dart';
@@ -19,8 +21,6 @@ class Usage {
   /// A simple description of what this script does, for use in help text.
   String description;
 
-  Rest rest;
-
   CallStyle callStyle = CallStyle.NORMAL;
 
   // TODO: Make public ?
@@ -30,17 +30,17 @@ class Usage {
   ArgParser get parser {
     if(_parser == null) {
       _parser = _getParser();
+      _addHelpFlag(_parser);
     }
     return _parser;
   }
-  ArgParser _getParser() {
-    var parser = new ArgParser();
-    _addHelpFlag(parser);
-    return parser;
-  }
+  ArgParser _getParser() => new ArgParser();
+  ArgParser _parser;
 
-  addPositional(String name, {String help}) {
-    _positionals.add(new Positional(name: name, help: help));
+  // Positionals
+
+  addPositional(Positional positional) {
+    _positionals.add(positional);
   }
 
   List<Positional> _positionals = [];
@@ -52,14 +52,28 @@ class Usage {
     return _positionalsView;
   }
 
-  _addHelpFlag(ArgParser parser) {
-    parser.addFlag(
-        HELP,
-        abbr: 'h',
-        help: 'Print this usage information.', negatable: false);
+  Rest rest;
+
+  // Options
+
+  addOption(String name, Option option) {
+    addOptionToParser(parser, name, option);
+    _options[name] = option;
+  }
+  Map<String, Option> _options = {};
+  Map<String, Option> _optionsView;
+  Map<String, Option> get options {
+    if(_optionsView == null) {
+      _optionsView = new UnmodifiableMapView(_options);
+    }
+    return _optionsView;
   }
 
-  ArgParser _parser;
+  _addHelpFlag(ArgParser parser) =>
+      addOption(HELP, new Flag(
+          abbr: 'h',
+          help: 'Print this usage information.',
+          negatable: false));
 
   Usage();
 
@@ -74,7 +88,6 @@ class Usage {
   Usage addCommand(String name) {
     parser.addCommand(name);
     var command = commands[name] = new _SubCommandUsage(this, name);
-    _addHelpFlag(command.parser);
     if(name != HELP && !commands.keys.contains(HELP)) {
       addCommand(HELP);
     }

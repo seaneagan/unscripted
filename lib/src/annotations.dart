@@ -5,39 +5,43 @@ part of unscripted;
 ///
 /// See the corresponding method parameters to [ArgParser.addOption]
 /// for descriptions of the fields.
-class Option extends Arg {
+class Option extends Help {
+  final String abbr;
   final List<String> allowed;
   final Map<dynamic, String> allowedHelp;
   final bool allowMultiple;
   final bool hide;
+  final defaultsTo;
   /// A function which parses the option value into the form accepted by the
   /// [Script].  It should throw to indicate that the argument is invalid.
   final Function parser;
 
   const Option({
       String help,
-      String abbr,
       parser(String arg),
+      this.abbr,
       this.allowed,
       this.allowedHelp,
       this.allowMultiple,
-      this.hide})
+      this.hide,
+      this.defaultsTo})
       : this.parser = parser,
-        super(help: help, abbr: abbr);
+        super(help: help);
 }
 
 /// An annotation which marks named method parameters as command line flags.
 ///
 /// See the corresponding method parameters to [ArgParser.addFlag]
 /// for descriptions of the fields.
-class Flag extends Arg {
+class Flag extends Option {
   final bool negatable;
 
   const Flag({
       String help,
       String abbr,
+      defaultsTo,
       this.negatable})
-      : super(help: help, abbr: abbr);
+      : super(help: help, abbr: abbr, defaultsTo: defaultsTo);
 }
 
 /// An annotation which gives example arguments that can be passed to a

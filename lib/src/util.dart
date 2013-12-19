@@ -18,13 +18,6 @@ class Help {
   const Help({this.help});
 }
 
-/// A base class for script argument annotations.
-class Arg extends Help {
-  final String abbr;
-
-  const Arg({String help, this.abbr}) : super(help: help);
-}
-
 class BaseCommand extends Help {
   const BaseCommand({String help}) : super(help: help);
 }
@@ -86,39 +79,52 @@ Usage getUsageFromFunction(MethodMirror methodMirror, {Usage usage}) {
   });
 
   positionals.forEach((positional) =>
-      usage.addPositional(positional.name, help: positional.help));
+      usage.addPositional(positional));
 
   parameters.where((parameter) => parameter.isNamed).forEach((parameter) {
 
-    Arg arg;
+    Option option;
     var type = parameter.type;
-    var defaultValue;
 
-    if(type == reflectClass(String)) {
-      arg = new Option();
-    } else if(type == reflectClass(bool)) {
-      arg = new Flag();
-    }
-    // TODO: handle List, List<String> as Options with allowMultiple = true.
+    var parameterName = MirrorSystem.getName(parameter.simpleName);
 
     InstanceMirror argAnnotation = parameter.metadata.firstWhere((annotation) =>
-        annotation.reflectee is Arg, orElse: () => null);
+        annotation.reflectee is Option, orElse: () => null);
 
     if(argAnnotation != null) {
-      arg = argAnnotation.reflectee;
+      option = argAnnotation.reflectee;
+    } else if(type == reflectClass(String) ||
+              type == currentMirrorSystem().dynamicType) {
+      option = new Option();
+    } else if(type == reflectClass(bool)) {
+      option = new Flag();
+    } else {
+
+      // TODO: handle List, List<String> as Options with allowMultiple = true.
+
+      throw new ArgumentError(
+          'Named parameter "$parameterName" does not represent a valid flag '
+          'or option.  Must be annotated as one of `@Flag`, `bool`, `@Option`, '
+          '`String` or `dynamic`.');
     }
 
-    var name = MirrorSystem.getName(parameter.simpleName);
-
-    if(parameter.hasDefaultValue) {
-      defaultValue = parameter.defaultValue.reflectee;
+    // Add default value if not already specified.
+    if(parameter.hasDefaultValue && option.defaultsTo == null) {
+      var defaultValue = parameter.defaultValue.reflectee;
+      // TODO: This is not very maintainable.
+      // Use reflection instead to copy values over?
+      option = option is Flag ?
+          new Flag(help: option.help, abbr: option.abbr,
+              defaultsTo: defaultValue, negatable: option.negatable) :
+          new Option(help: option.help, abbr: option.abbr,
+              defaultsTo: defaultValue, allowed: option.allowed,
+              allowedHelp: option.allowedHelp,
+              allowMultiple: option.allowMultiple, hide: option.hide);
     }
 
-    if(arg == null) {
-      throw 'Parameter $name is not a Flag, Option, Rest, List, String, bool';
-    }
+    var optionName = dashesToCamelCase.decode(parameterName);
 
-    addArgToParser(usage.parser, dashesToCamelCase.decode(name), defaultValue, arg);
+    usage.addOption(optionName, option);
   });
 
   return usage;
@@ -188,30 +194,28 @@ getFirstMetadataMatch(DeclarationMirror declaration, bool match(metadata)) {
         .firstWhere(match, orElse: () => null);
 }
 
-void addArgToParser(ArgParser parser, String name, defaultValue, Arg arg) {
+void addOptionToParser(ArgParser parser, String name, Option option) {
 
   var suffix;
 
   var props = {
-    #abbr: arg.abbr,
-    #help: arg.help,
-    #defaultsTo: defaultValue
+    #abbr: option.abbr,
+    #help: option.help,
+    #defaultsTo: option.defaultsTo
   };
 
-  if(arg is Option) {
-    suffix = 'Option';
-    props.addAll({
-      #allowed: arg.allowed,
-      #allowedHelp: arg.allowedHelp,
-      #allowMultiple: arg.allowMultiple,
-      #hide: arg.hide,
-    });
-  }
-
-  if(arg is Flag) {
+  if(option is Flag) {
     suffix = 'Flag';
     props.addAll({
-      #negatable: arg.negatable
+      #negatable: option.negatable
+    });
+  } else {
+    suffix = 'Option';
+    props.addAll({
+      #allowed: option.allowed,
+      #allowedHelp: option.allowedHelp,
+      #allowMultiple: option.allowMultiple,
+      #hide: option.hide,
     });
   }
 
@@ -251,9 +255,9 @@ List getPositionalParameterInfo(MethodMirror methodMirror) {
   var positionals = methodMirror.parameters.where((parameter) =>
       !parameter.isNamed);
 
-  // TODO: Support optional positionals.
+  // TODO: Find a better place for this check.
   if(positionals.any((positional) => positional.isOptional)) {
-    throw new UnimplementedError('Cannot use optional positional parameters.');
+    throw new ArgumentError('Cannot use optional positional parameters.');
   }
   var requiredPositionals =
       positionals.where((parameter) => !parameter.isOptional);
