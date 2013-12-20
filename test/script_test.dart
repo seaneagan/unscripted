@@ -105,10 +105,10 @@ main() {
       });
 
       test('for Option - invalid input throws', () {
-        expect(() {
-          new FunctionScript(({@Option(parser: int.parse) int option}) {
-          }).execute(['--option', 'abc']);
-        }, throwsA(new isInstanceOf<FormatException>()));
+        new FunctionScript(({@Option(parser: int.parse) int option}) {
+          _happened = true;
+        }).execute(['--option', 'abc']);
+        expect(_happened, false);
       });
 
       test('for Positional - valid input', () {
@@ -125,10 +125,10 @@ main() {
       });
 
       test('for Positional - invalid input throws', () {
-        expect(() {
-          new FunctionScript((@Positional(parser: int.parse) int option) {
-          }).execute(['abc']);
-        }, throwsA(new isInstanceOf<FormatException>()));
+        new FunctionScript((@Positional(parser: int.parse) int option) {
+          _happened = true;
+        }).execute(['abc']);
+        expect(_happened, false);
       });
 
     });
@@ -194,7 +194,7 @@ class CommandScriptTest {
   CommandScriptTest({this.flag: false, this.option: 'default'});
 
   @SubCommand()
-  command(@Rest() rest, {bool commandFlag}) {
+  command(@Rest(min: 0) rest, {bool commandFlag}) {
     _lastSeen = this;
     _lastSeenRest = rest;
     _commandHappened = true;

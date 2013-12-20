@@ -3,12 +3,13 @@ library unscripted.usage;
 
 import 'dart:collection';
 import 'dart:io';
+import 'dart:convert';
 
 import 'package:unmodifiable_collection/unmodifiable_collection.dart';
+import 'package:sequence_zip/sequence_zip.dart';
 import 'package:path/path.dart' as path;
 import 'package:args/args.dart' show ArgParser, ArgResults;
 import 'package:unscripted/unscripted.dart';
-import 'package:unscripted/src/args_codec.dart';
 import 'package:unscripted/src/util.dart';
 
 part 'usage_formatter.dart';
@@ -18,6 +19,12 @@ part 'usage_formatter.dart';
 /// and recursively add help to all sub-commands' parsers.
 class Usage {
 
+  /// Name.
+  String get name {
+    if(commandPath.isNotEmpty) return commandPath.last;
+    return null;
+  }
+
   /// A simple description of what this script does, for use in help text.
   String description;
 
@@ -25,6 +32,8 @@ class Usage {
 
   // TODO: Make public ?
   bool _allowTrailingOptions = false;
+
+  Usage();
 
   /// The parser associated with this usage.
   ArgParser get parser {
@@ -56,10 +65,6 @@ class Usage {
 
   // Options
 
-  addOption(String name, Option option) {
-    addOptionToParser(parser, name, option);
-    _options[name] = option;
-  }
   Map<String, Option> _options = {};
   Map<String, Option> _optionsView;
   Map<String, Option> get options {
@@ -68,6 +73,10 @@ class Usage {
     }
     return _optionsView;
   }
+  addOption(String name, Option option) {
+    addOptionToParser(parser, name, option);
+    _options[name] = option;
+  }
 
   _addHelpFlag(ArgParser parser) =>
       addOption(HELP, new Flag(
@@ -75,19 +84,31 @@ class Usage {
           help: 'Print this usage information.',
           negatable: false));
 
-  Usage();
 
   List<String> get commandPath => [];
-  List<ArgExample> examples = [];
-  Map<String, Usage> commands = {};
-
+  List<ArgExample> _examples = [];
+  List<ArgExample> _examplesView;
+  List<ArgExample> get examples {
+    if(_examplesView == null) {
+      _examplesView = new UnmodifiableListView(_examples);
+    }
+    return _examplesView;
+  }
   addExample(ArgExample example) {
-    examples.add(example);
+    _examples.add(example);
   }
 
+  Map<String, Usage> _commands = {};
+  Map<String, Usage> _commandsView;
+  Map<String, Usage> get commands {
+    if(_commandsView == null) {
+      _commandsView = new UnmodifiableMapView(_commands);
+    }
+    return _commandsView;
+  }
   Usage addCommand(String name) {
     parser.addCommand(name);
-    var command = commands[name] = new _SubCommandUsage(this, name);
+    var command = _commands[name] = new _SubCommandUsage(this, name);
     if(name != HELP && !commands.keys.contains(HELP)) {
       addCommand(HELP);
     }
@@ -95,37 +116,16 @@ class Usage {
   }
 
   ArgResults validate(List<String> arguments) {
+
     var results = parser.parse(arguments, allowTrailingOptions: _allowTrailingOptions);
 
-    _checkResults(results);
+    // Don't validate if help is requested.
+    var shouldValidate = getHelpPath(results) == null;
+
+    var commandInvocation = convertArgResultsToCommandInvocation(this, results, shouldValidate);
 
     return results;
   }
-
-  _checkResults(ArgResults results) {
-
-    // Ignore other arguments if user wants help.
-    if(getHelpPath(results) != null) return;
-
-    // Check positional count.
-    var min = _positionals.length +
-        (rest == null ? 0 : rest.min == null ? 0 : rest.min);
-    var count = results.rest.length;
-    if(count < min) {
-      List<Help> positionalHelp = _positionals.toList();
-      if(rest != null) positionalHelp.add(rest);
-
-      var missingPositional = positionalHelp[count].help;
-
-      var message = missingPositional == null ?
-          'This script requires at least $min positional argument(s)'
-          ', but received $count.' :
-          'Missing the <$missingPositional> positional ';
-
-      throw new FormatException(message);
-    }
-  }
-
 }
 
 class _SubCommandUsage extends Usage {
@@ -146,4 +146,95 @@ class _SubCommandUsage extends Usage {
   }
 
   ArgParser _getParser() => parent.parser.commands[_subCommandName];
+}
+
+class CommandInvocation {
+
+  final String name;
+  final List positionals;
+  final List rest;
+  final Map<String, dynamic> options;
+  final CommandInvocation subCommand;
+
+  CommandInvocation._(this.name, this.positionals, this.rest, this.options, this.subCommand);
+}
+
+CommandInvocation convertArgResultsToCommandInvocation(Usage usage, ArgResults results, bool shouldValidate) {
+
+  var positionalParams = usage.positionals;
+  var positionalArgs = results.rest;
+  int restParameterIndex;
+
+  if(usage.rest != null) {
+    restParameterIndex = positionalParams.length;
+    positionalArgs = positionalArgs.take(restParameterIndex).toList();
+  }
+
+  if(shouldValidate) {
+
+    var actual = results.rest.length;
+    int max;
+    var min = positionalParams.length;
+    if(usage.rest == null) {
+      max = positionalParams.length;
+    } else if(usage.rest.min != null) {
+      min += usage.rest.min;
+    }
+
+    throwPositionalCountError(String expectation) {
+      throw new FormatException('Received $actual positional command-line '
+          'arguments, but $expectation.');
+    }
+
+    if(actual < min) {
+      throwPositionalCountError('at least $min required');
+    }
+
+    if(max != null && actual > max) {
+      throwPositionalCountError('at most $max allowed');
+    }
+  }
+
+  var positionalParsers =
+      positionalParams.map((positional) => positional.parser);
+
+  parseArg(parser, arg) {
+    print('parser: $parser, arg: $arg');
+    return (parser == null || arg == null) ? arg : parser(arg);
+  }
+
+  List zipParsedArgs(args, parsers) {
+    return new IterableZip(
+        [args,
+         parsers])
+    .map((parts) => parseArg(parts[1], parts[0]))
+      .toList();
+  }
+
+  var positionals = zipParsedArgs(positionalArgs, positionalParsers);
+  List rest;
+
+  if(usage.rest != null) {
+    var rawRest = results.rest.skip(restParameterIndex);
+    var restParser = usage.rest.parser;
+    rest = zipParsedArgs(rawRest, new Iterable.generate(rawRest.length, (_) => restParser));
+  }
+
+  var options = <String, dynamic> {};
+
+  usage.options
+      .forEach((optionName, option) {
+        if(optionName == HELP) return;
+        var optionValue = results[optionName];
+        options[optionName] = parseArg(option.parser, optionValue);
+      });
+
+  CommandInvocation subCommand;
+
+  if(results.command != null) {
+    subCommand =
+        convertArgResultsToCommandInvocation(usage.commands[results.command.name], results.command, shouldValidate);
+  }
+
+  return new CommandInvocation._(results.name, positionals, rest, options, subCommand);
 }

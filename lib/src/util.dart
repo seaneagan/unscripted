@@ -8,7 +8,7 @@ import 'package:unscripted/unscripted.dart';
 import 'package:unscripted/src/string_codecs.dart';
 import 'package:unscripted/src/usage.dart';
 
-const String HELP = 'help';
+const HELP = 'help';
 
 /// A base class for script annotations which include help.
 class Help {
@@ -48,13 +48,8 @@ Usage getUsageFromFunction(MethodMirror methodMirror, {Usage usage}) {
 
   if(usage == null) usage = new Usage();
 
-  var rest = getRestFromMethod(methodMirror);
-  if(rest != null) {
-    if(rest.name == null) {
+  usage.rest = getRestFromMethod(methodMirror);
 
-    }
-    usage.rest = rest;
-  }
   _addCommandMetadata(usage, methodMirror);
 
   var parameters = methodMirror.parameters;
@@ -69,13 +64,16 @@ Usage getUsageFromFunction(MethodMirror methodMirror, {Usage usage}) {
 
     String positionalName = getDefaultPositionalName(parameter.simpleName);
     String positionalHelp;
+    var positionalParser;
+
     if(positional != null) {
       if(positional.name != null) {
         positionalName = positional.name;
       }
       positionalHelp = positional.help;
+      positionalParser = positional.parser;
     }
-    return new Positional(name: positionalName, help: positionalHelp);
+    return new Positional(name: positionalName, help: positionalHelp, parser: positionalParser);
   });
 
   positionals.forEach((positional) =>
@@ -93,8 +91,8 @@ Usage getUsageFromFunction(MethodMirror methodMirror, {Usage usage}) {
 
     if(argAnnotation != null) {
       option = argAnnotation.reflectee;
-    } else if(type == reflectClass(String) ||
-              type == currentMirrorSystem().dynamicType) {
+    } else if(type == reflectClass(String) /*||
+              type == currentMirrorSystem().dynamicType*/) {
       option = new Option();
     } else if(type == reflectClass(bool)) {
       option = new Flag();
