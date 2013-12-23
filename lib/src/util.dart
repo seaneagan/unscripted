@@ -7,6 +7,7 @@ import 'package:args/args.dart' show ArgParser, ArgResults;
 import 'package:unscripted/unscripted.dart';
 import 'package:unscripted/src/string_codecs.dart';
 import 'package:unscripted/src/usage.dart';
+import 'package:unscripted/src/invocation_maker.dart';
 
 const HELP = 'help';
 
@@ -33,7 +34,8 @@ Rest getRestFromMethod(MethodMirror method) {
       rest = new Rest(
           min: rest.min,
           help: rest.help,
-          name: getDefaultPositionalName(lastParameter.simpleName));
+          name: getDefaultPositionalName(lastParameter.simpleName),
+          parser: rest.parser);
     }
     return rest;
   }
@@ -230,23 +232,6 @@ void addOptionToParser(ArgParser parser, String name, Option option) {
   reflect(parser).invoke(new Symbol(parserMethod), [name], namedParameters);
 }
 
-List<String> getHelpPath(ArgResults results) {
-  var path = [];
-  var subResults = results;
-  while(true) {
-    if(subResults.options.contains(HELP) && subResults[HELP]) return path;
-    if(subResults.command == null) return null;
-    if(subResults.command.name == HELP) {
-      var helpCommand = subResults.command;
-      if(helpCommand.rest.isNotEmpty) path.add(helpCommand.rest.first);
-      return path;
-    }
-    subResults = subResults.command;
-    path.add(subResults.name);
-  }
-  return path;
-}
-
 // Returns a List whose elements are the required argument count, and whether
 // there is a Rest parameter.
 List getPositionalParameterInfo(MethodMirror methodMirror) {
@@ -289,4 +274,26 @@ MethodMirror getUnnamedConstructor(ClassMirror classMirror) {
 
   return constructors.firstWhere((constructor) =>
       constructor.constructorName == const Symbol(''), orElse: () => null);
+}
+
+convertCommandInvocationToInvocation(CommandInvocation commandInvocation, MethodMirror method, {Symbol memberName: #call}) {
+
+  var positionals = commandInvocation.positionals;
+
+  if(commandInvocation.rest != null) {
+    positionals = positionals..toList()..add(commandInvocation.rest);
+  }
+
+  var named = {};
+
+  commandInvocation.options.forEach((option, value) {
+    var paramSymbol = new Symbol(dashesToCamelCase.encode(option));
+    var paramExists = method.parameters.any((param) =>
+        param.simpleName == paramSymbol);
+    if(paramExists) {
+      named[paramSymbol] = value;
+    }
+  });
+
+  return new InvocationMaker.method(memberName, positionals, named).invocation;
 }

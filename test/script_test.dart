@@ -115,9 +115,9 @@ main() {
         var positionalValue;
         var restValue;
         new FunctionScript((
-            @Positional(parser: int.parse) int option,
+            @Positional(parser: int.parse) int first,
             @Rest(parser: int.parse) List<int> rest) {
-          positionalValue = option;
+          positionalValue = first;
           restValue = rest;
         }).execute(['123', '4', '5', '6']);
         expect(positionalValue, 123);
@@ -125,7 +125,7 @@ main() {
       });
 
       test('for Positional - invalid input throws', () {
-        new FunctionScript((@Positional(parser: int.parse) int option) {
+        new FunctionScript((@Positional(parser: int.parse) int first) {
           _happened = true;
         }).execute(['abc']);
         expect(_happened, false);

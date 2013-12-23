@@ -3,7 +3,7 @@ library unscripted.usage;
 
 import 'dart:collection';
 import 'dart:io';
-import 'dart:convert';
+import 'dart:mirrors';
 
 import 'package:unmodifiable_collection/unmodifiable_collection.dart';
 import 'package:sequence_zip/sequence_zip.dart';
@@ -115,16 +115,49 @@ class Usage {
     return command;
   }
 
-  ArgResults validate(List<String> arguments) {
+  CommandInvocation validate(List<String> arguments) {
 
     var results = parser.parse(arguments, allowTrailingOptions: _allowTrailingOptions);
 
+    var commandInvocation = convertArgResultsToCommandInvocation(this, results);
+
     // Don't validate if help is requested.
-    var shouldValidate = getHelpPath(results) == null;
+    var shouldValidate = commandInvocation.helpPath == null;
+    if(shouldValidate) {
+      _validate(commandInvocation);
+    }
 
-    var commandInvocation = convertArgResultsToCommandInvocation(this, results, shouldValidate);
+    return commandInvocation;
+  }
 
-    return results;
+  _validate(CommandInvocation commandInvocation) {
+    var actual =
+        (commandInvocation.positionals != null ? commandInvocation.positionals.length : 0) +
+        (commandInvocation.rest != null ? commandInvocation.rest.length : 0);
+    int max;
+    var min = positionals.length;
+    if(rest == null) {
+      max = positionals.length;
+    } else if(rest.min != null) {
+      min += rest.min;
+    }
+
+    throwPositionalCountError(String expectation) {
+      throw new FormatException('Received $actual positional command-line '
+          'arguments, but $expectation.');
+    }
+
+    if(actual < min) {
+      throwPositionalCountError('at least $min required');
+    }
+
+    if(max != null && actual > max) {
+      throwPositionalCountError('at most $max allowed');
+    }
+
+    if(commandInvocation.subCommand != null) {
+      commands[commandInvocation.subCommand.name]._validate(commandInvocation.subCommand);
+    }
   }
 }
 
@@ -155,11 +188,33 @@ class CommandInvocation {
   final List rest;
   final Map<String, dynamic> options;
   final CommandInvocation subCommand;
+  List<String> get helpPath {
+    if(_helpPath == null) _helpPath = _getHelpPath();
+    return _helpPath;
+  }
+  List<String> _getHelpPath() {
+    var path = [];
+    var subCommandInvocation = this;
+    while(true) {
+      if(subCommandInvocation.options.containsKey(HELP) &&
+          subCommandInvocation.options[HELP]) return path;
+      if(subCommandInvocation.subCommand == null) return null;
+      if(subCommandInvocation.subCommand.name == HELP) {
+        var helpCommand = subCommandInvocation.subCommand;
+        if(helpCommand.rest.isNotEmpty) path.add(helpCommand.rest.first);
+        return path;
+      }
+      subCommandInvocation = subCommandInvocation.subCommand;
+      path.add(subCommandInvocation.name);
+    }
+    return path;
+  }
+  List<String> _helpPath;
 
   CommandInvocation._(this.name, this.positionals, this.rest, this.options, this.subCommand);
 }
 
-CommandInvocation convertArgResultsToCommandInvocation(Usage usage, ArgResults results, bool shouldValidate) {
+CommandInvocation convertArgResultsToCommandInvocation(Usage usage, ArgResults results) {
 
   var positionalParams = usage.positionals;
   var positionalArgs = results.rest;
@@ -170,36 +225,10 @@ CommandInvocation convertArgResultsToCommandInvocation(Usage usage, ArgResults r
     positionalArgs = positionalArgs.take(restParameterIndex).toList();
   }
 
-  if(shouldValidate) {
-
-    var actual = results.rest.length;
-    int max;
-    var min = positionalParams.length;
-    if(usage.rest == null) {
-      max = positionalParams.length;
-    } else if(usage.rest.min != null) {
-      min += usage.rest.min;
-    }
-
-    throwPositionalCountError(String expectation) {
-      throw new FormatException('Received $actual positional command-line '
-          'arguments, but $expectation.');
-    }
-
-    if(actual < min) {
-      throwPositionalCountError('at least $min required');
-    }
-
-    if(max != null && actual > max) {
-      throwPositionalCountError('at most $max allowed');
-    }
-  }
-
   var positionalParsers =
       positionalParams.map((positional) => positional.parser);
 
   parseArg(parser, arg) {
-    print('parser: $parser, arg: $arg');
     return (parser == null || arg == null) ? arg : parser(arg);
   }
 
@@ -224,7 +253,6 @@ CommandInvocation convertArgResultsToCommandInvocation(Usage usage, ArgResults r
 
   usage.options
       .forEach((optionName, option) {
-        if(optionName == HELP) return;
         var optionValue = results[optionName];
         options[optionName] = parseArg(option.parser, optionValue);
       });
@@ -233,7 +261,7 @@ CommandInvocation convertArgResultsToCommandInvocation(Usage usage, ArgResults r
 
   if(results.command != null) {
     subCommand =
-        convertArgResultsToCommandInvocation(usage.commands[results.command.name], results.command, shouldValidate);
+        convertArgResultsToCommandInvocation(usage.commands[results.command.name], results.command);
   }
 
   return new CommandInvocation._(results.name, positionals, rest, options, subCommand);
