@@ -19,11 +19,11 @@ part 'usage_formatter.dart';
 /// and recursively add help to all sub-commands' parsers.
 class Usage {
 
-  /// Name.
-  String get name {
-    if(commandPath.isNotEmpty) return commandPath.last;
-    return null;
-  }
+  /// The name used to invoke this command.
+  final String name = null;
+
+  /// The parent command's usage.  This is null for root commands.
+  final Usage parent = null;
 
   /// A simple description of what this script does, for use in help text.
   String description;
@@ -84,8 +84,22 @@ class Usage {
           help: 'Print this usage information.',
           negatable: false));
 
+  List<String> _commandPath;
+  List<String> get commandPath {
+    if(_commandPath == null) {
+      var path = [];
+      var usage = this;
+      while(true) {
+        if(usage.parent == null) {
+          _commandPath = path;
+          break;
+        }
+        usage = usage.parent;
+      }
+      return _commandPath;
+    }
+  }
 
-  List<String> get commandPath => [];
   List<ArgExample> _examples = [];
   List<ArgExample> _examplesView;
   List<ArgExample> get examples {
@@ -164,21 +178,13 @@ class Usage {
 class _SubCommandUsage extends Usage {
 
   final Usage parent;
-  final String _subCommandName;
+  final String name;
 
   CallStyle get callStyle => parent.callStyle;
 
-  _SubCommandUsage(this.parent, this._subCommandName);
+  _SubCommandUsage(this.parent, this.name);
 
-  List<String> _path;
-  List<String> get commandPath {
-    if(_path == null) {
-      _path = parent.commandPath.toList()..add(_subCommandName);
-    }
-    return _path;
-  }
-
-  ArgParser _getParser() => parent.parser.commands[_subCommandName];
+  ArgParser _getParser() => parent.parser.commands[name];
 }
 
 class CommandInvocation {
