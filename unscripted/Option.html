@@ -33,39 +33,45 @@
 <button id="show-inherited" class="show-inherited">Hide inherited</button>
 <div class="doc">
 <p>An annotation which marks named method parameters as command line options.</p>
-<p>See the corresponding method parameters to <a class="crossref" href="../args/ArgParser.html#addOption">ArgParser.addOption</a>
+<p>See the corresponding method parameters to <code>ArgParser.addOption</code>
 for descriptions of the fields.</p>
 <pre class="source">
-class Option extends Arg {
+class Option extends Help {
+ final String abbr;
  final List&lt;String&gt; allowed;
  final Map&lt;dynamic, String&gt; allowedHelp;
  final bool allowMultiple;
  final bool hide;
+ final defaultsTo;
  /// A function which parses the option value into the form accepted by the
  /// [Script].  It should throw to indicate that the argument is invalid.
  final Function parser;
 
  const Option({
      String help,
-     String abbr,
      parser(String arg),
+     this.abbr,
      this.allowed,
      this.allowedHelp,
      this.allowMultiple,
-     this.hide})
+     this.hide,
+     this.defaultsTo})
      : this.parser = parser,
-       super(help: help, abbr: abbr);
+       super(help: help);
 }
 </pre>
 </div>
 <h3>Extends</h3>
 <p>
-<span class="type-box"><span class="icon-class"></span><a href="../unscripted.src.util/Help.html">Help</a></span>&nbsp;&gt;&nbsp;<span class="type-box"><span class="icon-class"></span><a href="../unscripted.src.util/Arg.html">Arg</a></span>&nbsp;&gt;&nbsp;<span class="type-box"><span class="icon-class"></span><strong>Option</strong></span></p>
+<span class="type-box"><span class="icon-class"></span><a href="../unscripted.src.util/Help.html">Help</a></span>&nbsp;&gt;&nbsp;<span class="type-box"><span class="icon-class"></span><strong>Option</strong></span></p>
+<h3>Subclasses</h3>
+<p>
+<span class="type-box"><span class="icon-class"></span><a href="../unscripted/Flag.html">Flag</a></span></p>
 <div>
 <h3>Constructors</h3>
 <div class="method"><h4 id="">
 <button class="show-code">Code</button>
-const <strong>Option</strong>({<a href="http://api.dartlang.org/dart_core/String.html">String</a> help, <a href="http://api.dartlang.org/dart_core/String.html">String</a> abbr, parser(<a href="http://api.dartlang.org/dart_core/String.html">String</a> arg), <a href="http://api.dartlang.org/dart_core/List.html">List</a>&lt;<a href="http://api.dartlang.org/dart_core/String.html">String</a>&gt; allowed, <a href="http://api.dartlang.org/dart_core/Map.html">Map</a>&lt;dynamic, <a href="http://api.dartlang.org/dart_core/String.html">String</a>&gt; allowedHelp, <a href="http://api.dartlang.org/dart_core/bool.html">bool</a> allowMultiple, <a href="http://api.dartlang.org/dart_core/bool.html">bool</a> hide}) <a class="anchor-link" href="#"
+const <strong>Option</strong>({<a href="http://api.dartlang.org/dart_core/String.html">String</a> help, parser(<a href="http://api.dartlang.org/dart_core/String.html">String</a> arg), <a href="http://api.dartlang.org/dart_core/String.html">String</a> abbr, <a href="http://api.dartlang.org/dart_core/List.html">List</a>&lt;<a href="http://api.dartlang.org/dart_core/String.html">String</a>&gt; allowed, <a href="http://api.dartlang.org/dart_core/Map.html">Map</a>&lt;dynamic, <a href="http://api.dartlang.org/dart_core/String.html">String</a>&gt; allowedHelp, <a href="http://api.dartlang.org/dart_core/bool.html">bool</a> allowMultiple, <a href="http://api.dartlang.org/dart_core/bool.html">bool</a> hide, defaultsTo}) <a class="anchor-link" href="#"
               title="Permalink to Option.Option">#</a></h4>
 <div class="doc">
 <div class="inherited">
@@ -77,27 +83,28 @@ only.</p>
 <pre class="source">
 const Option({
    String help,
-   String abbr,
    parser(String arg),
+   this.abbr,
    this.allowed,
    this.allowedHelp,
    this.allowMultiple,
-   this.hide})
+   this.hide,
+   this.defaultsTo})
    : this.parser = parser,
-     super(help: help, abbr: abbr);
+     super(help: help);
 </pre>
 </div>
 </div>
 </div>
 <div>
 <h3>Properties</h3>
-<div class="field inherited"><h4 id="abbr">
+<div class="field"><h4 id="abbr">
 <button class="show-code">Code</button>
 final <a href="http://api.dartlang.org/dart_core/String.html">String</a>         <strong>abbr</strong> <a class="anchor-link"
             href="#abbr"
             title="Permalink to Option.abbr">#</a>
         </h4>
-        <div class="inherited-from">inherited from Arg </div><div class="doc">
+        <div class="doc">
 <pre class="source">
 final String abbr
 </pre>
@@ -136,6 +143,18 @@ final <a href="http://api.dartlang.org/dart_core/bool.html">bool</a>         <st
         <div class="doc">
 <pre class="source">
 final bool allowMultiple
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="defaultsTo">
+<button class="show-code">Code</button>
+final         <strong>defaultsTo</strong> <a class="anchor-link"
+            href="#defaultsTo"
+            title="Permalink to Option.defaultsTo">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+final defaultsTo
 </pre>
 </div>
 </div>
@@ -183,7 +202,7 @@ final Function parser
         <div class="clear"></div>
         </div>
         <div class="footer">
-          <div>This page was generated at 2013-12-17 22:30:20.873</div>
+          <div>This page was generated at 2013-12-28 02:22:01.510</div>
         </div>
         <script async src="../client-live-nav.js"></script>
         </body></html>
