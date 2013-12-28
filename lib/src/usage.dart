@@ -1,12 +1,9 @@
 
 library unscripted.usage;
 
-import 'dart:collection';
 import 'dart:io';
-import 'dart:mirrors';
 
-import 'package:unmodifiable_collection/unmodifiable_collection.dart';
-import 'package:sequence_zip/sequence_zip.dart';
+import 'package:collection/collection.dart';
 import 'package:path/path.dart' as path;
 import 'package:args/args.dart' show ArgParser, ArgResults;
 import 'package:unscripted/unscripted.dart';
@@ -218,6 +215,12 @@ class CommandInvocation {
   List<String> _helpPath;
 
   CommandInvocation._(this.name, this.positionals, this.rest, this.options, this.subCommand);
+}
+
+class UsageException {
+  final String message;
+
+  UsageException(this.message);
 }
 
 CommandInvocation convertArgResultsToCommandInvocation(Usage usage, ArgResults results) {
