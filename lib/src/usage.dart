@@ -218,9 +218,12 @@ class CommandInvocation {
 }
 
 class UsageException {
-  final String message;
+  final Usage usage;
+  final String arg;
 
-  UsageException(this.message);
+  UsageException(this.usage, this.arg);
+
+  String toString() => 'UsageException: the $arg argument is invalid.';
 }
 
 CommandInvocation convertArgResultsToCommandInvocation(Usage usage, ArgResults results) {

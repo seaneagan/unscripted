@@ -21,9 +21,12 @@ abstract class ScriptImpl implements Script {
 
     try {
       commandInvocation = usage.validate(arguments);
-    } catch(e) {
+    } catch (e) {
+      // TODO: ArgParser.parse throws FormatException which does not indicate
+      // which sub-command was trying to be executed.
+      var helpUsage = e is UsageException ? e.usage : usage;
       print('$e\n');
-      _printHelp();
+      _printHelp(helpUsage);
       return;
     }
 
@@ -38,17 +41,17 @@ abstract class ScriptImpl implements Script {
   /// Prints help information for the associated command or sub-command thereof
   /// at [commandPath].
   // TODO: Integrate with Loggers.
-  _printHelp([List<String> commandPath]) {
-    var helpUsage = (commandPath == null ? [] : commandPath)
-        .fold(usage, (usage, subCommand) =>
-            usage.commands[subCommand]);
+  _printHelp(Usage helpUsage) {
     print(getUsageFormatter(helpUsage).format());
   }
 
   bool _checkHelp(CommandInvocation commandInvocation) {
     var path = commandInvocation.helpPath;
     if(path != null) {
-      _printHelp(path);
+      var helpUsage = path
+          .fold(usage, (usage, subCommand) =>
+              usage.commands[subCommand]);
+      _printHelp(helpUsage);
       return true;
     }
     return false;
@@ -130,7 +133,7 @@ class ClassScript extends DeclarationScript {
   /// information.
   _defaultCommand(CommandInvocation commandInvocation) {
     print('A sub-command must be specified.\n');
-    _printHelp();
+    _printHelp(usage);
   }
 
 }
