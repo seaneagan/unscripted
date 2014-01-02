@@ -130,6 +130,8 @@ class Usage {
 
     var results = parser.parse(arguments, allowTrailingOptions: _allowTrailingOptions);
 
+    // TODO: Don't execute "parser"s if help is requested,
+    // probably by separating into 2 phases.
     var commandInvocation = convertArgResultsToCommandInvocation(this, results);
 
     // Don't validate if help is requested.
@@ -154,7 +156,7 @@ class Usage {
     }
 
     throwPositionalCountError(String expectation) {
-      throw new FormatException('Received $actual positional command-line '
+      throw new UsageException(usage: this, cause: 'Received $actual positional command-line '
           'arguments, but $expectation.');
     }
 
@@ -220,10 +222,14 @@ class CommandInvocation {
 class UsageException {
   final Usage usage;
   final String arg;
+  final cause;
 
-  UsageException(this.usage, this.arg);
+  UsageException({this.usage, this.arg, this.cause});
 
-  String toString() => 'UsageException: the $arg argument is invalid.';
+  String toString() {
+    var message = arg == null ? '' : ': Invalid argument "$arg"';
+    return 'Script usage exception$message: $cause';
+  }
 }
 
 CommandInvocation convertArgResultsToCommandInvocation(Usage usage, ArgResults results) {
@@ -239,26 +245,37 @@ CommandInvocation convertArgResultsToCommandInvocation(Usage usage, ArgResults r
 
   var positionalParsers =
       positionalParams.map((positional) => positional.parser);
+  var positionalNames =
+      positionalParams.map((positional) => positional.name);
 
-  parseArg(parser, arg) {
-    return (parser == null || arg == null) ? arg : parser(arg);
+  parseArg(parser, arg, name) {
+    if(parser == null || arg == null) return arg;
+    try {
+      return parser(arg);
+    } catch(e) {
+      throw new UsageException(usage: usage, arg: name, cause: e);
+    }
   }
 
-  List zipParsedArgs(args, parsers) {
-    return new IterableZip(
-        [args,
-         parsers])
-    .map((parts) => parseArg(parts[1], parts[0]))
-      .toList();
+  List zipParsedArgs(args, parsers, names) {
+    return new IterableZip([args, parsers, names])
+        .map((parts) => parseArg(parts[1], parts[0], parts[2]))
+        .toList();
   }
 
-  var positionals = zipParsedArgs(positionalArgs, positionalParsers);
+  var positionals = zipParsedArgs(
+      positionalArgs,
+      positionalParsers,
+      positionalNames);
+
   List rest;
 
   if(usage.rest != null) {
     var rawRest = results.rest.skip(restParameterIndex);
-    var restParser = usage.rest.parser;
-    rest = zipParsedArgs(rawRest, new Iterable.generate(rawRest.length, (_) => restParser));
+    rest = zipParsedArgs(
+        rawRest,
+        new Iterable.generate(rawRest.length, (_) => usage.rest.parser),
+        new Iterable.generate(rawRest.length, (_) => usage.rest.name));
   }
 
   var options = <String, dynamic> {};
@@ -266,7 +283,7 @@ CommandInvocation convertArgResultsToCommandInvocation(Usage usage, ArgResults r
   usage.options
       .forEach((optionName, option) {
         var optionValue = results[optionName];
-        options[optionName] = parseArg(option.parser, optionValue);
+        options[optionName] = parseArg(option.parser, optionValue, optionName);
       });
 
   CommandInvocation subCommand;

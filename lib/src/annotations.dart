@@ -61,7 +61,7 @@ class ArgExample extends Help {
 /// positional command line parameters.
 class Positional extends Help {
 
-  /// The name with which to identify the parameter to in usage text.  By
+  /// The name to identify the parameter with in usage text.  By
   /// default the name of the dart parameter is used converted from camelCase
   /// to dash-erized.
   final String name;

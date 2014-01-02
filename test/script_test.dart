@@ -68,6 +68,21 @@ main() {
         expect(secondValue, 'second');
       });
 
+        // TODO: Enable once extra parameters are being validated.
+//      test('too many positionals', () {
+//        new FunctionScript((String first) {
+//          _happened = true;
+//        }).execute(['first', 'extra']);
+//        expect(_happened, isFalse);
+//      });
+
+      test('not enough positionals', () {
+        new FunctionScript((String first) {
+          _happened = true;
+        }).execute([]);
+        expect(_happened, isFalse);
+      });
+
       test('rest from Rest', () {
         var firstValue;
         new FunctionScript((String first, @Rest() rest) {
@@ -76,6 +91,13 @@ main() {
         }).execute(['first', 'second', 'third', 'fourth']);
         expect(firstValue, 'first');
         expect(_lastSeenRest, ['second', 'third', 'fourth']);
+      });
+
+      test('not enough rest', () {
+        new FunctionScript((String first, @Rest(min: 1) rest) {
+          _happened = true;
+        }).execute(['first']);
+        expect(_happened, isFalse);
       });
 
       test('dashed arg', () {
