@@ -7,6 +7,7 @@ documentation: http://seaneagan.github.com/unscripted
 dependencies:
   args: any
   collection: any
+  path: any
   sequence_zip: any
 dev_dependencies:
   unittest: any
