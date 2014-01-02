@@ -68,13 +68,12 @@ main() {
         expect(secondValue, 'second');
       });
 
-        // TODO: Enable once extra parameters are being validated.
-//      test('too many positionals', () {
-//        new FunctionScript((String first) {
-//          _happened = true;
-//        }).execute(['first', 'extra']);
-//        expect(_happened, isFalse);
-//      });
+      test('too many positionals', () {
+        new FunctionScript((String first) {
+          _happened = true;
+        }).execute(['first', 'extra']);
+        expect(_happened, isFalse);
+      });
 
       test('not enough positionals', () {
         new FunctionScript((String first) {

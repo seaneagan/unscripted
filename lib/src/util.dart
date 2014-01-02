@@ -280,10 +280,6 @@ convertCommandInvocationToInvocation(CommandInvocation commandInvocation, Method
 
   var positionals = commandInvocation.positionals;
 
-  if(commandInvocation.rest != null) {
-    positionals = positionals..toList()..add(commandInvocation.rest);
-  }
-
   var named = {};
 
   commandInvocation.options.forEach((option, value) {

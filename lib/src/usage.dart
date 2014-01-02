@@ -93,8 +93,8 @@ class Usage {
         }
         usage = usage.parent;
       }
-      return _commandPath;
     }
+    return _commandPath;
   }
 
   List<ArgExample> _examples = [];
@@ -130,23 +130,19 @@ class Usage {
 
     var results = parser.parse(arguments, allowTrailingOptions: _allowTrailingOptions);
 
-    // TODO: Don't execute "parser"s if help is requested,
-    // probably by separating into 2 phases.
-    var commandInvocation = convertArgResultsToCommandInvocation(this, results);
+    var commandInvocation = convertArgResultsToCommandInvocation(results);
 
-    // Don't validate if help is requested.
-    var shouldValidate = commandInvocation.helpPath == null;
-    if(shouldValidate) {
-      _validate(commandInvocation);
+    // Don't apply usage if help is requested.
+    var shouldApplyUsage = commandInvocation.helpPath == null;
+    if(shouldApplyUsage) {
+      commandInvocation = applyUsageToCommandInvocation(this, commandInvocation);
     }
-
     return commandInvocation;
   }
 
-  _validate(CommandInvocation commandInvocation) {
-    var actual =
-        (commandInvocation.positionals != null ? commandInvocation.positionals.length : 0) +
-        (commandInvocation.rest != null ? commandInvocation.rest.length : 0);
+  CommandInvocation _validate(CommandInvocation commandInvocation) {
+    var actual = commandInvocation.positionals != null ?
+        commandInvocation.positionals.length : 0;
     int max;
     var min = positionals.length;
     if(rest == null) {
@@ -167,10 +163,6 @@ class Usage {
     if(max != null && actual > max) {
       throwPositionalCountError('at most $max allowed');
     }
-
-    if(commandInvocation.subCommand != null) {
-      commands[commandInvocation.subCommand.name]._validate(commandInvocation.subCommand);
-    }
   }
 }
 
@@ -190,7 +182,6 @@ class CommandInvocation {
 
   final String name;
   final List positionals;
-  final List rest;
   final Map<String, dynamic> options;
   final CommandInvocation subCommand;
   List<String> get helpPath {
@@ -206,7 +197,9 @@ class CommandInvocation {
       if(subCommandInvocation.subCommand == null) return null;
       if(subCommandInvocation.subCommand.name == HELP) {
         var helpCommand = subCommandInvocation.subCommand;
-        if(helpCommand.rest.isNotEmpty) path.add(helpCommand.rest.first);
+        if(helpCommand.positionals.isNotEmpty) {
+          path.add(helpCommand.positionals.first);
+        }
         return path;
       }
       subCommandInvocation = subCommandInvocation.subCommand;
@@ -216,7 +209,7 @@ class CommandInvocation {
   }
   List<String> _helpPath;
 
-  CommandInvocation._(this.name, this.positionals, this.rest, this.options, this.subCommand);
+  CommandInvocation._(this.name, this.positionals, this.options, this.subCommand);
 }
 
 class UsageException {
@@ -232,10 +225,31 @@ class UsageException {
   }
 }
 
-CommandInvocation convertArgResultsToCommandInvocation(Usage usage, ArgResults results) {
+CommandInvocation convertArgResultsToCommandInvocation(ArgResults results) {
+
+  var positionals = results.rest;
+
+  var options = results.options.fold({}, (options, optionName) {
+        options[optionName] = results[optionName];
+        return options;
+      });
+
+  CommandInvocation subCommand;
+
+  if(results.command != null) {
+    subCommand =
+        convertArgResultsToCommandInvocation(results.command);
+  }
+
+  return new CommandInvocation._(results.name, positionals, options, subCommand);
+}
+
+CommandInvocation applyUsageToCommandInvocation(Usage usage, CommandInvocation invocation) {
+
+  usage._validate(invocation);
 
   var positionalParams = usage.positionals;
-  var positionalArgs = results.rest;
+  var positionalArgs = invocation.positionals;
   int restParameterIndex;
 
   if(usage.rest != null) {
@@ -268,30 +282,29 @@ CommandInvocation convertArgResultsToCommandInvocation(Usage usage, ArgResults r
       positionalParsers,
       positionalNames);
 
-  List rest;
-
   if(usage.rest != null) {
-    var rawRest = results.rest.skip(restParameterIndex);
-    rest = zipParsedArgs(
+    var rawRest = invocation.positionals.skip(restParameterIndex);
+    var rest = zipParsedArgs(
         rawRest,
         new Iterable.generate(rawRest.length, (_) => usage.rest.parser),
         new Iterable.generate(rawRest.length, (_) => usage.rest.name));
+    positionals.add(rest);
   }
 
   var options = <String, dynamic> {};
 
   usage.options
       .forEach((optionName, option) {
-        var optionValue = results[optionName];
+        var optionValue = invocation.options[optionName];
         options[optionName] = parseArg(option.parser, optionValue, optionName);
       });
 
   CommandInvocation subCommand;
 
-  if(results.command != null) {
+  if(invocation.subCommand != null) {
     subCommand =
-        convertArgResultsToCommandInvocation(usage.commands[results.command.name], results.command);
+        applyUsageToCommandInvocation(usage.commands[invocation.subCommand.name], invocation.subCommand);
   }
 
-  return new CommandInvocation._(results.name, positionals, rest, options, subCommand);
+  return new CommandInvocation._(invocation.name, positionals, options, subCommand);
 }
