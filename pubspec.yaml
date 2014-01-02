@@ -1,6 +1,6 @@
 name: unscripted
 author: Sean Eagan <seaneagan1@gmail.com>
-version: 0.1.2
+version: 0.1.3
 homepage: http://github.com/seaneagan/unscripted
 description: Write command-line scripts as ordinary methods and classes.
 documentation: http://seaneagan.github.com/unscripted
