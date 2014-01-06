@@ -38,8 +38,9 @@ for descriptions of the fields.</p>
 <pre class="source">
 class Option extends Help {
  final String abbr;
- final List&lt;String&gt; allowed;
- final Map&lt;dynamic, String&gt; allowedHelp;
+ /// Either a `List&lt;String&gt;` of allowed values, or `Map&lt;String, String&gt;` of
+ /// allowed values to help text.
+ final allowed;
  final bool allowMultiple;
  final bool hide;
  final defaultsTo;
@@ -52,7 +53,6 @@ class Option extends Help {
      parser(String arg),
      this.abbr,
      this.allowed,
-     this.allowedHelp,
      this.allowMultiple,
      this.hide,
      this.defaultsTo})
@@ -71,7 +71,7 @@ class Option extends Help {
 <h3>Constructors</h3>
 <div class="method"><h4 id="">
 <button class="show-code">Code</button>
-const <strong>Option</strong>({<a href="http://api.dartlang.org/dart_core/String.html">String</a> help, parser(<a href="http://api.dartlang.org/dart_core/String.html">String</a> arg), <a href="http://api.dartlang.org/dart_core/String.html">String</a> abbr, <a href="http://api.dartlang.org/dart_core/List.html">List</a>&lt;<a href="http://api.dartlang.org/dart_core/String.html">String</a>&gt; allowed, <a href="http://api.dartlang.org/dart_core/Map.html">Map</a>&lt;dynamic, <a href="http://api.dartlang.org/dart_core/String.html">String</a>&gt; allowedHelp, <a href="http://api.dartlang.org/dart_core/bool.html">bool</a> allowMultiple, <a href="http://api.dartlang.org/dart_core/bool.html">bool</a> hide, defaultsTo}) <a class="anchor-link" href="#"
+const <strong>Option</strong>({<a href="http://api.dartlang.org/dart_core/String.html">String</a> help, parser(<a href="http://api.dartlang.org/dart_core/String.html">String</a> arg), <a href="http://api.dartlang.org/dart_core/String.html">String</a> abbr, allowed, <a href="http://api.dartlang.org/dart_core/bool.html">bool</a> allowMultiple, <a href="http://api.dartlang.org/dart_core/bool.html">bool</a> hide, defaultsTo}) <a class="anchor-link" href="#"
               title="Permalink to Option.Option">#</a></h4>
 <div class="doc">
 <div class="inherited">
@@ -86,7 +86,6 @@ const Option({
    parser(String arg),
    this.abbr,
    this.allowed,
-   this.allowedHelp,
    this.allowMultiple,
    this.hide,
    this.defaultsTo})
@@ -112,25 +111,15 @@ final String abbr
 </div>
 <div class="field"><h4 id="allowed">
 <button class="show-code">Code</button>
-final <a href="http://api.dartlang.org/dart_core/List.html">List</a>&lt;<a href="http://api.dartlang.org/dart_core/String.html">String</a>&gt;         <strong>allowed</strong> <a class="anchor-link"
+final         <strong>allowed</strong> <a class="anchor-link"
             href="#allowed"
             title="Permalink to Option.allowed">#</a>
         </h4>
         <div class="doc">
+<p>Either a <code>List&lt;String&gt;</code> of allowed values, or <code>Map&lt;String, String&gt;</code> of
+allowed values to help text.</p>
 <pre class="source">
-final List&lt;String&gt; allowed
-</pre>
-</div>
-</div>
-<div class="field"><h4 id="allowedHelp">
-<button class="show-code">Code</button>
-final <a href="http://api.dartlang.org/dart_core/Map.html">Map</a>&lt;dynamic, <a href="http://api.dartlang.org/dart_core/String.html">String</a>&gt;         <strong>allowedHelp</strong> <a class="anchor-link"
-            href="#allowedHelp"
-            title="Permalink to Option.allowedHelp">#</a>
-        </h4>
-        <div class="doc">
-<pre class="source">
-final Map&lt;dynamic, String&gt; allowedHelp
+final allowed
 </pre>
 </div>
 </div>
@@ -202,7 +191,7 @@ final Function parser
         <div class="clear"></div>
         </div>
         <div class="footer">
-          <div>This page was generated at 2014-01-06 20:24:07.208</div>
+          <div>This page was generated at 2014-01-06 21:02:14.502</div>
         </div>
         <script async src="../client-live-nav.js"></script>
         </body></html>
