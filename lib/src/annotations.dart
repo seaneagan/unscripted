@@ -13,8 +13,9 @@ class Option extends Help {
   final bool allowMultiple;
   final bool hide;
   final defaultsTo;
-  /// A function which parses the option value into the form accepted by the
-  /// [Script].  It should throw to indicate that the argument is invalid.
+  /// A function which validates and/or transforms the raw command-line String
+  /// value into a form accepted by the [Script].  It should throw to indicate
+  /// that the argument is invalid.
   final Function parser;
 
   const Option({
@@ -66,8 +67,9 @@ class Positional extends Help {
   /// to dash-erized.
   final String name;
 
-  /// A function which parses the option value into the form accepted by the
-  /// [Script].  It should throw to indicate that the argument is invalid.
+  /// A function which validates and/or transforms the raw command-line String
+  /// value into a form accepted by the [Script].  It should throw to indicate
+  /// that the argument is invalid.
   final Function parser;
 
   const Positional({String help, parser(String arg), this.name})
