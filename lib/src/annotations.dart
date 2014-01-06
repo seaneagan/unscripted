@@ -7,8 +7,9 @@ part of unscripted;
 /// for descriptions of the fields.
 class Option extends Help {
   final String abbr;
-  final List<String> allowed;
-  final Map<dynamic, String> allowedHelp;
+  /// Either a `List<String>` of allowed values, or `Map<String, String>` of
+  /// allowed values to help text.
+  final allowed;
   final bool allowMultiple;
   final bool hide;
   final defaultsTo;
@@ -21,7 +22,6 @@ class Option extends Help {
       parser(String arg),
       this.abbr,
       this.allowed,
-      this.allowedHelp,
       this.allowMultiple,
       this.hide,
       this.defaultsTo})

@@ -118,7 +118,6 @@ Usage getUsageFromFunction(MethodMirror methodMirror, {Usage usage}) {
               defaultsTo: defaultValue, negatable: option.negatable) :
           new Option(help: option.help, abbr: option.abbr,
               defaultsTo: defaultValue, allowed: option.allowed,
-              allowedHelp: option.allowedHelp,
               allowMultiple: option.allowMultiple, hide: option.hide);
     }
 
@@ -199,9 +198,16 @@ void addOptionToParser(ArgParser parser, String name, Option option) {
     });
   } else {
     suffix = 'Option';
+
+    if(option.allowed != null) {
+      var allowed = option.allowed;
+      if(allowed is Map<String, String>) {
+        allowed = allowed.keys.toList();
+        props[#allowedHelp] = option.allowed;
+      }
+      props[#allowed] = allowed;
+    }
     props.addAll({
-      #allowed: option.allowed,
-      #allowedHelp: option.allowedHelp,
       #allowMultiple: option.allowMultiple,
       #hide: option.hide,
     });
