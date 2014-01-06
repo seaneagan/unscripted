@@ -65,6 +65,41 @@ abstract class DeclarationScript extends ScriptImpl {
   MethodMirror get _method;
 
   DeclarationScript();
+
+  Usage get usage => getUsageFromFunction(_method);
+
+  _handleResults(CommandInvocation commandInvocation) {
+
+    var topInvocation = convertCommandInvocationToInvocation(commandInvocation, _method);
+
+    var topResult = _getTopCommandResult(topInvocation);
+
+    _handleSubCommands(topResult, commandInvocation.subCommand, usage);
+  }
+
+  _getTopCommandResult(Invocation invocation);
+
+  _handleSubCommands(InstanceMirror result, CommandInvocation commandInvocation, Usage usage) {
+
+    if(commandInvocation == null) {
+      // TODO: Move this to an earlier UsageException instead ?
+      if(usage != null && usage.commands.isNotEmpty) {
+        print('Must specify a sub-command.\n');
+        _printHelp(usage);
+      }
+      return;
+    }
+
+    var commandName = commandInvocation.name;
+    var commandSymbol = new Symbol(dashesToCamelCase.encode(commandName));
+    var commandMethod = result.type.instanceMembers[commandSymbol];
+    var invocation = convertCommandInvocationToInvocation(commandInvocation, commandMethod, memberName: commandSymbol);
+    var subResult = result.delegate(invocation);
+    Usage subUsage;
+    if(commandInvocation.subCommand != null) subUsage = usage.commands[commandInvocation.subCommand.name];
+    _handleSubCommands(reflect(subResult), commandInvocation.subCommand, subUsage);
+  }
+
 }
 
 class FunctionScript extends DeclarationScript {
@@ -76,18 +111,12 @@ class FunctionScript extends DeclarationScript {
 
   MethodMirror get _method => _declaration;
 
-  Usage get usage => getUsageFromFunction(_declaration);
+  FunctionScript(this._function) : super();
 
-  FunctionScript(this._function, {String description})
-      : super();
-
-  _handleResults(CommandInvocation commandInvocation) {
-    var invocation = convertCommandInvocationToInvocation(commandInvocation, _method);
-    Function.apply(
-        _function,
-        invocation.positionalArguments,
-        invocation.namedArguments);
-  }
+  _getTopCommandResult(Invocation invocation) => reflect(Function.apply(
+      _function,
+      invocation.positionalArguments,
+      invocation.namedArguments));
 }
 
 class ClassScript extends DeclarationScript {
@@ -98,42 +127,10 @@ class ClassScript extends DeclarationScript {
 
   MethodMirror get _method => getUnnamedConstructor(_declaration);
 
-  Usage get usage => getUsageFromClass(_class);
+  ClassScript(this._class) : super();
 
-  ClassScript(this._class)
-      : super();
-
-  _handleResults(CommandInvocation commandInvocation) {
-    var classMirror = _declaration;
-
-    // Handle constructor.
-    var constructorInvocation = convertCommandInvocationToInvocation(commandInvocation, _method);
-
-    var instanceMirror = classMirror.newInstance(
-        const Symbol(''),
-        constructorInvocation.positionalArguments,
-        constructorInvocation.namedArguments);
-
-    // Handle command.
-    var commandResults = commandInvocation.subCommand;
-    if(commandResults == null) {
-      _defaultCommand(commandInvocation);
-      return;
-    }
-    var commandName = commandResults.name;
-    var commandSymbol = new Symbol(dashesToCamelCase.encode(commandName));
-    var commandMethod = _declaration.declarations[commandSymbol] as MethodMirror;
-    var subCommandInvocation = convertCommandInvocationToInvocation(commandInvocation.subCommand, commandMethod, memberName: commandSymbol);
-    instanceMirror.delegate(subCommandInvocation);
-  }
-
-  /// Called if no sub-command was provided.
-  ///
-  /// The default implementation treats this as an error, and prints help
-  /// information.
-  _defaultCommand(CommandInvocation commandInvocation) {
-    print('A sub-command must be specified.\n');
-    _printHelp(usage);
-  }
-
+  _getTopCommandResult(Invocation invocation) => _declaration.newInstance(
+      const Symbol(''),
+      invocation.positionalArguments,
+      invocation.namedArguments);
 }

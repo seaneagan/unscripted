@@ -33,6 +33,7 @@ class Usage {
   Usage();
 
   /// The parser associated with this usage.
+  // TODO: Make private.
   ArgParser get parser {
     if(_parser == null) {
       _parser = _getParser();

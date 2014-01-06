@@ -3,14 +3,12 @@ part of unscripted;
 
 /// "Sketches" a [Script] from [model].
 ///
-/// The model is either a closure ([Function]) or class ([Type]), annotated
-/// with command-line specific metadata.  The model itself can be annotated as
-/// a [Command].  The returned script automatically includes '--help' / '-h'
-/// flags, and prints help information when these flags are passed, or when the
-/// script was invoked incorrectly.
+/// The model is generally a closure of a method, which is annotated with
+/// command-line metadata.  The model can also be a class (see below).
 ///
-/// For scripts without sub-commands, the model should be a [Function].
-/// The function's parameters define the script's command-line parameters.
+/// The method itself can be annotated as a [Command].
+///
+/// The method's parameters define the script's command-line parameters.
 /// Named parameters with [bool] type annotations or [Flag] metadata annotations
 /// are considered flags.  Named parameters with [String] or [dynamic] type
 /// annotations or [Option] metadata annotations are considered options.
@@ -19,8 +17,30 @@ part of unscripted;
 /// [Rest] metadata annotation can be placed on the last positional parameter
 /// to represent all remaining positional arguments passed to the script.
 ///
-/// When the returned script is [executed][Script.execute], the command-line
-/// arguments are injected into their corresponding function arguments.
+/// Sub-commands can be added to the script by creating a class with instance
+/// methods annotated as [SubCommand]s.  The model returns an instance of this
+/// class and documents this in it's return type.  Most commonly the model is
+/// a constructor of this class.  But since dart does
+/// [not yet](http://dartbug.com/10659) have syntax for closurizing constructors,
+/// the model can be a class literal, to indicate to that the unnamed
+/// constructor of the class is the actual model.
+///
+/// Help flags ('--help' / '-h') are automatically included.  If the script has
+/// sub-commands, a 'help' command is also included, which can be invoked bare,
+/// 'help' as a synonym for '--help', or by specifying a sub-command e.g.
+/// 'help sub-command'.
+///
+/// When the returned script is [executed][Script.execute], if the user
+/// requested help for, or incorrectly invoked, the command or a sub-command,
+/// then the help text is displayed, along with any specific error.  Otherwise,
+/// the command-line arguments are valid, and are injected into the
+/// corresponding method parameters.  If the model has sub-commands, then if a
+/// sub-command was specified on the command-line, it is invoked with it's
+/// corresponding command-line arguments, and so forth (recursively).  If a
+/// model has sub-commands, but no sub-command was specified, this is treated
+/// as an error, and the help text is displayed.
+///
+/// Basic example:
 ///
 ///     main(arguments) => sketch(greet).execute(arguments);
 ///
@@ -37,28 +57,15 @@ part of unscripted;
 ///
 ///     }
 ///
-/// For scripts with sub-commands, the model must be a class ([Type]), which
-/// must have an unnamed constructor, whose parameters define the
-/// top-level options for the script.  Methods of the class can be annotated
-/// as [SubCommand]s.  These methods define and implement the sub-commands
-/// of the script.  A 'help' sub-command is also added which can be invoked bare
-/// or with the name of a sub-command for which to print help.
-///
-/// When the returned script is [executed][Script.execute], the global command
-/// line arguments are injected into their corresponding constructor arguments
-/// to create an instance of the class.  Then, the method corresponding to the
-/// sub-command and associated arguments that were specified on the command-line
-/// are used to invoke the corresponding method on the instance which will have
-/// access to any global options through instance variables that were set in
-/// the constructor.
+/// Sub-command example:
 ///
 ///     main(arguments) => sketch(Server).execute(arguments);
 ///
-///     @Command(help: 'Manages a server')
 ///     class Server {
 ///
 ///       final String configPath;
 ///
+///       @Command(help: 'Manages a server')
 ///       Server({this.configPath: 'config.xml'});
 ///
 ///       @SubCommand(help: 'Start the server')
@@ -76,7 +83,7 @@ part of unscripted;
 ///     }
 ///
 /// Commands and SubCommands can also be annotated with [ArgExample]s, to
-/// document in the help text example arguments that they can receive.
+/// document, in the help text, example arguments that they can receive.
 ///
 /// Parameter and command names which are camelCased are mapped to their
 /// dash-erized command-line equivalents.  For example, `fooBar` would map to

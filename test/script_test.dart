@@ -114,6 +114,14 @@ main() {
         expect(_happened, false);
       });
 
+      SubCommandScriptTest withSubCommands({bool flag1}) {
+        return new SubCommandScriptTest(flag1: flag1);
+      }
+
+      test('with sub-commands', () {
+        new FunctionScript(withSubCommands).execute(['--flag1', 'recursive2', '--no-flag2']);
+      });
+
     });
 
     group('parser', () {
@@ -199,11 +207,14 @@ main() {
         expect(CommandScriptTest._dashedCommandHappened, isTrue);
       });
 
+      test('recursive sub-commands', () {
+        unit.execute(['recursive1', '--flag1', 'recursive2', '--flag2']);
+      });
+
     });
   });
 }
 
-@Command(help: 'Test command with sub-commands')
 class CommandScriptTest {
   final bool flag;
   final String option;
@@ -212,6 +223,7 @@ class CommandScriptTest {
   static bool _commandHappened;
   static bool _dashedCommandHappened;
 
+  @Command(help: 'Test command with sub-commands')
   CommandScriptTest({this.flag: false, this.option: 'default'});
 
   @SubCommand()
@@ -226,4 +238,21 @@ class CommandScriptTest {
     _lastSeen = this;
     _dashedCommandHappened = true;
   }
+
+  @SubCommand(help: 'Test sub-command with sub-commands')
+  SubCommandScriptTest recursive1({bool flag1}) => new SubCommandScriptTest(flag1: flag1);
+}
+
+class SubCommandScriptTest {
+
+  final bool flag1;
+
+  SubCommandScriptTest({this.flag1});
+
+  @SubCommand()
+  recursive2({bool flag2}) {
+    print('flag1: $flag1');
+    print('flag2: $flag2');
+  }
+
 }

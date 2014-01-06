@@ -95,11 +95,11 @@ import 'package:unscripted/unscripted.dart';
 
 main(arguments) => sketch(Server).execute(arguments);
 
-@Command(help: 'Manages a server')
 class Server {
 
   final String configPath;
 
+  @Command(help: 'Manages a server')
   Server({this.configPath: 'config.xml'});
 
   @SubCommand(help: 'Start the server')

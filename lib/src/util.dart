@@ -127,52 +127,40 @@ Usage getUsageFromFunction(MethodMirror methodMirror, {Usage usage}) {
     usage.addOption(optionName, option);
   });
 
+  _addSubCommandsForClass(usage, methodMirror.returnType);
+
   return usage;
 }
 
-Usage getUsageFromClass(Type theClass) {
+_addSubCommandsForClass(Usage usage, TypeMirror typeMirror) {
+  if(typeMirror is ClassMirror) {
 
-  var classMirror = reflectClass(theClass);
+    var methods = typeMirror.instanceMembers.values;
 
-  var unnamedConstructor = getUnnamedConstructor(classMirror);
+    Map<MethodMirror, SubCommand> subCommands = {};
 
-  var usage = getUsageFromFunction(unnamedConstructor);
+    methods.forEach((methodMirror) {
+      var subCommand = methodMirror.metadata
+          .map((im) => im.reflectee)
+          .firstWhere(
+              (v) => v is SubCommand,
+              orElse: () => null);
 
-  // TODO: Include inherited methods, when supported by 'dart:mirrors'.
-  var methods = classMirror.declarations.values
-      .where((d) =>
-          d is MethodMirror &&
-          d.isRegularMethod &&
-          !d.isStatic);
+      if(subCommand != null) {
+        subCommands[methodMirror] = subCommand;
+      }
+    });
 
-  Map<MethodMirror, SubCommand> subCommands = {};
+    var commands = {};
 
-  methods.forEach((methodMirror) {
-    var subCommand = methodMirror.metadata
-        .map((im) => im.reflectee)
-        .firstWhere(
-            (v) => v is SubCommand,
-            orElse: () => null);
-
-    if(subCommand != null) {
-      subCommands[methodMirror] = subCommand;
-    }
-  });
-
-  var commands = {};
-
-  subCommands.forEach((methodMirror, subCommand) {
-    var commandName = dashesToCamelCase
-        .decode(MirrorSystem.getName(methodMirror.simpleName));
-    var subCommandUsage = getUsageFromFunction(
-        methodMirror,
-        usage: usage.addCommand(commandName));
-  });
-
-  var constructors = classMirror.declarations.values
-      .where((d) => d is MethodMirror && d.isConstructor);
-
-  return usage;
+    subCommands.forEach((methodMirror, subCommand) {
+      var commandName = dashesToCamelCase
+          .decode(MirrorSystem.getName(methodMirror.simpleName));
+      var subCommandUsage = getUsageFromFunction(
+          methodMirror,
+          usage: usage.addCommand(commandName));
+    });
+  }
 }
 
 _addCommandMetadata(Usage usage, DeclarationMirror declaration) {

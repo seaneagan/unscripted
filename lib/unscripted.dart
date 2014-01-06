@@ -3,6 +3,8 @@
 /// annotated with command line specific metadata.
 library unscripted;
 
+import 'dart:mirrors';
+
 import 'package:unscripted/src/script_impl.dart';
 import 'package:unscripted/src/util.dart';
 
