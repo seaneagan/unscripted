@@ -44,8 +44,9 @@ class Option extends Help {
  final bool allowMultiple;
  final bool hide;
  final defaultsTo;
- /// A function which parses the option value into the form accepted by the
- /// [Script].  It should throw to indicate that the argument is invalid.
+ /// A function which validates and/or transforms the raw command-line String
+ /// value into a form accepted by the [Script].  It should throw to indicate
+ /// that the argument is invalid.
  final Function parser;
 
  const Option({
@@ -179,8 +180,9 @@ final <a href="http://api.dartlang.org/dart_core/Function.html">Function</a>    
             title="Permalink to Option.parser">#</a>
         </h4>
         <div class="doc">
-<p>A function which parses the option value into the form accepted by the
-<a class="crossref" href="../unscripted/Script.html">Script</a>.  It should throw to indicate that the argument is invalid.</p>
+<p>A function which validates and/or transforms the raw command-line String
+value into a form accepted by the <a class="crossref" href="../unscripted/Script.html">Script</a>.  It should throw to indicate
+that the argument is invalid.</p>
 <pre class="source">
 final Function parser
 </pre>
@@ -191,7 +193,7 @@ final Function parser
         <div class="clear"></div>
         </div>
         <div class="footer">
-          <div>This page was generated at 2014-01-06 21:02:14.502</div>
+          <div>This page was generated at 2014-01-06 21:59:36.962</div>
         </div>
         <script async src="../client-live-nav.js"></script>
         </body></html>
