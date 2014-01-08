@@ -1,13 +1,16 @@
 
 library unscripted.src.util;
 
+import 'dart:async';
 import 'dart:mirrors';
+import 'dart:io';
 
 import 'package:args/args.dart' show ArgParser, ArgResults;
 import 'package:unscripted/unscripted.dart';
 import 'package:unscripted/src/string_codecs.dart';
 import 'package:unscripted/src/usage.dart';
 import 'package:unscripted/src/invocation_maker.dart';
+import 'package:mockable_filesystem/filesystem.dart' as filesystem;
 
 const HELP = 'help';
 
@@ -300,4 +303,91 @@ Map<Symbol, MethodMirror> getInstanceMethods(ClassMirror classMirror) {
     }
     return ret;
   });
+}
+
+parseInput(String arg, {filesystem.FileSystem fileSystem}) {
+  if(fileSystem == null) {
+    fileSystem = filesystem.fileSystem;
+  }
+  return _parseIOArg(arg, stdin, (stdin) => new _StdInput(stdin),
+      (file) => new _FileInput(file), fileSystem);
+}
+
+parseOutput(String arg, {filesystem.FileSystem fileSystem}) {
+  if(fileSystem == null) {
+    fileSystem = filesystem.fileSystem;
+  }
+  return _parseIOArg(arg, stdout, (stdout) => new _StdOutput(stdout),
+      (file) => new _FileOutput(file), fileSystem);
+}
+
+_parseIOArg(String arg, stdio, convertStdio(stdio), convertFile(file), filesystem.FileSystem fileSystem) {
+
+  if(arg == '-') return convertStdio(stdio);
+
+  var file = fileSystem.getFile(arg);
+
+  if(!file.existsSync()) {
+    throw 'File path does not exist or is not a file: ${file.path}';
+  }
+
+  return convertFile(file);
+}
+
+class _FileInput implements Input {
+
+  File _file;
+
+  _FileInput(this._file);
+
+  String get path => _file.path;
+  List<String> get lines => _file.readAsLinesSync();
+  Stream<List<int>> get stream => _file.openRead();
+  String get text => _file.readAsStringSync();
+}
+
+class _StdInput implements Input {
+
+  Stdin _stdin;
+
+  _StdInput(this._stdin);
+
+  String get path => null;
+  List<String> get lines => _getStdinLines(_stdin);
+  Stdin get stream => _stdin;
+  String get text => _getStdinLines(_stdin, true).join();
+}
+
+class _StdOutput implements Output {
+
+  final IOSink _sink;
+
+  _StdOutput(this._sink);
+
+  String get path => null;
+  IOSink get sink => _sink;
+}
+
+class _FileOutput implements Output {
+
+  final File _file;
+
+  _FileOutput(this._file);
+
+  String get path => _file.path;
+  IOSink get sink {
+    if(_sink == null) _sink = _file.openWrite();
+    return _sink;
+  }
+
+  IOSink _sink;
+}
+
+List<String> _getStdinLines(Stdin stdin, [bool retainNewlines = false]) {
+  var lines = [];
+  String line;
+  while((line = stdin.readLineSync(retainNewlines: retainNewlines)) != null) {
+    lines.add(line);
+  }
+  return lines;
 }
