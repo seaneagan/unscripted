@@ -1,0 +1,137 @@
+        <!DOCTYPE html>
+        <html>
+        <head>
+                <meta charset="utf-8">
+        <title>Input abstract class / unscripted Library / Dart Documentation</title>
+        <link rel="stylesheet" type="text/css"
+            href="../styles.css">
+        <link href="//fonts.googleapis.com/css?family=Open+Sans:400,600,700,800" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" href="../favicon.ico">
+        
+        </head>
+        <body data-library="unscripted" data-type="Input">
+        <div class="page">
+        <div class="header">
+          <a href="../index.html"><div class="logo"></div></a>
+          <a href="../index.html">Dart Documentation</a>
+         &rsaquo; <a href="../unscripted.html">unscripted</a> &rsaquo; <a href="../unscripted/Input.html">Input</a>        <div id="search-box">
+          <input type="search" name="q" id="q" autocomplete="off"
+              class="search-input" placeholder="Search API">
+        </div>
+        
+      </div>
+      <div class="drop-down" id="drop-down"></div>
+      
+        <div class="nav">
+        
+</div>
+<div class="content">
+        <h2><strong>Input</strong>
+          abstract class
+        </h2>
+        
+<button id="show-inherited" class="show-inherited">Hide inherited</button>
+<div class="doc">
+<p>Represents a script input, either <a class="crossref" href="../dart.io.html#stdin">stdin</a> or a file.</p>
+<pre class="source">
+abstract class Input {
+
+ /// Returns an input representing [stdin] if [arg] is '-',
+ /// or a file if [arg] is a valid file path, else throws.
+ static Input parse(String arg) =&gt; parseInput(arg);
+
+ /// Returns the file path for files, `null` for [stdin].
+ String get path;
+
+ /// The full input text.
+ String get text;
+
+ /// The lines of the input, newlines are not retained.
+ List&lt;String&gt; get lines;
+
+ /// A stream of the input content.
+ Stream&lt;List&lt;int&gt;&gt; get stream;
+}
+</pre>
+</div>
+<div>
+<h3>Static Methods</h3>
+<div class="method"><h4 id="parse">
+<button class="show-code">Code</button>
+<a href="../unscripted/Input.html">Input</a> <strong>parse</strong>(<a href="http://api.dartlang.org/dart_core/String.html">String</a> arg) <a class="anchor-link" href="#parse"
+              title="Permalink to Input.parse">#</a></h4>
+<div class="doc">
+<p>Returns an input representing <a class="crossref" href="../dart.io.html#stdin">stdin</a> if 
+<span class="param">arg</span> is '-',
+or a file if 
+<span class="param">arg</span> is a valid file path, else throws.</p>
+<pre class="source">
+static Input parse(String arg) =&gt; parseInput(arg);
+</pre>
+</div>
+</div>
+</div>
+<div>
+<h3>Properties</h3>
+<div class="field"><h4 id="lines">
+<button class="show-code">Code</button>
+final <a href="http://api.dartlang.org/dart_core/List.html">List</a>&lt;<a href="http://api.dartlang.org/dart_core/String.html">String</a>&gt;         <strong>lines</strong> <a class="anchor-link"
+            href="#lines"
+            title="Permalink to Input.lines">#</a>
+        </h4>
+        <div class="doc">
+<p>The lines of the input, newlines are not retained.</p>
+<pre class="source">
+List&lt;String&gt; get lines;
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="path">
+<button class="show-code">Code</button>
+final <a href="http://api.dartlang.org/dart_core/String.html">String</a>         <strong>path</strong> <a class="anchor-link"
+            href="#path"
+            title="Permalink to Input.path">#</a>
+        </h4>
+        <div class="doc">
+<p>Returns the file path for files, <code>null</code> for <a class="crossref" href="../dart.io.html#stdin">stdin</a>.</p>
+<pre class="source">
+String get path;
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="stream">
+<button class="show-code">Code</button>
+final <a href="http://api.dartlang.org/dart_async/Stream.html">Stream</a>&lt;<a href="http://api.dartlang.org/dart_core/List.html">List</a>&lt;<a href="http://api.dartlang.org/dart_core/int.html">int</a>&gt;&gt;         <strong>stream</strong> <a class="anchor-link"
+            href="#stream"
+            title="Permalink to Input.stream">#</a>
+        </h4>
+        <div class="doc">
+<p>A stream of the input content.</p>
+<pre class="source">
+Stream&lt;List&lt;int&gt;&gt; get stream;
+</pre>
+</div>
+</div>
+<div class="field"><h4 id="text">
+<button class="show-code">Code</button>
+final <a href="http://api.dartlang.org/dart_core/String.html">String</a>         <strong>text</strong> <a class="anchor-link"
+            href="#text"
+            title="Permalink to Input.text">#</a>
+        </h4>
+        <div class="doc">
+<p>The full input text.</p>
+<pre class="source">
+String get text;
+</pre>
+</div>
+</div>
+</div>
+        </div>
+        <div class="clear"></div>
+        </div>
+        <div class="footer">
+          <div>This page was generated at 2014-01-08 22:34:21.741</div>
+        </div>
+        <script async src="../client-live-nav.js"></script>
+        </body></html>
+        
