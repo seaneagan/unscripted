@@ -140,6 +140,14 @@ main() {
         expect(_happened, false);
       });
 
+      test('for Option - with allowMultiple', () {
+        var optionValues;
+        new FunctionScript(({@Option(parser: int.parse, allowMultiple: true) List<int> option}) {
+          optionValues = option;
+        }).execute(['--option', '1', '--option', '2']);
+        expect(optionValues, [1, 2]);
+      });
+
       test('for Positional - valid input', () {
         var positionalValue;
         var restValue;

@@ -297,7 +297,11 @@ CommandInvocation applyUsageToCommandInvocation(Usage usage, CommandInvocation i
   usage.options
       .forEach((optionName, option) {
         var optionValue = invocation.options[optionName];
-        options[optionName] = parseArg(option.parser, optionValue, optionName);
+        var values = optionValue is List ? optionValue : [optionValue];
+        parseValue(value) => parseArg(option.parser, value, optionName);
+        options[optionName] = optionValue is List ?
+            new UnmodifiableListView(optionValue.map(parseValue)) :
+            parseValue(optionValue);
       });
 
   CommandInvocation subCommand;
