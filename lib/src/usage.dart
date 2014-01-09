@@ -221,8 +221,11 @@ class UsageException {
   UsageException({this.usage, this.arg, this.cause});
 
   String toString() {
-    var message = arg == null ? '' : ': Invalid argument "$arg"';
-    return 'Script usage exception$message: $cause';
+    var argMesage = arg == null ? '' : ': argument $arg';
+    var callStyle = usage.callStyle;
+    if(callStyle == CallStyle.NORMAL) callStyle = CallStyle.SHEBANG;
+    var command = formatCallStyle(callStyle);
+    return '$command: error$argMesage: $cause';
   }
 }
 

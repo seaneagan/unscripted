@@ -79,15 +79,7 @@ Use "${_formatRootCommand()} $HELP [command]" for more information about a comma
     return parts.join(' ');
   }
 
-  String _formatRootCommand() {
-    var commandName = path.basenameWithoutExtension(path.fromUri(Platform.script));
-
-    switch(usage.callStyle) {
-      case CallStyle.NORMAL: return 'dart $commandName.dart';
-      case CallStyle.SHEBANG: return '$commandName.dart';
-      case CallStyle.SHELL: return commandName;
-    }
-  }
+  String _formatRootCommand() => formatCallStyle(usage.callStyle);
 
   String _formatCommands() =>
       ([_formatRootCommand()]..addAll(usage.commandPath)).join(' ');
@@ -97,5 +89,14 @@ Use "${_formatRootCommand()} $HELP [command]" for more information about a comma
 $title:
 
 $content''';
+  }
+}
+
+formatCallStyle(CallStyle callStyle) {
+  var commandName = path.basenameWithoutExtension(path.fromUri(Platform.script));
+  switch(callStyle) {
+    case CallStyle.NORMAL: return 'dart $commandName.dart';
+    case CallStyle.SHEBANG: return '$commandName.dart';
+    case CallStyle.SHELL: return commandName;
   }
 }
