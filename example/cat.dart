@@ -14,7 +14,7 @@ main(arguments) => sketch(cat).execute(arguments);
 @ArgExample('f - g', help: "Output f's contents, then standard input, then g's contents.")
 @ArgExample('', help: 'Copy standard input to standard output.')
 cat(
-    @Rest(min: 0, parser: Input.parse)
+    @Rest(parser: Input.parse)
     List<Input> files,
     {@Flag(negatable: false, abbr: 'n', help: 'number all output lines')
      bool number,

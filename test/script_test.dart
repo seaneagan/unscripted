@@ -93,7 +93,7 @@ main() {
       });
 
       test('not enough rest', () {
-        new FunctionScript((String first, @Rest(min: 1) rest) {
+        new FunctionScript((String first, @Rest(required: true) rest) {
           _happened = true;
         }).execute(['first']);
         expect(_happened, isFalse);
@@ -235,7 +235,7 @@ class CommandScriptTest {
   CommandScriptTest({this.flag: false, this.option: 'default'});
 
   @SubCommand()
-  command(@Rest(min: 0) rest, {bool commandFlag}) {
+  command(@Rest() rest, {bool commandFlag}) {
     _lastSeen = this;
     _lastSeenRest = rest;
     _commandHappened = true;

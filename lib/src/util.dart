@@ -35,7 +35,7 @@ Rest getRestFromMethod(MethodMirror method) {
         (metadata) => metadata is Rest);
     if(rest != null  && rest.name == null) {
       rest = new Rest(
-          min: rest.min,
+          required: rest.required,
           help: rest.help,
           name: getDefaultPositionalName(lastParameter.simpleName),
           parser: rest.parser);

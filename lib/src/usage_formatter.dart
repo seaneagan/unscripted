@@ -48,11 +48,7 @@ class TerminalUsageFormatter extends UsageFormatter {
     var restName = usage.rest == null ? '' : usage.rest.name;
 
     if(restName != null && restName.isNotEmpty) {
-      if(usage.rest.min > 0) {
-        restName = '<$restName>';
-      } else {
-        restName = '[$restName]';
-      }
+      restName = usage.rest.required ? '<$restName>' : '[$restName]';
       usageParts.add(restName);
     }
 

@@ -84,9 +84,9 @@ class Rest extends Positional {
 
   /// The minimum amount of arguments that should be passed to the rest
   /// parameter to avoid an error being thrown.
-  final int min;
+  final bool required;
 
-  const Rest({String name, String help, parser(String arg), this.min: 1})
+  const Rest({String name, String help, parser(String arg), this.required: false})
       : super(name: name, parser: parser, help: help);
 }
 

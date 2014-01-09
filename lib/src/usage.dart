@@ -148,8 +148,8 @@ class Usage {
     var min = positionals.length;
     if(rest == null) {
       max = positionals.length;
-    } else if(rest.min != null) {
-      min += rest.min;
+    } else if(rest.required) {
+      min++;
     }
 
     throwPositionalCountError(String expectation) {
