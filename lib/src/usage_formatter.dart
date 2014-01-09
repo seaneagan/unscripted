@@ -42,13 +42,14 @@ class TerminalUsageFormatter extends UsageFormatter {
     var args = parser.commands.isEmpty ? optionsPlaceholder : 'command';
     usageParts.add(args);
 
-    var positionalNames = usage.positionals.map((positional) => '<${positional.name}>');
+    var positionalNames = usage.positionals.map((positional) => positional.name);
     usageParts.addAll(positionalNames);
 
     var restName = usage.rest == null ? '' : usage.rest.name;
 
     if(restName != null && restName.isNotEmpty) {
-      restName = usage.rest.required ? '<$restName>' : '[$restName]';
+      if(!usage.rest.required) restName = '[$restName]';
+      restName = '$restName...';
       usageParts.add(restName);
     }
 
