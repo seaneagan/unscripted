@@ -51,9 +51,7 @@ cat(
         .transform(UTF8.decoder)
         .transform(const LineSplitter());
 
-    if(squeezeBlank) {
-      lines = squeezeBlankLines(lines);
-    }
+    if(squeezeBlank) lines = squeezeBlankLines(lines);
 
     if(number) {
       lines = enumerateStream(lines);
