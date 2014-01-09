@@ -24,17 +24,21 @@ cat(
      bool squeezeBlank,
      @Flag(negatable: false, abbr: 'A', help: 'equivalent to -vET')
      bool showAll,
+     @Flag(negatable: false, abbr: 'e', help: 'equivalent to -vE')
+     bool e,
+     @Flag(negatable: false, abbr: 't', help: 'equivalent to -vT')
+     bool t,
      @Flag(negatable: false, abbr: 'T', help: 'display TAB characters as ^I')
      bool showTabs,
-     @Flag(negatable: false, abbr: 'v', help: '(not yet supported) use ^ and M- notation, except for LFD and TAB')
-     bool showNonprinting,
      @Flag(negatable: false, abbr: 'E', help: r'display $ at end of each line')
-     bool showEnds}) {
+     bool showEnds,
+     @Flag(negatable: false, abbr: 'v', help: '(not yet supported) use ^ and M- notation, except for LFD and TAB')
+     bool showNonprinting}) {
 
-  showEnds = showEnds || showAll;
-  showTabs = showTabs || showAll;
-  showNonprinting = showNonprinting || showAll;
-  number = number || numberNonblank;
+  if(showAll) showEnds = showTabs = showNonprinting = true;
+  if(e)       showEnds            = showNonprinting = true;
+  if(t)                  showTabs = showNonprinting = true;
+  if(numberNonblank)                         number = true;
 
   if (files.isEmpty) {
     // Default to stdin.
@@ -63,49 +67,39 @@ cat(
       });
     }
 
-    if(showEnds) {
-      lines = lines.map((line) => '$line\$');
-    }
+    if(showEnds) lines = lines.map((line) => '$line\$');
 
-    if(showTabs) {
-      lines = lines.map(showTabChars);
-    }
+    if(showTabs) lines = lines.map(showTabChars);
 
-    if(showNonprinting) {
-      // TODO: Show non-printing characters.
-    }
+    // TODO: Show non-printing characters.
+    if(showNonprinting) {}
 
     lines.forEach(print);
   });
 }
 
 Stream<IndexedValue> enumerateStream(Stream stream) {
-  int index = 0;
-  return stream.transform(new StreamTransformer<dynamic, IndexedValue>.fromHandlers(
-      handleData: (value, EventSink<IndexedValue> sink) {
-        sink.add(new IndexedValue(index++, value));
-      }));
+  var index = 0;
+  return stream.map((value) => new IndexedValue(index++, value));
 }
 
 Stream<IndexedValue> shiftForBlanks(Stream<IndexedValue> stream) {
-  int blanks = 0;
-  return stream.transform(new StreamTransformer<dynamic, IndexedValue>.fromHandlers(
-      handleData: (IndexedValue value, EventSink<IndexedValue> sink) {
-        var blank = value.value.isEmpty;
-        if(blank) blanks++;
-        sink.add(new IndexedValue(blank ? null : value.index - blanks, value.value));
-      }));
+  var blanks = 0;
+  return stream.map((IndexedValue value) {
+    var blank = value.value.isEmpty;
+    if(blank) blanks++;
+    return new IndexedValue(blank ? null : value.index - blanks, value.value);
+  });
 }
 
 Stream<String> squeezeBlankLines(Stream<String> stream) {
-  bool lastBlank = false;
-  return stream.transform(new StreamTransformer<String, String>.fromHandlers(
-      handleData: (String value, EventSink<String> sink) {
-        bool blank = value.isEmpty;
-        if(lastBlank && blank) return;
-        lastBlank = blank;
-        sink.add(value);
-      }));
+  var lastBlank = false;
+  return stream.where((String value) {
+    var blank = value.isEmpty;
+    var squeeze = lastBlank && blank;
+    lastBlank = blank;
+    return !squeeze;
+  });
 }
 
 String padInt(int i, {int length: 0, String pad: '0'}) {
