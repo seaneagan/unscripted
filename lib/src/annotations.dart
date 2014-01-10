@@ -41,8 +41,9 @@ class Flag extends Option {
       String help,
       String abbr,
       defaultsTo,
-      this.negatable})
-      : super(help: help, abbr: abbr, defaultsTo: defaultsTo);
+      bool negatable})
+      : this.negatable = negatable == null ? true : negatable,
+        super(help: help, abbr: abbr, defaultsTo: defaultsTo);
 }
 
 /// An annotation which gives example arguments that can be passed to a

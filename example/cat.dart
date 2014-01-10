@@ -1,4 +1,6 @@
 
+/// A dart implementation of the unix utility [cat_wiki][].
+/// [cat_wiki]: http://en.wikipedia.org/wiki/Cat_(Unix)
 library cat;
 
 import 'dart:async';
@@ -16,23 +18,23 @@ main(arguments) => sketch(cat).execute(arguments);
 cat(
     @Rest(parser: Input.parse)
     List<Input> files,
-    {@Flag(negatable: false, abbr: 'n', help: 'number all output lines')
+    {@Flag(abbr: 'n', help: 'number all output lines')
      bool number,
-     @Flag(negatable: false, abbr: 'b', help: 'number nonblank output lines')
+     @Flag(abbr: 'b', help: 'number nonblank output lines')
      bool numberNonblank,
-     @Flag(negatable: false, abbr: 's', help: 'never more than one single blank line')
+     @Flag(abbr: 's', help: 'never more than one single blank line')
      bool squeezeBlank,
-     @Flag(negatable: false, abbr: 'A', help: 'equivalent to -vET')
+     @Flag(abbr: 'A', help: 'equivalent to -vET')
      bool showAll,
-     @Flag(negatable: false, abbr: 'e', help: 'equivalent to -vE')
+     @Flag(abbr: 'e', help: 'equivalent to -vE')
      bool e,
-     @Flag(negatable: false, abbr: 't', help: 'equivalent to -vT')
+     @Flag(abbr: 't', help: 'equivalent to -vT')
      bool t,
-     @Flag(negatable: false, abbr: 'T', help: 'display TAB characters as ^I')
+     @Flag(abbr: 'T', help: 'display TAB characters as ^I')
      bool showTabs,
-     @Flag(negatable: false, abbr: 'E', help: r'display $ at end of each line')
+     @Flag(abbr: 'E', help: r'display $ at end of each line')
      bool showEnds,
-     @Flag(negatable: false, abbr: 'v', help: '(not yet supported) use ^ and M- notation, except for LFD and TAB')
+     @Flag(abbr: 'v', help: '(not yet supported) use ^ and M- notation, except for LFD and TAB')
      bool showNonprinting}) {
 
   if(showAll) showEnds = showTabs = showNonprinting = true;
@@ -47,9 +49,8 @@ cat(
 
   files.forEach((Input input) {
 
-    var lines = input.stream
-        .transform(UTF8.decoder)
-        .transform(const LineSplitter());
+    var bytesToLines = UTF8.decoder.fuse(const LineSplitter());
+    var lines = input.stream.transform(bytesToLines);
 
     if(squeezeBlank) lines = squeezeBlankLines(lines);
 
@@ -60,14 +61,15 @@ cat(
       }
       lines = lines.map((IndexedValue pair) {
         var line = pair.value;
-        var lineNumber = (numberNonblank && line.isEmpty) ? null : pair.index + 1;
-        return '${padInt(lineNumber, length: 6, pad: ' ')}  $line';
+        var lineNum = (numberNonblank && line.isEmpty) ? null : pair.index + 1;
+        var lineNumString = lineNum == null ? '' : lineNum.toString();
+        return '${padLeft(lineNumString, 6, ' ')}  $line';
       });
     }
 
     if(showEnds) lines = lines.map((line) => '$line\$');
 
-    if(showTabs) lines = lines.map(showTabChars);
+    if(showTabs) lines = lines.map((str) => str.replaceAll('\t', '^I'));
 
     // TODO: Show non-printing characters.
     if(showNonprinting) {}
@@ -83,10 +85,10 @@ Stream<IndexedValue> enumerateStream(Stream stream) {
 
 Stream<IndexedValue> shiftForBlanks(Stream<IndexedValue> stream) {
   var blanks = 0;
-  return stream.map((IndexedValue value) {
-    var blank = value.value.isEmpty;
+  return stream.map((IndexedValue pair) {
+    var blank = pair.value.isEmpty;
     if(blank) blanks++;
-    return new IndexedValue(blank ? null : value.index - blanks, value.value);
+    return new IndexedValue(blank ? null : pair.index - blanks, pair.value);
   });
 }
 
@@ -99,13 +101,3 @@ Stream<String> squeezeBlankLines(Stream<String> stream) {
     return !squeeze;
   });
 }
-
-String padInt(int i, {int length: 0, String pad: '0'}) {
-  var str = i == null ? '' : i.toString();
-  var padLength = length - str.length;
-  return (padLength > 0) ?
-      '${repeat(pad, padLength)}$str' :
-      str;
-}
-
-String showTabChars(String str) => str.replaceAll('\t', '^I');
