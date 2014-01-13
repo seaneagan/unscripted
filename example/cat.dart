@@ -1,12 +1,9 @@
 
-/// A dart implementation of the unix utility [cat_wiki][].
-/// [cat_wiki]: http://en.wikipedia.org/wiki/Cat_(Unix)
-library cat;
-
 import 'dart:async';
 import 'dart:convert';
 
 import 'package:unscripted/unscripted.dart';
+import 'package:quiver/async.dart';
 import 'package:quiver/iterables.dart';
 import 'package:quiver/strings.dart';
 
@@ -15,8 +12,9 @@ main(arguments) => sketch(cat).execute(arguments);
 @Command(help: 'Concatenate FILE(s), or standard input, to standard output.')
 @ArgExample('f - g', help: "Output f's contents, then standard input, then g's contents.")
 @ArgExample('', help: 'Copy standard input to standard output.')
+/// A dart implementation of the unix utility [cat][cat_wiki].
+/// [cat_wiki]: http://en.wikipedia.org/wiki/Cat_(Unix)
 cat(
-    @Rest(parser: Input.parse)
     List<Input> files,
     {@Flag(abbr: 'n', help: 'number all output lines')
      bool number,
@@ -45,9 +43,12 @@ cat(
   if (files.isEmpty) {
     // Default to stdin.
     files = [Input.parse('-')];
+  } else {
+    // TODO: If there are multiple stdin files ('-') does cat store the
+    // stdin content for the later ones?
   }
 
-  files.forEach((Input input) {
+  forEachAsync(files, (Input input) {
 
     var bytesToLines = UTF8.decoder.fuse(const LineSplitter());
     var lines = input.stream.transform(bytesToLines);
@@ -72,9 +73,10 @@ cat(
     if(showTabs) lines = lines.map((str) => str.replaceAll('\t', '^I'));
 
     // TODO: Show non-printing characters.
+    // See http://docstore.mik.ua/orelly/unix3/upt/ch12_04.htm
     if(showNonprinting) {}
 
-    lines.forEach(print);
+    return lines.forEach(print);
   });
 }
 
