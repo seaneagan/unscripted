@@ -133,6 +133,14 @@ main() {
         expect(optionValue, 123);
       });
 
+      test('for Option - from type annotation', () {
+        var optionValue;
+        new FunctionScript(({int option}) {
+          optionValue = option;
+        }).execute(['--option', '123']);
+        expect(optionValue, 123);
+      });
+
       test('for Option - invalid input throws', () {
         new FunctionScript(({@Option(parser: int.parse) int option}) {
           _happened = true;
@@ -148,12 +156,33 @@ main() {
         expect(optionValues, [1, 2]);
       });
 
+      test('for Option - from List type annotation', () {
+        var optionValues;
+        new FunctionScript(({List<int> option}) {
+          optionValues = option;
+        }).execute(['--option', '1', '--option', '2']);
+        expect(optionValues, [1, 2]);
+      });
+
       test('for Positional - valid input', () {
         var positionalValue;
         var restValue;
         new FunctionScript((
             @Positional(parser: int.parse) int first,
             @Rest(parser: int.parse) List<int> rest) {
+          positionalValue = first;
+          restValue = rest;
+        }).execute(['123', '4', '5', '6']);
+        expect(positionalValue, 123);
+        expect(restValue, [4, 5, 6]);
+      });
+
+      test('for Positional - from type annotation', () {
+        var positionalValue;
+        var restValue;
+        new FunctionScript((
+            int first,
+            List<int> rest) {
           positionalValue = first;
           restValue = rest;
         }).execute(['123', '4', '5', '6']);
@@ -264,3 +293,9 @@ class SubCommandScriptTest {
   }
 
 }
+
+@Command() final int
+  A = 1,
+  B = 2,
+  C = 3;
+

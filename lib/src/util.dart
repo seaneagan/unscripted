@@ -33,13 +33,32 @@ Rest getRestFromMethod(MethodMirror method) {
   if(lastParameter != null) {
     Rest rest = getFirstMetadataMatch(lastParameter,
         (metadata) => metadata is Rest);
-    if(rest != null  && rest.name == null) {
+
+    var restName = getDefaultPositionalName(lastParameter.simpleName);
+    var type = lastParameter.type;
+    var parserFromTypeArgument;
+    if(type.originalDeclaration == reflectClass(List) &&
+       type.typeArguments.isNotEmpty) {
+      parserFromTypeArgument = getParserFromType(type.typeArguments.single);
+    }
+
+    if(rest != null) {
+      var parser = rest.parser;
+      if(parser == null) {
+        parser = parserFromTypeArgument;
+      }
+      if(rest.name != null) {
+        restName = rest.name;
+      }
       rest = new Rest(
           required: rest.required,
           help: rest.help,
-          name: getDefaultPositionalName(lastParameter.simpleName),
-          parser: rest.parser);
+          name: restName,
+          parser: parser);
+    } else if(parserFromTypeArgument != null) {
+      rest = new Rest(name: restName, parser: parserFromTypeArgument);
     }
+
     return rest;
   }
   return null;
@@ -69,16 +88,21 @@ Usage getUsageFromFunction(MethodMirror methodMirror, {Usage usage}) {
 
     String positionalName = getDefaultPositionalName(parameter.simpleName);
     String positionalHelp;
-    var positionalParser;
+    var parser;
 
     if(positional != null) {
       if(positional.name != null) {
         positionalName = positional.name;
       }
       positionalHelp = positional.help;
-      positionalParser = positional.parser;
+      parser = positional.parser;
     }
-    return new Positional(name: positionalName, help: positionalHelp, parser: positionalParser);
+
+    if(parser == null) {
+      parser = getParserFromType(parameter.type);
+    }
+
+    return new Positional(name: positionalName, help: positionalHelp, parser: parser);
   });
 
   positionals.forEach((positional) =>
@@ -96,33 +120,41 @@ Usage getUsageFromFunction(MethodMirror methodMirror, {Usage usage}) {
 
     if(argAnnotation != null) {
       option = argAnnotation.reflectee;
-    } else if(type == reflectClass(String) /*||
-              type == currentMirrorSystem().dynamicType*/) {
-      option = new Option();
     } else if(type == reflectClass(bool)) {
       option = new Flag();
     } else {
-
-      // TODO: handle List, List<String> as Options with allowMultiple = true.
-
-      throw new ArgumentError(
-          'Named parameter "$parameterName" does not represent a valid flag '
-          'or option.  Must be annotated as one of `@Flag`, `bool`, `@Option`, '
-          '`String` or `dynamic`.');
+      option = new Option();
     }
 
-    // Add default value if not already specified.
-    if(parameter.hasDefaultValue && option.defaultsTo == null) {
-      var defaultValue = parameter.defaultValue.reflectee;
-      // TODO: This is not very maintainable.
-      // Use reflection instead to copy values over?
-      option = option is Flag ?
-          new Flag(help: option.help, abbr: option.abbr,
-              defaultsTo: defaultValue, negatable: option.negatable) :
-          new Option(help: option.help, abbr: option.abbr,
-              defaultsTo: defaultValue, allowed: option.allowed,
-              allowMultiple: option.allowMultiple, hide: option.hide);
+    var parser = option.parser;
+    if(parser == null) {
+      parser = getParserFromType(type);
     }
+
+    var allowMultiple = option.allowMultiple;
+
+    if(parser == null && type.originalDeclaration == reflectClass(List)) {
+      allowMultiple = true;
+      if(type.typeArguments.isNotEmpty){
+        parser = getParserFromType(type.typeArguments.single);
+      }
+    }
+
+    var defaultValue = option.defaultsTo;
+    if(defaultValue == null && parameter.hasDefaultValue) {
+      defaultValue = parameter.defaultValue.reflectee;
+    }
+
+    // Update option with any configuration detected in the parameter.
+    // TODO: This is not very maintainable.
+    // Use reflection instead to copy values over?
+    option = option is Flag ?
+        new Flag(help: option.help, abbr: option.abbr,
+            defaultsTo: defaultValue, negatable: option.negatable) :
+        new Option(help: option.help, abbr: option.abbr,
+            defaultsTo: defaultValue, allowed: option.allowed,
+            allowMultiple: allowMultiple, hide: option.hide,
+            parser: parser);
 
     var optionName = dashesToCamelCase.decode(parameterName);
 
@@ -132,6 +164,16 @@ Usage getUsageFromFunction(MethodMirror methodMirror, {Usage usage}) {
   _addSubCommandsForClass(usage, methodMirror.returnType);
 
   return usage;
+}
+
+getParserFromType(TypeMirror typeMirror) {
+  if(typeMirror is ClassMirror &&
+      typeMirror.declarations.values.any((d) => d.isStatic && d.simpleName == #parse)) {
+    var closure = typeMirror[#parse];
+    // TODO: This is a workaround for http://dartbug.com/16025.
+    return (item) => closure(item).reflectee;
+  }
+  return null;
 }
 
 _addSubCommandsForClass(Usage usage, TypeMirror typeMirror) {
