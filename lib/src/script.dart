@@ -1,7 +1,7 @@
 
 part of unscripted;
 
-/// "Sketches" a [Script] from [model].
+/// Declares a [Script] from [model].
 ///
 /// The model is generally a closure of a method, which is annotated with
 /// command-line metadata.  The model can also be a class (see below).
@@ -42,7 +42,7 @@ part of unscripted;
 ///
 /// Basic example:
 ///
-///     main(arguments) => sketch(greet).execute(arguments);
+///     main(arguments) => declare(greet).execute(arguments);
 ///
 ///     // Optional command-line metadata:
 ///     @Command(help: 'Outputs a greeting')
@@ -59,7 +59,7 @@ part of unscripted;
 ///
 /// Sub-command example:
 ///
-///     main(arguments) => sketch(Server).execute(arguments);
+///     main(arguments) => declare(Server).execute(arguments);
 ///
 ///     class Server {
 ///
@@ -88,7 +88,7 @@ part of unscripted;
 /// Parameter and command names which are camelCased are mapped to their
 /// dash-erized command-line equivalents.  For example, `fooBar` would map to
 /// `foo-bar`.
-Script sketch(model) {
+Script declare(model) {
   if(model is Function) return new FunctionScript(model);
   if(model is Type) return new ClassScript(model);
   throw new ArgumentError('model must be a Type or Function');

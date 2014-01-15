@@ -2,7 +2,7 @@
 
 import 'package:unscripted/unscripted.dart';
 
-main(arguments) => sketch(Server).execute(arguments);
+main(arguments) => declare(Server).execute(arguments);
 
 class Server {
 

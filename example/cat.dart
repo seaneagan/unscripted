@@ -7,7 +7,7 @@ import 'package:quiver/iterables.dart';
 import 'package:quiver/strings.dart';
 import 'package:unscripted/unscripted.dart';
 
-main(arguments) => sketch(cat).execute(arguments);
+main(arguments) => declare(cat).execute(arguments);
 
 // TODO: Add tests, see https://gist.github.com/sandal/1293709
 /// A dart implementation of the [cat][1] unix utility.

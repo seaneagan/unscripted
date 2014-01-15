@@ -4,7 +4,7 @@ unscripted
 [![Build Status](https://drone.io/github.com/seaneagan/unscripted/status.png)](https://drone.io/github.com/seaneagan/unscripted/latest)
 
 Unscripted is a [pub package][pkg] for dart which enables you to
-[sketch][sketch] command-line scripts as ordinary programming constructs, such 
+[declare][declare] command-line scripts as ordinary programming constructs, such 
 as methods and classes, annotated with command-line specific metadata as 
 necessary.
 
@@ -35,7 +35,7 @@ with a bit of command-line metadata:
 ```dart
 import 'package:unscripted/unscripted.dart';
 
-main(arguments) => sketch(greet).execute(arguments);
+main(arguments) => declare(greet).execute(arguments);
 
 // Optional command-line metadata:
 @Command(help: 'Outputs a greeting')
@@ -93,7 +93,7 @@ the following 'server.dart':
 ```dart
 import 'package:unscripted/unscripted.dart';
 
-main(arguments) => sketch(Server).execute(arguments);
+main(arguments) => declare(Server).execute(arguments);
 
 class Server {
 
@@ -156,6 +156,6 @@ Options:
 
 [pkg]: http://pub.dartlang.org/packages/unscripted
 [api_docs]: https://seaneagan.github.com/unscripted/unscripted.html
-[sketch]: https://seaneagan.github.com/unscripted/unscripted.html#sketch
+[declare]: https://seaneagan.github.com/unscripted/unscripted.html#declare
 [examples]: https://github.com/seaneagan/unscripted/tree/master/example
 [old_greet]: https://github.com/seaneagan/unscripted/tree/master/example/old_greet.dart
