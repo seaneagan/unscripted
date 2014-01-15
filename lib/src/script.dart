@@ -9,13 +9,24 @@ part of unscripted;
 /// The method itself can be annotated as a [Command].
 ///
 /// The method's parameters define the script's command-line parameters.
-/// Named parameters with [bool] type annotations or [Flag] metadata annotations
-/// are considered flags.  Named parameters with [String] or [dynamic] type
-/// annotations or [Option] metadata annotations are considered options.
-/// Required positional parameters are mapped to positional command-line
-/// parameters.  Optional positional parameters are not allowed.  However, a
-/// [Rest] metadata annotation can be placed on the last positional parameter
-/// to represent all remaining positional arguments passed to the script.
+/// Named parameters with [bool] type or [Flag] metadata represent command-line
+/// flags.  Other named parameters represent value-taking command-line options,
+/// and can accept [Option] metadata.  Required positional parameters are
+/// mapped to positional command-line parameters, and can use [Positional] metadata.
+/// Optional positional parameters are not allowed.  However, [Rest] metadata
+/// can be placed on the last positional parameter to represent all remaining
+/// positional arguments passed to the script.
+///
+/// Any value-taking argument (option, positional, rest) can have a "parser".
+/// This is a function which is responsible for validating and/or transforming
+/// the string value passed on the command-line before it is passed to the
+/// method.  Rest parsers are applied to each command-line value they receive.
+/// If a parser throws an exception, it is `toString`ed and displayed to the
+/// user
+/// Parsers can be declared either via the `parser` field of the
+/// appropriate metadata (see above), or by giving the method parameter a type
+/// which has a static `parse` method that can be used as the parser.  For
+/// example `int` parameters are parsed with `int.parse`.
 ///
 /// Sub-commands can be added to the script by creating a class with instance
 /// methods annotated as [SubCommand]s.  The model returns an instance of this

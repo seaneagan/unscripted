@@ -3,41 +3,32 @@ unscripted
 
 [![Build Status](https://drone.io/github.com/seaneagan/unscripted/status.png)](https://drone.io/github.com/seaneagan/unscripted/latest)
 
-Unscripted is a [pub package][pkg] for dart which enables you to
-[declare][declare] command-line scripts as ordinary programming constructs, such 
-as methods and classes, annotated with command-line specific metadata as 
-necessary.
+Unscripted is a [pub package][pkg] for declarative command-line interface
+programming in dart.  Command-line interfaces are defined using ordinary method
+and class declarations, minimally annotated with command-line metadata.  
+Reflection is used to derive the command-line interface from the declarations.  
+Command-line arguments are automatically injected into the method or
+class (constructor).  This removes the need for boilerplate logic to define, 
+parse, validate and assign variables for command-line arguments.  Since the 
+interface is defined in code, standard refactoring, testing, etc. tools can 
+be used.
 
-Command-line parameters, just like dart method parameters, come in two varieties,
-named and positional.  This makes for a nice mapping between command-line scripts
-and dart methods.  Unscripted uses reflection to transform between the two.
-It also applies the concept of dependency injection to inject command-line
-arguments into dart methods.  This removes the need for boilerplate logic
-around command-line arguments to define, parse, validate and assign them to
-local variables.  This allows making command-line interface changes solely
-via dart refactoring tools or even simple one-liners, and makes for less untested
-code.
+##Demo
 
-The quickest way to get started is to copy one of the examples below
-(also available [here][examples]) and edit as necessary.
-
-More detailed usage is available in the [API docs][api_docs].
+[cat.dart][cat.dart] is a complete implementation of the *nix `cat` 
+utility using unscripted.
 
 ##Usage
 
-Let's say we want to write a simple script to output a greeting to one or more
-people with a few options sprinkled in to customize the output to make it
-interesting.  The status quo dart script for this is too long to embed here,
-but might look something like [this][old_greet].  With unscripted, we can get
-rid a lot of boilerplate, retaining only the `greet` method, annotating it
-with a bit of command-line metadata:
+(For more detailed usage, see the [API docs][api_docs])
+
+A simple script to output a greeting:
 
 ```dart
 import 'package:unscripted/unscripted.dart';
 
 main(arguments) => declare(greet).execute(arguments);
 
-// Optional command-line metadata:
 @Command(help: 'Outputs a greeting')
 @ArgExample('--salutation Welcome --exclaim Bob', help: 'enthusiastic')
 greet(
@@ -51,6 +42,8 @@ greet(
 }
 ```
 
+(Compare to a [traditiional version][old_greet] of this script.)
+
 We can call this script as follows:
 
 ```shell
@@ -62,7 +55,7 @@ Welcome Bob!
 
 ###Automatic --help
 
-Unscripted also automatically defines and handles a --help/-h option,
+Unscripted automatically defines and handles a --help/-h option,
 allowing for:
 
 ```shell
@@ -71,7 +64,7 @@ Outputs a greeting
 
 Usage:
 
-dart greet.dart [options] <WHO>
+dart greet.dart [options] WHO...
 
 Options:
 
@@ -155,6 +148,7 @@ Options:
 ```
 
 [pkg]: http://pub.dartlang.org/packages/unscripted
+[cat.dart]: https://github.com/seaneagan/unscripted/blob/master/example/cat.dart
 [api_docs]: https://seaneagan.github.com/unscripted/unscripted.html
 [declare]: https://seaneagan.github.com/unscripted/unscripted.html#declare
 [examples]: https://github.com/seaneagan/unscripted/tree/master/example
