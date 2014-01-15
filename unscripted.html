@@ -42,13 +42,23 @@ annotated with command line specific metadata.</p></div>
 command-line metadata.  The model can also be a class (see below).</p>
 <p>The method itself can be annotated as a <a class="crossref" href="unscripted/Command.html">Command</a>.</p>
 <p>The method's parameters define the script's command-line parameters.
-Named parameters with <a class="crossref" href="dart_core/bool.html">bool</a> type annotations or <a class="crossref" href="unscripted/Flag.html">Flag</a> metadata annotations
-are considered flags.  Named parameters with <a class="crossref" href="dart_core/String.html">String</a> or <code>dynamic</code> type
-annotations or <a class="crossref" href="unscripted/Option.html">Option</a> metadata annotations are considered options.
-Required positional parameters are mapped to positional command-line
-parameters.  Optional positional parameters are not allowed.  However, a
-<a class="crossref" href="unscripted/Rest.html">Rest</a> metadata annotation can be placed on the last positional parameter
-to represent all remaining positional arguments passed to the script.</p>
+Named parameters with <a class="crossref" href="dart_core/bool.html">bool</a> type or <a class="crossref" href="unscripted/Flag.html">Flag</a> metadata represent command-line
+flags.  Other named parameters represent value-taking command-line options,
+and can accept <a class="crossref" href="unscripted/Option.html">Option</a> metadata.  Required positional parameters are
+mapped to positional command-line parameters, and can use <a class="crossref" href="unscripted/Positional.html">Positional</a> metadata.
+Optional positional parameters are not allowed.  However, <a class="crossref" href="unscripted/Rest.html">Rest</a> metadata
+can be placed on the last positional parameter to represent all remaining
+positional arguments passed to the script.</p>
+<p>Any value-taking argument (option, positional, rest) can have a "parser".
+This is a function which is responsible for validating and/or transforming
+the string value passed on the command-line before it is passed to the
+method.  Rest parsers are applied to each command-line value they receive.
+If a parser throws an exception, it is <code>toString</code>ed and displayed to the
+user
+Parsers can be declared either via the <code>parser</code> field of the
+appropriate metadata (see above), or by giving the method parameter a type
+which has a static <code>parse</code> method that can be used as the parser.  For
+example <code>int</code> parameters are parsed with <code>int.parse</code>.</p>
 <p>Sub-commands can be added to the script by creating a class with instance
 methods annotated as <a class="crossref" href="unscripted/SubCommand.html">SubCommand</a>s.  The model returns an instance of this
 class and documents this in it's return type.  Most commonly the model is
@@ -200,7 +210,7 @@ Script declare(model) {
         <div class="clear"></div>
         </div>
         <div class="footer">
-          <div>This page was generated at 2014-01-15 19:47:59.336</div>
+          <div>This page was generated at 2014-01-15 21:42:04.775</div>
         </div>
         <script async src="client-live-nav.js"></script>
         </body></html>
