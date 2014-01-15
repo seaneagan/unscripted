@@ -10,8 +10,8 @@ import 'package:unscripted/unscripted.dart';
 main(arguments) => sketch(cat).execute(arguments);
 
 // TODO: Add tests, see https://gist.github.com/sandal/1293709
-/// A dart implementation of the unix utility [cat][cat_wiki].
-/// [cat_wiki]: http://en.wikipedia.org/wiki/Cat_(Unix)
+/// A dart implementation of the [cat][1] unix utility.
+/// [1]: http://en.wikipedia.org/wiki/Cat_(Unix)
 @Command(help: 'Concatenate FILE(s), or standard input, to standard output.')
 @ArgExample('f - g', help: "Output f's contents, then standard input, then g's contents.")
 @ArgExample('', help: 'Copy standard input to standard output.')
@@ -34,8 +34,17 @@ cat(
      @Flag(abbr: 'E', help: r'display $ at end of each line')
      bool showEnds,
      @Flag(abbr: 'v', help: 'use ^ and M- notation, except for LFD and TAB')
-     bool showNonprinting}) {
+     bool showNonprinting,
+     @Flag(hide: true)
+     bool version}) {
 
+  // Placeholder: see https://github.com/seaneagan/unscripted/issues/21
+  if(version) {
+    print('cat.dart v0.1');
+    return;
+  }
+
+  // Handle compound flags.
   if(showAll) showEnds = showTabs = showNonprinting = true;
   if(e)       showEnds            = showNonprinting = true;
   if(t)                  showTabs = showNonprinting = true;
@@ -101,18 +110,18 @@ Stream<String> squeezeBlankLines(Stream<String> stream) {
 }
 
 // See http://docstore.mik.ua/orelly/unix3/upt/ch12_04.htm
-// Note: This is likely buggy and slow.
 String showNonprintables(String line) {
   String convertNonprintable(int char) {
-    isControl(int char) => char <= 037 || char == 0177;
+    isControl(int char) => char <= 31 || char == 127;
     var buffer = new StringBuffer();
-    if (char >= 0200) {
-      char &= 0177;
+    if (char >= 128) {
+      // TODO: I don't think these "metacharacters" are handled correctly yet.
+      char &= 127;
       buffer.write('M-');
     }
     if (isControl(char)) {
       buffer.write('^');
-      if (char == 0177) {
+      if (char == 127) {
         buffer.write('?');
       } else {
         buffer.writeCharCode(char + '@'.codeUnitAt(0));
@@ -124,5 +133,6 @@ String showNonprintables(String line) {
   }
 
   var re = new RegExp(r'[\x00-\x08\x0A-\x1F\x7F]|[^\x00-\x7F]');
-  return line.replaceAllMapped(re, (match) => convertNonprintable(match.input.codeUnitAt(0)));
+  return line.replaceAllMapped(re, (match) =>
+      convertNonprintable(match.input.codeUnitAt(0)));
 }
