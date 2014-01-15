@@ -31,12 +31,12 @@
 annotated with command line specific metadata.</p></div>
 <div>
 <h3>Functions</h3>
-<div class="method"><h4 id="sketch">
+<div class="method"><h4 id="declare">
 <button class="show-code">Code</button>
-<a href="unscripted/Script.html">Script</a> <strong>sketch</strong>(model) <a class="anchor-link" href="#sketch"
-              title="Permalink to sketch">#</a></h4>
+<a href="unscripted/Script.html">Script</a> <strong>declare</strong>(model) <a class="anchor-link" href="#declare"
+              title="Permalink to declare">#</a></h4>
 <div class="doc">
-<p>"Sketches" a <a class="crossref" href="unscripted/Script.html">Script</a> from 
+<p>Declares a <a class="crossref" href="unscripted/Script.html">Script</a> from 
 <span class="param">model</span>.</p>
 <p>The model is generally a closure of a method, which is annotated with
 command-line metadata.  The model can also be a class (see below).</p>
@@ -70,7 +70,7 @@ corresponding command-line arguments, and so forth (recursively).  If a
 model has sub-commands, but no sub-command was specified, this is treated
 as an error, and the help text is displayed.</p>
 <p>Basic example:</p>
-<pre><code>main(arguments) =&gt; sketch(greet).execute(arguments);
+<pre><code>main(arguments) =&gt; declare(greet).execute(arguments);
 
 // Optional command-line metadata:
 @Command(help: 'Outputs a greeting')
@@ -86,7 +86,7 @@ greet(
 }
 </code></pre>
 <p>Sub-command example:</p>
-<pre><code>main(arguments) =&gt; sketch(Server).execute(arguments);
+<pre><code>main(arguments) =&gt; declare(Server).execute(arguments);
 
 class Server {
 
@@ -115,7 +115,7 @@ document, in the help text, example arguments that they can receive.</p>
 dash-erized command-line equivalents.  For example, <code>fooBar</code> would map to
 <code>foo-bar</code>.</p>
 <pre class="source">
-Script sketch(model) {
+Script declare(model) {
  if(model is Function) return new FunctionScript(model);
  if(model is Type) return new ClassScript(model);
  throw new ArgumentError('model must be a Type or Function');
@@ -200,7 +200,7 @@ Script sketch(model) {
         <div class="clear"></div>
         </div>
         <div class="footer">
-          <div>This page was generated at 2014-01-14 22:08:55.034</div>
+          <div>This page was generated at 2014-01-15 19:47:59.336</div>
         </div>
         <script async src="client-live-nav.js"></script>
         </body></html>
