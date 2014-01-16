@@ -53,36 +53,50 @@ cat(
   // Default to stdin.
   if (files.isEmpty) files = [Input.parse('-')];
 
-  forEachAsync(files, (Input input) {
+  // Get lines.
+  var lines = concatAsync(files, toStream: (Input input) =>
+    input.stream.transform(UTF8.decoder.fuse(const LineSplitter())));
 
-    // Get lines.
-    var lines = input.stream.transform(UTF8.decoder.fuse(const LineSplitter()));
+  // Squeeze blank lines.
+  if(squeezeBlank) lines = squeezeBlankLines(lines);
 
-    // Squeeze blank lines.
-    if(squeezeBlank) lines = squeezeBlankLines(lines);
-
-    // Number lines.
-    if(number) {
-      lines = enumerateStream(lines);
-      if(numberNonblank) {
-        lines = shiftForBlanks(lines);
-      }
-      lines = lines.map((IndexedValue pair) {
-        var line = pair.value;
-        var lineNum = (numberNonblank && line.isEmpty) ? null : pair.index + 1;
-        var lineNumString = lineNum == null ? '' : lineNum.toString();
-        return '${padLeft(lineNumString, 6, ' ')}  $line';
-      });
+  // Number lines.
+  if(number) {
+    lines = enumerateStream(lines);
+    if(numberNonblank) {
+      lines = shiftForBlanks(lines);
     }
+    lines = lines.map((IndexedValue pair) {
+      var line = pair.value;
+      var lineNum = (numberNonblank && line.isEmpty) ? null : pair.index + 1;
+      var lineNumString = lineNum == null ? '' : lineNum.toString();
+      return '${padLeft(lineNumString, 6, ' ')}  $line';
+    });
+  }
 
-    // Show non-printing characters.
-    if(showEnds)        lines = lines.map((line) => '$line\$');
-    if(showTabs)        lines = lines.map((str) => str.replaceAll('\t', '^I'));
-    if(showNonprinting) lines = lines.map(showNonprintables);
+  // Show non-printing characters.
+  if(showEnds)        lines = lines.map((line) => '$line\$');
+  if(showTabs)        lines = lines.map((str) => str.replaceAll('\t', '^I'));
+  if(showNonprinting) lines = lines.map(showNonprintables);
 
-    // Print lines.
-    return lines.forEach(print);
-  });
+  // Print lines.
+  lines.forEach(print);
+}
+
+/// Concatenate [Stream]s.
+///
+/// Items in [iterable] is converted to Streams by [toStream] when the
+/// previous item's Stream is done.  If [toStream] is null, it defaults to the
+/// identity function (e.g. `(x) => x`).
+///
+/// The returned Stream concatenates the events of each resulting Stream.
+Stream concatAsync(Iterable iterable, {Stream toStream(item)}) {
+  if(toStream == null) toStream = (x) => x;
+  var controller = new StreamController();
+  forEachAsync(iterable, (item) {
+    return controller.addStream(toStream(item));
+  })..catchError(controller.addError)..whenComplete(controller.close);
+  return controller.stream;
 }
 
 Stream<IndexedValue> enumerateStream(Stream stream) {
