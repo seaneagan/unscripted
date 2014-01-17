@@ -43,7 +43,7 @@ class Flag extends Option {
       defaultsTo,
       bool hide,
       bool negatable})
-      : this.negatable = negatable == null ? true : negatable,
+      : this.negatable = negatable == null ? false : negatable,
         super(help: help, abbr: abbr, defaultsTo: defaultsTo, hide: hide);
 }
 
