@@ -45,7 +45,7 @@ class Flag extends Option {
      defaultsTo,
      bool hide,
      bool negatable})
-     : this.negatable = negatable == null ? true : negatable,
+     : this.negatable = negatable == null ? false : negatable,
        super(help: help, abbr: abbr, defaultsTo: defaultsTo, hide: hide);
 }
 </pre>
@@ -73,7 +73,7 @@ const Flag({
    defaultsTo,
    bool hide,
    bool negatable})
-   : this.negatable = negatable == null ? true : negatable,
+   : this.negatable = negatable == null ? false : negatable,
      super(help: help, abbr: abbr, defaultsTo: defaultsTo, hide: hide);
 </pre>
 </div>
@@ -188,7 +188,7 @@ final Function parser
         <div class="clear"></div>
         </div>
         <div class="footer">
-          <div>This page was generated at 2014-01-16 18:29:48.033</div>
+          <div>This page was generated at 2014-01-17 19:30:18.905</div>
         </div>
         <script async src="../client-live-nav.js"></script>
         </body></html>
