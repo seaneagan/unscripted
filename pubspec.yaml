@@ -1,6 +1,6 @@
 name: unscripted
 author: Sean Eagan <seaneagan1@gmail.com>
-version: 0.3.0
+version: 0.3.1
 homepage: http://github.com/seaneagan/unscripted
 description: Declarative command-line interface programming.
 documentation: http://seaneagan.github.com/unscripted
