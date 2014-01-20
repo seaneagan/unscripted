@@ -104,7 +104,7 @@ abstract class DeclarationScript extends ScriptImpl {
     var commandName = commandInvocation.name;
     var commandSymbol = new Symbol(dashesToCamelCase.encode(commandName));
     var classMirror = result.type;
-    var methods = getInstanceMethods(classMirror);
+    var methods = classMirror.instanceMembers;
     var commandMethod = methods[commandSymbol];
     var invocation = convertCommandInvocationToInvocation(commandInvocation, commandMethod, memberName: commandSymbol);
     var subResult = result.delegate(invocation);

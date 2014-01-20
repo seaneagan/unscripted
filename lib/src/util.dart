@@ -179,7 +179,7 @@ getParserFromType(TypeMirror typeMirror) {
 _addSubCommandsForClass(Usage usage, TypeMirror typeMirror) {
   if(typeMirror is ClassMirror) {
 
-    var methods = getInstanceMethods(typeMirror).values;
+    var methods = typeMirror.instanceMembers.values;
 
     Map<MethodMirror, SubCommand> subCommands = {};
 
@@ -331,20 +331,6 @@ convertCommandInvocationToInvocation(CommandInvocation commandInvocation, Method
   });
 
   return new InvocationMaker.method(memberName, positionals, named).invocation;
-}
-
-// TODO (https://github.com/seaneagan/unscripted/issues/18)
-Map<Symbol, MethodMirror> getInstanceMethods(ClassMirror classMirror) {
-  var declarations = classMirror.declarations;
-  return declarations.keys.fold({}, (ret, name) {
-    var declaration = declarations[name];
-    if(declaration is MethodMirror &&
-       declaration.isRegularMethod &&
-       !declaration.isStatic) {
-      ret[name] = declaration;
-    }
-    return ret;
-  });
 }
 
 parseInput(String arg, {filesystem.FileSystem fileSystem}) {
