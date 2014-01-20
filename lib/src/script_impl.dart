@@ -1,6 +1,7 @@
 
 library unscripted.declaration_script;
 
+import 'dart:io';
 import 'dart:mirrors';
 
 import 'package:unscripted/unscripted.dart';
@@ -27,6 +28,7 @@ abstract class ScriptImpl implements Script {
       var helpUsage = e is UsageException ? e.usage : usage;
       print('$e\n');
       _printHelp(helpUsage);
+      exitCode = 2;
       return;
     }
 

@@ -1,6 +1,8 @@
 
 library script_test;
 
+import 'dart:io';
+
 import 'package:unscripted/unscripted.dart';
 import 'package:unscripted/src/script_impl.dart';
 import 'package:unittest/unittest.dart';
@@ -17,6 +19,17 @@ main() {
       _happened = false;
       _lastSeenRest = null;
     });
+
+    tearDown(() {
+      // UsageExceptions set exit code to 2.
+      exitCode = 0;
+    });
+
+    expectUsageError() {
+      expect(_happened, isFalse);
+      // TODO: Uncomment once http://dartbug.com/16217 is fixed.
+      // expect(exitCode, 2);
+    }
 
     group('FunctionScript', () {
 
@@ -72,14 +85,14 @@ main() {
         new FunctionScript((String first) {
           _happened = true;
         }).execute(['first', 'extra']);
-        expect(_happened, isFalse);
+        expectUsageError();
       });
 
       test('not enough positionals', () {
         new FunctionScript((String first) {
           _happened = true;
         }).execute([]);
-        expect(_happened, isFalse);
+        expectUsageError();
       });
 
       test('rest from Rest', () {
@@ -96,7 +109,7 @@ main() {
         new FunctionScript((String first, @Rest(required: true) rest) {
           _happened = true;
         }).execute(['first']);
-        expect(_happened, isFalse);
+        expectUsageError();
       });
 
       test('dashed arg', () {
@@ -145,7 +158,7 @@ main() {
         new FunctionScript(({@Option(parser: int.parse) int option}) {
           _happened = true;
         }).execute(['--option', 'abc']);
-        expect(_happened, false);
+        expectUsageError();
       });
 
       test('for Option - with allowMultiple', () {
@@ -194,7 +207,7 @@ main() {
         new FunctionScript((@Positional(parser: int.parse) int first) {
           _happened = true;
         }).execute(['abc']);
-        expect(_happened, false);
+        expectUsageError();
       });
 
     });
@@ -298,4 +311,3 @@ class SubCommandScriptTest {
   A = 1,
   B = 2,
   C = 3;
-
