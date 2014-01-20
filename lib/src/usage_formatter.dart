@@ -10,12 +10,20 @@ abstract class UsageFormatter {
   UsageFormatter(this.usage);
 }
 
+AnsiPen get titlePen {
+	return new AnsiPen()..white(bold: true);
+}
+
 // TODO: Add tests for this.
 class TerminalUsageFormatter extends UsageFormatter {
 
   TerminalUsageFormatter(Usage usage) : super(usage);
 
   String format() {
+
+    var oldColorDisabled = color_disabled;
+
+    color_disabled = shouldDisableColor();
 
     var parser = usage.parser;
     var description = usage.description;
@@ -55,7 +63,8 @@ class TerminalUsageFormatter extends UsageFormatter {
 
     if(parser.commands.isNotEmpty) {
       blocks.add(['Available commands', '''
-${parser.commands.keys.map((command) => '  $command\n').join()}
+${parser.commands.keys.join('\n')}
+
 Use "${_formatRootCommand()} $HELP [command]" for more information about a command.''']);
     }
 
@@ -68,6 +77,8 @@ Use "${_formatRootCommand()} $HELP [command]" for more information about a comma
         .toList();
 
     if(description.isNotEmpty) blockStrings.insert(0, description);
+
+    color_disabled = oldColorDisabled;
 
     return blockStrings.join('\n\n');
   }
@@ -87,9 +98,9 @@ Use "${_formatRootCommand()} $HELP [command]" for more information about a comma
 
   String _formatBlock(String title, String content) {
     return '''
-$title:
+${titlePen(title)}:
 
-$content''';
+${indentLines(content)}''';
   }
 }
 
@@ -101,3 +112,12 @@ formatCallStyle(CallStyle callStyle) {
     case CallStyle.SHELL: return commandName;
   }
 }
+
+indentLines(String text) =>
+    const LineSplitter().convert(text).map((line) => indentLine(line, 2)).join('\n');
+
+indentLine(String line, int spaces, {int depth: 1}) => '${repeat(' ', spaces * depth)}$line';
+
+// TODO: May need to also disable when testing help formatting output.
+bool shouldDisableColor() => Platform.operatingSystem == 'windows' ||
+      !stdout.hasTerminal;

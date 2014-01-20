@@ -5,6 +5,7 @@ homepage: http://github.com/seaneagan/unscripted
 description: Declarative command-line interface programming.
 documentation: http://seaneagan.github.com/unscripted
 dependencies:
+  ansicolor: any
   args: any
   collection: any
   mockable_filesystem: any

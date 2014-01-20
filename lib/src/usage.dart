@@ -1,11 +1,14 @@
 
 library unscripted.usage;
 
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:ansicolor/ansicolor.dart';
 import 'package:collection/collection.dart';
 import 'package:path/path.dart' as path;
 import 'package:args/args.dart' show ArgParser, ArgResults;
+import 'package:quiver/strings.dart';
 import 'package:unscripted/unscripted.dart';
 import 'package:unscripted/src/util.dart';
 
