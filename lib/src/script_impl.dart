@@ -26,9 +26,7 @@ abstract class ScriptImpl implements Script {
       // TODO: ArgParser.parse throws FormatException which does not indicate
       // which sub-command was trying to be executed.
       var helpUsage = e is UsageException ? e.usage : usage;
-      print('$e\n');
-      _printHelp(helpUsage);
-      exitCode = 2;
+      _handleUsageError(helpUsage, e);
       return;
     }
 
@@ -40,11 +38,23 @@ abstract class ScriptImpl implements Script {
   /// Handles successfully validated [commandInvocation].
   _handleResults(CommandInvocation commandInvocation);
 
-  /// Prints help information for the associated command or sub-command thereof
-  /// at [commandPath].
+  /// Prints help for [helpUsage].  If [error] is not null, prints the help and
+  /// error to [stderr].
   // TODO: Integrate with Loggers.
-  _printHelp(Usage helpUsage) {
-    print(getUsageFormatter(helpUsage).format());
+  _printHelp(Usage helpUsage, [error]) {
+    var isError = error == null;
+    var sink = stdout;
+    if(isError) {
+      sink = stderr;
+      sink.writeln(error);
+      sink.writeln();
+    }
+    sink.writeln(getUsageFormatter(helpUsage).format());
+  }
+
+  _handleUsageError(Usage usage, error) {
+    _printHelp(usage, error);
+    exitCode = 2;
   }
 
   bool _checkHelp(CommandInvocation commandInvocation) {
@@ -86,8 +96,7 @@ abstract class DeclarationScript extends ScriptImpl {
     if(commandInvocation == null) {
       // TODO: Move this to an earlier UsageException instead ?
       if(usage != null && usage.commands.isNotEmpty) {
-        print('Must specify a sub-command.\n');
-        _printHelp(usage);
+        _handleUsageError(usage, 'Must specify a sub-command.');
       }
       return;
     }
