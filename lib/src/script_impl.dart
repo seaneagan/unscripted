@@ -42,7 +42,7 @@ abstract class ScriptImpl implements Script {
   /// error to [stderr].
   // TODO: Integrate with Loggers.
   _printHelp(Usage helpUsage, [error]) {
-    var isError = error == null;
+    var isError = error != null;
     var sink = stdout;
     if(isError) {
       sink = stderr;
