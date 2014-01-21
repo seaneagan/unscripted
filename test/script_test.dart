@@ -132,7 +132,7 @@ main() {
       }
 
       test('with sub-commands', () {
-        new FunctionScript(withSubCommands).execute(['--flag1', 'recursive2', '--no-flag2']);
+        new FunctionScript(withSubCommands).execute(['--flag1', 'recursive2', '--flag2']);
       });
 
     });
