@@ -149,7 +149,7 @@ Usage getUsageFromFunction(MethodMirror methodMirror, {Usage usage}) {
     // TODO: This is not very maintainable.
     // Use reflection instead to copy values over?
     option = option is Flag ?
-        new Flag(help: option.help, abbr: option.abbr,
+        new Flag(help: option.help, abbr: option.abbr, hide: option.hide,
             defaultsTo: defaultValue, negatable: option.negatable) :
         new Option(help: option.help, abbr: option.abbr,
             defaultsTo: defaultValue, allowed: option.allowed,
@@ -233,6 +233,7 @@ void addOptionToParser(ArgParser parser, String name, Option option) {
   var props = {
     #abbr: option.abbr,
     #help: option.help,
+    #hide: option.hide,
     #defaultsTo: option.defaultsTo
   };
 
@@ -254,7 +255,6 @@ void addOptionToParser(ArgParser parser, String name, Option option) {
     }
     props.addAll({
       #allowMultiple: option.allowMultiple,
-      #hide: option.hide,
     });
   }
 
