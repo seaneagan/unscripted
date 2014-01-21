@@ -80,7 +80,7 @@ Use "${_formatRootCommand()} $HELP [command]" for more information about a comma
 
     color_disabled = oldColorDisabled;
 
-    return blockStrings.join('\n\n');
+    return blockStrings.join('\n\n') + '\n';
   }
 
   _formatExample(ArgExample example) {
