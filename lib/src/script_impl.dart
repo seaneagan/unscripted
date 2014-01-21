@@ -96,7 +96,9 @@ abstract class DeclarationScript extends ScriptImpl {
     if(commandInvocation == null) {
       // TODO: Move this to an earlier UsageException instead ?
       if(usage != null && usage.commands.isNotEmpty) {
-        _handleUsageError(usage, 'Must specify a sub-command.');
+        _handleUsageError(usage, new UsageException(
+            usage: usage,
+            cause: 'Must specify a sub-command.'));
       }
       return;
     }
