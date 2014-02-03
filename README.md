@@ -153,3 +153,6 @@ Options:
 [declare]: https://seaneagan.github.com/unscripted/unscripted.html#declare
 [examples]: https://github.com/seaneagan/unscripted/tree/master/example
 [old_greet]: https://github.com/seaneagan/unscripted/tree/master/example/old_greet.dart
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/seaneagan/unscripted/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
