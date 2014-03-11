@@ -2,8 +2,8 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:quiver/async.dart';
 import 'package:quiver/iterables.dart';
+import 'package:quiver/streams.dart' as streams;
 import 'package:quiver/strings.dart';
 import 'package:unscripted/unscripted.dart';
 
@@ -54,15 +54,15 @@ cat(
   if (files.isEmpty) files = [Input.parse('-')];
 
   // Get lines.
-  var lines = concatAsync(files, toStream: (Input input) =>
-    input.stream.transform(UTF8.decoder.fuse(const LineSplitter())));
+  var lines = streams.concat(files.map((Input input) =>
+    input.stream.transform(UTF8.decoder.fuse(const LineSplitter()))));
 
   // Squeeze blank lines.
   if(squeezeBlank) lines = squeezeBlankLines(lines);
 
   // Number lines.
   if(number) {
-    lines = enumerateStream(lines);
+    lines = streams.enumerate(lines);
     if(numberNonblank) {
       lines = shiftForBlanks(lines);
     }
@@ -81,27 +81,6 @@ cat(
 
   // Print lines.
   lines.forEach(print);
-}
-
-/// Concatenate [Stream]s.
-///
-/// Items in [iterable] is converted to Streams by [toStream] when the
-/// previous item's Stream is done.  If [toStream] is null, it defaults to the
-/// identity function (e.g. `(x) => x`).
-///
-/// The returned Stream concatenates the events of each resulting Stream.
-Stream concatAsync(Iterable iterable, {Stream toStream(item)}) {
-  if(toStream == null) toStream = (x) => x;
-  var controller = new StreamController();
-  forEachAsync(iterable, (item) {
-    return controller.addStream(toStream(item));
-  })..catchError(controller.addError)..whenComplete(controller.close);
-  return controller.stream;
-}
-
-Stream<IndexedValue> enumerateStream(Stream stream) {
-  var index = 0;
-  return stream.map((value) => new IndexedValue(index++, value));
 }
 
 Stream<IndexedValue> shiftForBlanks(Stream<IndexedValue> stream) {
