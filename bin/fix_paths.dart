@@ -83,5 +83,5 @@ void fixIndexFiles(List<Map> indexFiles) {
 }
 
 void main() {
-  fixIndexFiles(findIndexFiles('../build/web'));
+  fixIndexFiles(findIndexFiles('../.docs_staging'));
 }
