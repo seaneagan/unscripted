@@ -168,10 +168,9 @@ Usage getUsageFromFunction(MethodMirror methodMirror, {Usage usage}) {
 
 getParserFromType(TypeMirror typeMirror) {
   if(typeMirror is ClassMirror &&
-      typeMirror.declarations.values.any((d) => d.isStatic && d.simpleName == #parse)) {
-    var closure = typeMirror[#parse];
-    // TODO: This is a workaround for http://dartbug.com/16025.
-    return (item) => closure(item).reflectee;
+      typeMirror.declarations.values.any((d) =>
+          d.isStatic && d.simpleName == #parse)) {
+    return (String item) => typeMirror.invoke(#parse, [item]).reflectee;
   }
   return null;
 }

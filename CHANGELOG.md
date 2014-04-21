@@ -1,3 +1,8 @@
+## 0.3.2
+
+Bugfixes:
+
+  - dart:mirror closurization operator removed (#50)
 
 ## 0.3.0
 
