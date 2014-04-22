@@ -149,7 +149,7 @@ Options:
 
 [pkg]: http://pub.dartlang.org/packages/unscripted
 [cat.dart]: https://github.com/seaneagan/unscripted/blob/master/example/cat.dart
-[api_docs]: https://seaneagan.github.com/unscripted/unscripted.html
+[api_docs]: https://seaneagan.github.com/unscripted
 [declare]: https://seaneagan.github.com/unscripted/unscripted.html#declare
 [examples]: https://github.com/seaneagan/unscripted/tree/master/example
 [old_greet]: https://github.com/seaneagan/unscripted/tree/master/example/old_greet.dart
