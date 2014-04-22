@@ -10,6 +10,6 @@ dependencies:
   collection: any
   mockable_filesystem: any
   path: any
-dev_dependencies:
   quiver: any
+dev_dependencies:
   unittest: any
