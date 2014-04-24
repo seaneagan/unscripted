@@ -232,8 +232,7 @@ void addOptionToParser(ArgParser parser, String name, Option option) {
   var props = {
     #abbr: option.abbr,
     #help: option.help,
-    #hide: option.hide,
-    #defaultsTo: option.defaultsTo
+    #hide: option.hide
   };
 
   if(option is Flag) {

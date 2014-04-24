@@ -303,11 +303,18 @@ CommandInvocation applyUsageToCommandInvocation(Usage usage, CommandInvocation i
   usage.options
       .forEach((optionName, option) {
         var optionValue = invocation.options[optionName];
-        var values = optionValue is List ? optionValue : [optionValue];
-        parseValue(value) => parseArg(option.parser, value, optionName);
-        options[optionName] = optionValue is List ?
-            new UnmodifiableListView(optionValue.map(parseValue)) :
-            parseValue(optionValue);
+        var resolvedOptionValue;
+        if(option.defaultsTo != null && optionValue == null) {
+          resolvedOptionValue = option.defaultsTo;
+        } else {
+          var optionValue = invocation.options[optionName];
+          var values = optionValue is List ? optionValue : [optionValue];
+          parseValue(value) => parseArg(option.parser, value, optionName);
+          resolvedOptionValue = optionValue is List ?
+              new UnmodifiableListView(optionValue.map(parseValue)) :
+              parseValue(optionValue);
+        }
+        options[optionName] = resolvedOptionValue;
       });
 
   CommandInvocation subCommand;

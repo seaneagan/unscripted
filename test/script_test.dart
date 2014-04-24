@@ -203,6 +203,14 @@ main() {
         expect(restValue, [4, 5, 6]);
       });
 
+      test('not called on default values', () {
+        var optionValue;
+        new FunctionScript(({int option : 1}) {
+          optionValue = option;
+        }).execute([]);
+        expect(optionValue, 1);
+      });
+
       test('for Positional - invalid input throws', () {
         new FunctionScript((@Positional(parser: int.parse) int first) {
           _happened = true;
