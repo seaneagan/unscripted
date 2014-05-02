@@ -132,7 +132,12 @@ class Usage {
 
   CommandInvocation validate(List<String> arguments) {
 
-    var results = parser.parse(arguments, allowTrailingOptions: _allowTrailingOptions);
+    ArgResults results;
+    try {
+      results = parser.parse(arguments, allowTrailingOptions: _allowTrailingOptions);
+    } catch (e, s) {
+      throw new UsageException(usage: this, cause: e);
+    }
 
     var commandInvocation = convertArgResultsToCommandInvocation(results);
 
@@ -144,7 +149,7 @@ class Usage {
     return commandInvocation;
   }
 
-  CommandInvocation _validate(CommandInvocation commandInvocation) {
+    void _validate(CommandInvocation commandInvocation) {
     var actual = commandInvocation.positionals != null ?
         commandInvocation.positionals.length : 0;
     int max;
