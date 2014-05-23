@@ -2,7 +2,6 @@
 library command_line_test;
 
 import 'package:unscripted/src/completion/completion.dart';
-import 'package:unscripted/src/usage.dart';
 import 'package:unittest/unittest.dart';
 
 main() {

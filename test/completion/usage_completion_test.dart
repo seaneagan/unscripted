@@ -13,10 +13,12 @@ main() {
   CommandLine makeSimpleCommandLine(String line) {
     line = 'foo $line';
     var args = line.split(new RegExp(r'\s+'));
+    var cWord = args.length - 1;
+    if(args.last == '') args.removeLast();
     return new CommandLine(args, environment: {
       'COMP_LINE' : line,
       'COMP_POINT': line.length.toString(),
-      'COMP_CWORD': (args.length - 1).toString()
+      'COMP_CWORD': cWord.toString()
     });
   }
 
@@ -24,23 +26,17 @@ main() {
 
     group('when usage empty', () {
 
-      test('-- suggests --help', () {
+      test('should complete -- to --help', () {
         var commandLine = makeSimpleCommandLine('--');
         var completions = getUsageCompletions(new Usage(), commandLine);
         expect(completions, ['--help']);
-      });
-
-      test('- suggests -h', () {
-        var commandLine = makeSimpleCommandLine('-');
-        var completions = getUsageCompletions(new Usage(), commandLine);
-        expect(completions, ['-h']);
       });
 
     });
 
     group('when completing long option', () {
 
-      test('suggests all long options', () {
+      test('should suggest all long options for --', () {
         var commandLine = makeSimpleCommandLine('--');
         var usage = new Usage()
             ..addOption('aaa', new Option())
@@ -50,7 +46,7 @@ main() {
         expect(completions, ['--help', '--aaa', '--bbb']);
       });
 
-      test('suggests long options with same prefix', () {
+      test('should suggest long options with same prefix', () {
         var commandLine = makeSimpleCommandLine('--a');
         var usage = new Usage()
             ..addOption('aaa', new Option())
@@ -62,37 +58,27 @@ main() {
 
     });
 
-    group('when completing short option', () {
+    test('should complete - to --', () {
+      var usage = new Usage()
+          ..addOption('opt', new Option(abbr: 'o'));
 
-      test('suggests all short options', () {
-        var commandLine = makeSimpleCommandLine('-');
-        var usage = new Usage()
-            ..addOption('aaa', new Option(abbr: 'a'))
-            ..addOption('bbb', new Option(abbr: 'b'));
+      var completions = getUsageCompletions(usage, makeSimpleCommandLine('-'));
+      expect(completions, ['--']);
+    });
 
-        var completions = getUsageCompletions(usage, commandLine);
-        expect(completions, ['-h', '-a', '-b']);
-      });
 
-      test('suggests short flags not already specified', () {
-        var commandLine = makeSimpleCommandLine('-x');
-        var usage = new Usage()
-            ..addOption('opt', new Option(abbr: 'o'))
-            ..addOption('xflag', new Flag(abbr: 'x'))
-            ..addOption('yflag', new Flag(abbr: 'y'));
+    test('should complete short option to long option', () {
+      var usage = new Usage()
+          ..addOption('opt', new Option(abbr: 'o'))
+          ..addOption('flag', new Flag(abbr: 'f'));
 
-        var completions = getUsageCompletions(usage, commandLine);
-        // TODO: Do we really want 'h' (help) here?  Makes sense for -vh
-        // (verbose help) for example.
-        expect(completions, ['-xh', '-xy']);
-      });
-
+      expect(getUsageCompletions(usage, makeSimpleCommandLine('-o')), ['--opt']);
+      expect(getUsageCompletions(usage, makeSimpleCommandLine('-f')), ['--flag']);
     });
 
     group('when completing option value', () {
 
-      test('suggests allowed when specified', () {
-        var commandLine = makeSimpleCommandLine('--aaa ');
+      test('should suggest allowed', () {
         var usage = new Usage()
             ..addOption('aaa', new Option(abbr: 'a', allowed: ['x', 'y', 'z']))
             ..addOption('bbb', new Option(abbr: 'b', allowed: {'x': '', 'y': '', 'z': ''}))
@@ -109,15 +95,28 @@ main() {
         testAllowed('-b ', ['x', 'y', 'z']);
         testAllowed('--ccc ', []);
         testAllowed('-c ', []);
-        testAllowed('--flag ', []);
         testAllowed('-f ', []);
+      });
+
+      test('should suggest allowed result when allowed is a func', () {
+        var usage = new Usage()
+            ..addOption('aaa', new Option(abbr: 'a', allowed: (partial) => ['x', 'y', 'z']));
+
+        testAllowed(String line, Iterable<String> expectedCompletions) {
+          var completions = getUsageCompletions(usage, makeSimpleCommandLine(line));
+          expect(completions, expectedCompletions);
+        }
+        testAllowed('--aaa ', ['x', 'y', 'z']);
+        testAllowed('--aaa x', ['x']);
+        testAllowed('-a ', ['x', 'y', 'z']);
+        testAllowed('-a x', ['x']);
       });
 
     });
 
     group('when completing a command', () {
 
-      test('suggests available commands', () {
+      test('should suggest available commands', () {
         var commandLine = makeSimpleCommandLine(' ');
         var usage = new Usage()
             ..addCommand('xcommand')
@@ -127,7 +126,7 @@ main() {
         expect(completions, unorderedEquals(['help', 'xcommand', 'ycommand']));
       });
 
-      test('suggests commands matching incomplete word', () {
+      test('should suggest commands matching incomplete word', () {
         var commandLine = makeSimpleCommandLine(' x');
         var usage = new Usage()
             ..addCommand('xcommand')

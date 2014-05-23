@@ -1,17 +1,17 @@
+#!/usr/bin/env dart
 
 import 'package:unscripted/unscripted.dart';
 
-main(arguments) => declare(greet).execute(arguments);
+main(arguments) => declare(greet).execute(arguments, isWindows: false);
 
 // Optional command-line metadata:
-@Command(help: 'Outputs a greeting')
+@Command(help: 'Outputs a greeting', completion: true, callStyle: CallStyle.SHEBANG)
 @ArgExample('--salutation Welcome --exclaim Bob', help: 'enthusiastic')
 greet(
-    @Rest(help: "Name(s) to greet")
-    List<String> who, // A rest parameter, must be last positional.
+    @Rest(help: "Name(s) to greet") List<String> who,
     {String salutation : 'Hello', // An option, use `@Option(...)` for metadata.
      bool exclaim : false}) { // A flag, use `@Flag(...)` for metadata.
 
-  print('$salutation ${who.join(' ')}${exclaim ? '!' : ''}');
+  print('$salutation${who == null ? '' : ' ${who.join(' ')}'}${exclaim ? '!' : ''}');
 
 }

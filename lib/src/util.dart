@@ -9,6 +9,7 @@ import 'package:args/args.dart' show ArgParser, ArgResults;
 import 'package:unscripted/unscripted.dart';
 import 'package:unscripted/src/string_codecs.dart';
 import 'package:unscripted/src/usage.dart';
+import 'package:unscripted/src/completion/completion.dart';
 import 'package:unscripted/src/invocation_maker.dart';
 import 'package:mockable_filesystem/filesystem.dart' as filesystem;
 
@@ -209,20 +210,23 @@ _addSubCommandsForClass(Usage usage, TypeMirror typeMirror) {
 _addCommandMetadata(Usage usage, DeclarationMirror declaration) {
   BaseCommand command = getFirstMetadataMatch(
       declaration, (metadata) => metadata is BaseCommand);
+  if(command is Command && usage.parent == null) {
+    var topCommand = command as Command;
+    usage.callStyle = topCommand.callStyle;
+    if(topCommand.completion) addCompletionCommand(usage);
+  }
   var description = command == null ? '' : command.help;
   usage.description = description;
   Iterable<ArgExample> examples = declaration.metadata
       .map((annotation) => annotation.reflectee)
       .where((metadata) => metadata is ArgExample);
-  examples.forEach((example) {
-    usage.addExample(example);
-  });
+  examples.forEach(usage.addExample);
 }
 
 getFirstMetadataMatch(DeclarationMirror declaration, bool match(metadata)) {
   return declaration.metadata
       .map((annotation) => annotation.reflectee)
-        .firstWhere(match, orElse: () => null);
+      .firstWhere(match, orElse: () => null);
 }
 
 void addOptionToParser(ArgParser parser, String name, Option option) {
@@ -243,8 +247,8 @@ void addOptionToParser(ArgParser parser, String name, Option option) {
   } else {
     suffix = 'Option';
 
-    if(option.allowed != null) {
-      var allowed = option.allowed;
+    var allowed = option.allowed;
+    if(allowed != null && allowed is! Function) {
       if(allowed is Map<String, String>) {
         allowed = allowed.keys.toList();
         props[#allowedHelp] = option.allowed;

@@ -11,10 +11,6 @@ part 'usage_completion.dart';
 part 'command_line.dart';
 part 'completion_script.dart';
 
-//completion.usage = "npm completion >> ~/.bashrc\n"
-//                 + "npm completion >> ~/.zshrc\n"
-//                 + "source <(npm completion)"
-
 void complete (
     Usage usage,
     List<String> args,
@@ -26,43 +22,27 @@ void complete (
     var ENOTSUP = 252;
     exitCode = ENOTSUP;
     throw new UnsupportedError(
-        "${usage.name} completion not supported on windows");
+        "${formatCallStyle(usage.callStyle)} completion not supported on windows");
   }
 
   if(environment == null) environment = Platform.environment;
   var commandLine = new CommandLine(args, environment: environment);
   var output = commandLine == null ?
-    getScriptOutput(usage.name) :
+    getScriptOutput(formatCallStyle(usage.callStyle)) :
     // "Plumbing mode"
     getCompletionOutput(usage, commandLine);
 
-  print(output);
+  if(output.isNotEmpty) print(output);
 }
 
 String getCompletionOutput(Usage usage, CommandLine commandLine) {
 
-  var completions = (commandLine.wordIndex > 3) ?
-    getUsageCompletions(usage, commandLine) :
-    getCompletionCommandCompletions(commandLine);
+  var completions = getUsageCompletions(usage, commandLine);
 
-    completions = filterCompletions(
-      commandLine.partialWord, expandCompletions(completions));
+  completions = filterCompletions(
+    commandLine.partialWord, expandCompletions(completions));
 
   return completions.join('\n');
-}
-
-// TODO: Replace with `install` and `uninstall` sub-commands.
-Iterable getCompletionCommandCompletions(CommandLine commandLine) {
-  shellConfig(shell) => '.${shell}rc';
-  bool shellConfigExists(String shellConfig) => new File(
-      path.join(Platform.environment['HOME'], shellConfig)).existsSync();
-  var completions = ['bash', 'zsh']
-      .map(shellConfig).where(shellConfigExists)
-      .map((config) => path.join('~', config));
-  if (commandLine.wordIndex == 2) {
-    completions = completions.map((configPath) => [">>", configPath]);
-  }
-  return completions;
 }
 
 Iterable<String> expandCompletions(Iterable completions) =>
@@ -75,14 +55,27 @@ Iterable<String> filterCompletions(String partialWord, Iterable<String> completi
     unescape(c).startsWith(partialWord));
 }
 
-String completionsOutput(Iterable<String> completions) => (completions.join("\n"));
-
-String unescape (String w) {
+String unescape(String w) {
   if (w.startsWith('"')) return w.replaceAll(new RegExp(r'^"|"$'), "");
   return w.replaceAll(new RegExp(r'\\ '), " ");
 }
 
-String escape (String w) {
+String escape(String w) {
   if (!new RegExp(r'\s+').hasMatch(w)) return w;
   return '"$w"';
 }
+
+addCompletionCommand(Usage usage) {
+  var completionUsage = usage.addCommand('completion');
+  // TODO: How to add `. <(foo completion)` example?
+  shellConfigs.map((config) => new ArgExample('>> ${tildePath(config)}'))
+      .forEach(completionUsage.addExample);
+  completionUsage.description =
+      'Outputs a bash/zsh completion script for use with this command';
+  completionUsage.rest = new Rest(help: 'These are used only by the completion script', name: 'args');
+}
+
+final shells = ['bash', 'zsh'];
+final shellConfigs = shells.map(shellConfig);
+String shellConfig(shell) => '.${shell}rc';
+String tildePath(String subPath) => path.join('~', subPath);

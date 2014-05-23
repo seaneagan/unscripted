@@ -1,12 +1,13 @@
 
 part of unscripted.completion;
 
-void getScriptOutput (String command) {
+String getScriptOutput (String command) {
 
   var completionCommand = '$command completion';
-  var func = '_${command}_completion';
+  var func = '_${command.replaceAll(new RegExp(r'[.-]'), '_')}_completion';
 
-    var script = '''
+  return '''
+
 ###-begin-$command-completion-###
 #
 # $command command completion script
@@ -22,9 +23,9 @@ export COMP_WORDBREAKS
 if type complete &>/dev/null; then
   $func () {
     local si="\$IFS"
-    IFS=\$'\n' COMPREPLY=(\$(COMP_CWORD="\$COMP_CWORD" \
-                           COMP_LINE="\$COMP_LINE" \
-                           COMP_POINT="\$COMP_POINT" \
+    IFS=\$'\n' COMPREPLY=(\$(export COMP_CWORD="\$COMP_CWORD" \
+                           export COMP_LINE="\$COMP_LINE" \
+                           export COMP_POINT="\$COMP_POINT" \
                            $completionCommand -- "\${COMP_WORDS[@]}" \
                            2>/dev/null)) || return \$?
     IFS="\$si"
@@ -33,9 +34,9 @@ if type complete &>/dev/null; then
 elif type compdef &>/dev/null; then
   $func() {
     si=\$IFS
-    compadd -- \$(COMP_CWORD=\$((CURRENT-1)) \
-                 COMP_LINE=\$BUFFER \
-                 COMP_POINT=0 \
+    compadd -- \$(export COMP_CWORD=\$((CURRENT-1)) \
+                 export COMP_LINE=\$BUFFER \
+                 export COMP_POINT=0 \
                  $completionCommand -- "\${words[@]}" \
                  2>/dev/null)
     IFS=\$si
@@ -50,9 +51,9 @@ elif type compctl &>/dev/null; then
     read -l line
     read -ln point
     si="\$IFS"
-    IFS=\$'\n' reply=(\$(COMP_CWORD="\$cword" \
-                       COMP_LINE="\$line" \
-                       COMP_POINT="\$point" \
+    IFS=\$'\n' reply=(\$(export COMP_CWORD="\$cword" \
+                       export COMP_LINE="\$line" \
+                       export COMP_POINT="\$point" \
                        $completionCommand -- "\${words[@]}" \
                        2>/dev/null)) || return \$?
     IFS="\$si"
@@ -62,4 +63,3 @@ fi
 ###-end-$command-completion-###
 ''';
 }
-

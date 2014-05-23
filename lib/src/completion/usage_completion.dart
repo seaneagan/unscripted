@@ -31,7 +31,7 @@ Iterable getUsageCompletions(Usage usage, CommandLine commandLine) {
   var leafCommandInvocation = commandInvocation;
   var leafUsage = usage;
   // Aggregate allowed and provided options.
-  var allowedOptions = leafUsage.options;
+  var allowedOptions = new Map.from(leafUsage.options);
   while(leafCommandInvocation.subCommand != null) {
     leafCommandInvocation = leafCommandInvocation.subCommand;
     leafUsage = usage.commands[leafCommandInvocation.name];
@@ -69,23 +69,19 @@ Iterable getUsageCompletions(Usage usage, CommandLine commandLine) {
       // Short option
       var abbrs = toComplete.substring(1).split('');
       if(abbrs.isEmpty) {
-        // Any remaining option abbr will work.
-        return completionOptions.values
-            .where((option) => option.abbr != null)
-            .map((option) => '$toComplete${option.abbr}');
+        return ['--'];
+        // TODO: Return short options like below instead?
       }
-      abbrs.forEach((abbr) {
+      if(abbrs.length == 1) {
+        var abbr = abbrs.single;
         var opt = completionOptions.keys.firstWhere((opt) {
           var option = completionOptions[opt];
           // TODO: Bail out on non-flags here?
           return option.abbr == abbr;
         }, orElse: () => null);
-        if(opt != null) completionOptions.remove(opt);
-      });
-      return completionOptions.values
-          .where((option) => option is Flag)
-          .map((flag) => flag.abbr).where((abbr) => abbr != null)
-          .map((abbr) => "$toComplete$abbr");
+        if(opt != null) return ['--$opt'];
+      }
+      return [];
     }
   }
 
@@ -116,16 +112,22 @@ Iterable getUsageCompletions(Usage usage, CommandLine commandLine) {
   return completions;
 }
 
-Iterable _getCompletionsForOption(Option option, String word) {
+Iterable<String> _getCompletionsForOption(Option option, String prefix) {
   // The word must be a command or positional argument.
   if(option is Flag) {
     return [];
   }
 
   var allowed = option.allowed;
-  if(allowed is Map) allowed = allowed.keys;
-  if(allowed != null) {
-    return allowed.where((v) => v.startsWith(word));
+  var newAllowed = allowed;
+  if(allowed is Iterable) newAllowed = allowed;
+  else if(allowed is _CompletionFilter) newAllowed = allowed(prefix);
+  else if(allowed is Map) newAllowed = allowed.keys;
+  if(newAllowed != null) {
+    return newAllowed.where((v) => v.startsWith(prefix));
   }
   return [];
 }
+
+// TODO: Allow returning a Future<Iterable<String>>
+typedef Iterable<String> _CompletionFilter(String prefix);

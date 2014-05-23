@@ -5,6 +5,7 @@ import 'dart:io';
 import 'dart:mirrors';
 
 import 'package:unscripted/unscripted.dart';
+import 'package:unscripted/src/completion/completion.dart';
 import 'package:unscripted/src/string_codecs.dart';
 import 'package:unscripted/src/usage.dart';
 import 'package:unscripted/src/util.dart';
@@ -16,7 +17,10 @@ abstract class ScriptImpl implements Script {
   UsageFormatter getUsageFormatter(Usage usage) =>
       new TerminalUsageFormatter(usage);
 
-  execute(List<String> arguments) {
+  execute(
+      List<String> arguments,
+      {Map<String, String> environment,
+       bool isWindows}) {
 
     CommandInvocation commandInvocation;
 
@@ -31,6 +35,10 @@ abstract class ScriptImpl implements Script {
     }
 
     if(_checkHelp(commandInvocation)) return;
+    if(_checkCompletion(
+        commandInvocation,
+        environment: environment,
+        isWindows: isWindows)) return;
     _handleResults(commandInvocation);
 
   }
@@ -68,6 +76,19 @@ abstract class ScriptImpl implements Script {
     }
     return false;
   }
+
+  bool _checkCompletion(
+      CommandInvocation commandInvocation,
+      {Map<String, String> environment,
+       bool isWindows}) {
+    var subCommand = commandInvocation.subCommand;
+    if(subCommand != null && subCommand.name == 'completion') {
+      complete(usage, subCommand.positionals.single, environment: environment,
+          isWindows: isWindows);
+      return true;
+    }
+    return false;
+  }
 }
 
 abstract class DeclarationScript extends ScriptImpl {
@@ -95,7 +116,7 @@ abstract class DeclarationScript extends ScriptImpl {
 
     if(commandInvocation == null) {
       // TODO: Move this to an earlier UsageException instead ?
-      if(usage != null && usage.commands.isNotEmpty) {
+      if(usage != null && usage.commands.keys.any((commandName) => !['help', 'completion'].contains(commandName))) {
         _handleUsageError(usage, new UsageException(
             usage: usage,
             cause: 'Must specify a sub-command.'));

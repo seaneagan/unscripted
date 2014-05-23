@@ -116,6 +116,9 @@ abstract class Script {
   /// if help was requested, help text is printed and the method returns.
   /// Otherwise, script-specific logic is executed on the successfully parsed
   /// arguments.
-  execute(List<String> arguments);
+  execute(
+      List<String> arguments,
+      {Map<String, String> environment,
+       bool isWindows});
 
 }
