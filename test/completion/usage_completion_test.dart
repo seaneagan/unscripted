@@ -63,7 +63,10 @@ main() {
           ..addOption('opt', new Option(abbr: 'o'));
 
       var completions = getUsageCompletions(usage, makeSimpleCommandLine('-'));
-      expect(completions, ['--']);
+      expect(completions, hasLength(2));
+      expect(completions.first, '--');
+      expect(completions.last, hasLength(greaterThan(2)));
+      expect(completions.last, startsWith('--'));
     });
 
 

@@ -69,7 +69,7 @@ Iterable getUsageCompletions(Usage usage, CommandLine commandLine) {
       // Short option
       var abbrs = toComplete.substring(1).split('');
       if(abbrs.isEmpty) {
-        return ['--'];
+        return ['--', '--this-should-never-be-seen'];
         // TODO: Return short options like below instead?
       }
       if(abbrs.length == 1) {
