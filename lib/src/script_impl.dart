@@ -83,7 +83,7 @@ abstract class ScriptImpl implements Script {
        bool isWindows}) {
     var subCommand = commandInvocation.subCommand;
     if(subCommand != null && subCommand.name == 'completion') {
-      complete(usage, subCommand.positionals.single, environment: environment,
+      complete(usage, subCommand, environment: environment,
           isWindows: isWindows);
       return true;
     }

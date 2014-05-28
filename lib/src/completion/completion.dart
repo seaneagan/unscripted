@@ -13,7 +13,7 @@ part 'completion_script.dart';
 
 void complete (
     Usage usage,
-    List<String> args,
+    CommandInvocation completionCommand,
     {bool isWindows,
      Map<String, String> environment}) {
 
@@ -26,13 +26,28 @@ void complete (
   }
 
   if(environment == null) environment = Platform.environment;
+  var args = completionCommand.positionals.single;
   var commandLine = new CommandLine(args, environment: environment);
-  var output = commandLine == null ?
-    getScriptOutput(formatCallStyle(usage.callStyle)) :
+  if(commandLine == null) {
+    var completionSubCommand = completionCommand.subCommand;
+    var commandToComplete = formatCallStyle(usage.callStyle);
+    if(completionSubCommand == null) {
+      print(getScriptOutput(commandToComplete));
+    } else {
+      var subCommandName = completionSubCommand.name;
+      switch(subCommandName) {
+        case 'install': installScript(commandToComplete); break;
+        case 'uninstall': uninstallScript(commandToComplete); break;
+        default: throw 'Unrecognized completion sub-command';
+      }
+    }
+  } else {
     // "Plumbing mode"
-    getCompletionOutput(usage, commandLine);
-
-  if(output.isNotEmpty) print(output);
+    var output = getCompletionOutput(usage, commandLine);
+    if(output.isNotEmpty) {
+      print(output);
+    }
+  }
 }
 
 String getCompletionOutput(Usage usage, CommandLine commandLine) {
@@ -66,16 +81,19 @@ String escape(String w) {
 }
 
 addCompletionCommand(Usage usage) {
-  var completionUsage = usage.addCommand('completion');
-  // TODO: How to add `. <(foo completion)` example?
-  shellConfigs.map((config) => new ArgExample('>> ${tildePath(config)}'))
-      .forEach(completionUsage.addExample);
-  completionUsage.description =
-      'Outputs a bash/zsh completion script for use with this command';
-  completionUsage.rest = new Rest(help: 'These are used only by the completion script', name: 'args');
+  var completionCommand = usage.addCommand('completion')
+      ..description =
+          'Install, uninstall, or output a bash/zsh completion script for use with this command'
+      ..rest = new Rest(help:
+          'These are used only by the completion script', name: 'args')
+      ..addExample(new ArgExample('install'))
+      ..addExample(new ArgExample('uninstall'))
+      ..addExample(new ArgExample('>> /usr/local/etc/bash_completion.d/${formatCallStyle(usage.callStyle)}'));
+  completionCommand.addCommand('install')
+      ..description = 'Install completion script in shell startup script (.bashrc/.zshrc)';
+  completionCommand.addCommand('uninstall')
+      ..description = 'Uninstall completion script from shell startup script (.bashrc/.zshrc)';
 }
 
-final shells = ['bash', 'zsh'];
-final shellConfigs = shells.map(shellConfig);
+// final shells = ['bash', 'zsh'];
 String shellConfig(shell) => '.${shell}rc';
-String tildePath(String subPath) => path.join('~', subPath);

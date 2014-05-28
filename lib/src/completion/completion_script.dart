@@ -1,14 +1,17 @@
 
 part of unscripted.completion;
 
+String getMarker(String command, String type) => '###-$type-$command-completion-###';
+String getBeginMarker(String command) => '\n' + getMarker(command, 'begin');
+String getEndMarker(String command) => getMarker(command, 'end') + '\n';
+
 String getScriptOutput (String command) {
 
   var completionCommand = '$command completion';
   var func = '_${command.replaceAll(new RegExp(r'[.-]'), '_')}_completion';
 
   return '''
-
-###-begin-$command-completion-###
+${getBeginMarker(command)}
 #
 # $command command completion script
 #
@@ -60,6 +63,67 @@ elif type compctl &>/dev/null; then
   }
   compctl -K $func $command
 fi
-###-end-$command-completion-###
-''';
+${getEndMarker(command)}''';
+}
+
+installScript(String command) {
+  var installCommand = '$command completion install';
+  print('Installing completion for $command');
+
+  var rcText = readRc(command);
+  if(rcText == null) {
+    var fileName = path.basename(shellRc.path);
+    throw "No $fileName file. You'll have to instead run: $command completion >> ~/$fileName";
+  }
+
+  var parts = rcText.split(getBeginMarker(command));
+  if(parts.length >= 2) {
+    print(' ✗ $command completion was already installed. Nothing to do.');
+    return;
+  }
+
+  appendRc(command, getScriptOutput(command));
+  print('''
+ ✓ $command completion installed.
+   Now run ". ~/${shellConfig(currentShell)}" to try it without restarting your shell.''');
+}
+
+uninstallScript(String command) {
+  var uninstallCommand = '$command completion uninstall';
+  print('Uninstalling completion for $command');
+
+  var rcText = readRc(command);
+
+  var begin = rcText.indexOf(getBeginMarker(command));
+  var endMarker = getEndMarker(command);
+  var end = rcText.indexOf(getEndMarker(command));
+  if(begin == -1 || end == -1) {
+    print(' ✗ $command completion was not installed. Nothing to do.');
+    return;
+  }
+  end = end + endMarker.length;
+  var prefix = rcText.substring(0, begin);
+  var suffix = rcText.substring(end);
+  shellRc.writeAsStringSync(prefix + suffix);
+  print(' ✓ $command completion uninstalled.');
+}
+
+String currentShell = new RegExp(r'\/bin\/(\w+)').firstMatch(Platform.environment['SHELL']).group(1);
+File shellRc = () {
+  var fileName = '.' + currentShell + 'rc';
+  var filePath = path.join(Platform.environment['HOME'], fileName);
+  return new File(filePath);
+}();
+
+String readRc(String command) {
+  if(shellRc.existsSync()) {
+    return shellRc.readAsStringSync();
+  }
+  return null;
+}
+
+appendRc(String command, String text) {
+  if(shellRc.existsSync()) {
+    shellRc.openSync(mode: FileMode.APPEND).writeStringSync(text);
+  }
 }
