@@ -44,7 +44,7 @@ class Usage {
     }
     return _parser;
   }
-  ArgParser _getParser() => new ArgParser();
+  ArgParser _getParser() => new ArgParser(allowTrailingOptions: _allowTrailingOptions);
   ArgParser _parser;
 
   // Positionals
@@ -134,7 +134,7 @@ class Usage {
 
     ArgResults results;
     try {
-      results = parser.parse(arguments, allowTrailingOptions: _allowTrailingOptions);
+      results = parser.parse(arguments);
     } catch (e, s) {
       throw new UsageException(usage: this, cause: e);
     }
