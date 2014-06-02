@@ -74,7 +74,11 @@ class Positional extends Help {
   /// that the argument is invalid.
   final Function parser;
 
-  const Positional({String help, parser(String arg), this.name})
+  /// Either a `List<String>` of allowed values, or `Map<String, String>` of
+  /// allowed values to help text.
+  final allowed;
+
+  const Positional({String help, parser(String arg), this.name, this.allowed})
       : this.parser = parser,
       super(help: help);
 }
@@ -88,8 +92,8 @@ class Rest extends Positional {
   /// parameter to avoid an error being thrown.
   final bool required;
 
-  const Rest({String name, String help, parser(String arg), this.required: false})
-      : super(name: name, parser: parser, help: help);
+  const Rest({String name, String help, parser(String arg), allowed, this.required: false})
+      : super(name: name, parser: parser, help: help, allowed: allowed);
 }
 
 /// An annotation which marks a class as representing a script command.

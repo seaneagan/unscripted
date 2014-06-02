@@ -13,7 +13,7 @@ Iterable getUsageCompletions(Usage usage, CommandLine commandLine) {
   while(validWords.isNotEmpty) {
     validWords.removeLast();
     try {
-      commandInvocation = usage.validate(validWords);
+      commandInvocation = usage.parse(validWords);
       break;
     } on UsageException catch (e, s) {
       // TODO: Log?
@@ -38,23 +38,10 @@ Iterable getUsageCompletions(Usage usage, CommandLine commandLine) {
     allowedOptions.addAll(leafUsage.options);
   }
 
-  if(!toComplete.startsWith('-')) {
-    // Try completing command.
-    // TODO: Could be a positional arg as well.
-    var commandUsage = usage;
-    var completedWords = commandLine.partialWords.toList()..removeLast();
-    completedWords.every((word) =>
-        (commandUsage = commandUsage.commands[word]) != null);
-    if(commandUsage != null) {
-      return commandUsage.commands.keys.where((command) => command.startsWith(toComplete));
-    }
-  }
-
   // TODO: Remove options that have already been provided on the command line,
   // and don't have allowMultiple true.  Take allowTrailingOptions and '--'
   // argument into account.
   var completionOptions = new Map<String, Option>.from(allowedOptions);
-  Iterable<String> completions = [];
 
   // User is trying to specify an option.
   if(toComplete.startsWith('-')) {
@@ -83,33 +70,44 @@ Iterable getUsageCompletions(Usage usage, CommandLine commandLine) {
       }
       return [];
     }
-  }
+  } else {
 
-  if(commandLine.partialWords.length >= 2) {
-    var previousWord = commandLine.partialWords.elementAt(
-        commandLine.partialWords.length - 2);
-    if(previousWord.startsWith('-')) {
-      // Maybe completing an option value.
+    if(commandLine.partialWords.length >= 2) {
+      var previousWord = commandLine.partialWords.elementAt(
+          commandLine.partialWords.length - 2);
+      if(previousWord.startsWith('-')) {
+        // Maybe completing an option value.
 
-      if(previousWord.startsWith('--')) {
-        // Long option
-        var opt = previousWord.substring(2);
-        if(completionOptions.containsKey(opt)) {
-          var option = completionOptions[opt];
-          return _getCompletionsForOption(option, toComplete);
-        }
-      } else {
-        // Short option
-        if(previousWord.length == 2) {
-          var abbr = previousWord[1];
-          var option = completionOptions.values.singleWhere((option) => option.abbr == abbr);
-          return _getCompletionsForOption(option, toComplete);
+        if(previousWord.startsWith('--')) {
+          // Long option
+          var opt = previousWord.substring(2);
+          if(completionOptions.containsKey(opt)) {
+            var option = completionOptions[opt];
+            return _getCompletionsForOption(option, toComplete);
+          }
+        } else {
+          // Short option
+          if(previousWord.length == 2) {
+            var abbr = previousWord[1];
+            var option = completionOptions.values.singleWhere((option) => option.abbr == abbr);
+            return _getCompletionsForOption(option, toComplete);
+          }
         }
       }
     }
+
+    // Try completing positional.
+    var positionalCount = leafCommandInvocation.positionals.length;
+    var positional = leafUsage.positionalAt(leafCommandInvocation.positionals.length);
+    if(positional != null) {
+      return _getCompletionsForAllowed(positional.allowed, toComplete);
+    }
+
+    // Try completing command.
+    return leafUsage.commands.keys.where((command) => command.startsWith(toComplete));
   }
 
-  return completions;
+  return [];
 }
 
 Iterable<String> _getCompletionsForOption(Option option, String prefix) {
@@ -117,8 +115,10 @@ Iterable<String> _getCompletionsForOption(Option option, String prefix) {
   if(option is Flag) {
     return [];
   }
+  return _getCompletionsForAllowed(option.allowed, prefix);
+}
 
-  var allowed = option.allowed;
+Iterable<String> _getCompletionsForAllowed(allowed, String prefix) {
   var newAllowed = allowed;
   if(allowed is Iterable) newAllowed = allowed;
   else if(allowed is _CompletionFilter) newAllowed = allowed(prefix);

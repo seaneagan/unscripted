@@ -22,14 +22,17 @@ main() {
     });
   }
 
+  testAllowed(Usage usage, String line, expectedCompletions) {
+    var completions = getUsageCompletions(usage, makeSimpleCommandLine(line));
+    expect(completions, expectedCompletions);
+  }
+
   group('getUsageCompletions', () {
 
     group('when usage empty', () {
 
       test('should complete -- to --help', () {
-        var commandLine = makeSimpleCommandLine('--');
-        var completions = getUsageCompletions(new Usage(), commandLine);
-        expect(completions, ['--help']);
+        testAllowed(new Usage(), '--', ['--help']);
       });
 
     });
@@ -37,23 +40,19 @@ main() {
     group('when completing long option', () {
 
       test('should suggest all long options for --', () {
-        var commandLine = makeSimpleCommandLine('--');
         var usage = new Usage()
             ..addOption('aaa', new Option())
             ..addOption('bbb', new Option());
 
-        var completions = getUsageCompletions(usage, commandLine);
-        expect(completions, ['--help', '--aaa', '--bbb']);
+        testAllowed(usage, '--', unorderedEquals(['--help', '--aaa', '--bbb']));
       });
 
       test('should suggest long options with same prefix', () {
-        var commandLine = makeSimpleCommandLine('--a');
         var usage = new Usage()
             ..addOption('aaa', new Option())
             ..addOption('bbb', new Option());
 
-        var completions = getUsageCompletions(usage, commandLine);
-        expect(completions, ['--aaa']);
+        testAllowed(usage, '--a', ['--aaa']);
       });
 
     });
@@ -75,8 +74,8 @@ main() {
           ..addOption('opt', new Option(abbr: 'o'))
           ..addOption('flag', new Flag(abbr: 'f'));
 
-      expect(getUsageCompletions(usage, makeSimpleCommandLine('-o')), ['--opt']);
-      expect(getUsageCompletions(usage, makeSimpleCommandLine('-f')), ['--flag']);
+      testAllowed(usage, '-o', ['--opt']);
+      testAllowed(usage, '-f', ['--flag']);
     });
 
     group('when completing option value', () {
@@ -88,31 +87,47 @@ main() {
             ..addOption('ccc', new Option(abbr: 'c'))
             ..addOption('flag', new Flag(abbr: 'f'));
 
-        testAllowed(String line, Iterable<String> expectedCompletions) {
-          var completions = getUsageCompletions(usage, makeSimpleCommandLine(line));
-          expect(completions, expectedCompletions);
-        }
-        testAllowed('--aaa ', ['x', 'y', 'z']);
-        testAllowed('-a ', ['x', 'y', 'z']);
-        testAllowed('--bbb ', ['x', 'y', 'z']);
-        testAllowed('-b ', ['x', 'y', 'z']);
-        testAllowed('--ccc ', []);
-        testAllowed('-c ', []);
-        testAllowed('-f ', []);
+        testAllowed(usage, '--aaa ', ['x', 'y', 'z']);
+        testAllowed(usage, '-a ', ['x', 'y', 'z']);
+        testAllowed(usage, '--bbb ', ['x', 'y', 'z']);
+        testAllowed(usage, '-b ', ['x', 'y', 'z']);
+        testAllowed(usage, '--ccc ', []);
+        testAllowed(usage, '-c ', []);
+        testAllowed(usage, '-f ', []);
       });
 
       test('should suggest allowed result when allowed is a func', () {
         var usage = new Usage()
             ..addOption('aaa', new Option(abbr: 'a', allowed: (partial) => ['x', 'y', 'z']));
 
-        testAllowed(String line, Iterable<String> expectedCompletions) {
-          var completions = getUsageCompletions(usage, makeSimpleCommandLine(line));
-          expect(completions, expectedCompletions);
-        }
-        testAllowed('--aaa ', ['x', 'y', 'z']);
-        testAllowed('--aaa x', ['x']);
-        testAllowed('-a ', ['x', 'y', 'z']);
-        testAllowed('-a x', ['x']);
+        testAllowed(usage, '--aaa ', ['x', 'y', 'z']);
+        testAllowed(usage, '--aaa x', ['x']);
+        testAllowed(usage, '-a ', ['x', 'y', 'z']);
+        testAllowed(usage, '-a x', ['x']);
+      });
+
+    });
+
+    group('when completing positional value', () {
+
+      test('should suggest allowed', () {
+        var usage = new Usage()
+            ..addPositional(new Positional(allowed: ['aa', 'bb', 'cc']))
+            ..addPositional(new Positional(allowed: {'aa': '', 'bb': '', 'cc': ''}));
+
+        testAllowed(usage, '', ['aa', 'bb', 'cc']);
+        testAllowed(usage, 'a', ['aa']);
+        testAllowed(usage, 'aa b', ['bb']);
+        testAllowed(usage, 'aa bb c', []);
+      });
+
+      test('should suggest allowed result when allowed is a func', () {
+        var usage = new Usage()
+            ..addPositional(new Positional(allowed: (partial) => ['aa', 'bb', 'cc']));
+
+        testAllowed(usage, '', ['aa', 'bb', 'cc']);
+        testAllowed(usage, 'a', ['aa']);
+        testAllowed(usage, 'aa b', []);
       });
 
     });
@@ -120,23 +135,19 @@ main() {
     group('when completing a command', () {
 
       test('should suggest available commands', () {
-        var commandLine = makeSimpleCommandLine(' ');
         var usage = new Usage()
             ..addCommand('xcommand')
             ..addCommand('ycommand');
 
-        var completions = getUsageCompletions(usage, commandLine);
-        expect(completions, unorderedEquals(['help', 'xcommand', 'ycommand']));
+        testAllowed(usage, '', unorderedEquals(['help', 'xcommand', 'ycommand']));
       });
 
       test('should suggest commands matching incomplete word', () {
-        var commandLine = makeSimpleCommandLine(' x');
         var usage = new Usage()
             ..addCommand('xcommand')
             ..addCommand('ycommand');
 
-        var completions = getUsageCompletions(usage, commandLine);
-        expect(completions, ['xcommand']);
+        testAllowed(usage, 'x', ['xcommand']);
       });
 
     });

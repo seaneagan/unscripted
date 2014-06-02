@@ -132,14 +132,7 @@ class Usage {
 
   CommandInvocation validate(List<String> arguments) {
 
-    ArgResults results;
-    try {
-      results = parser.parse(arguments);
-    } catch (e, s) {
-      throw new UsageException(usage: this, cause: e);
-    }
-
-    var commandInvocation = convertArgResultsToCommandInvocation(results);
+    var commandInvocation = parse(arguments);
 
     // Don't apply usage if help is requested.
     var shouldApplyUsage = commandInvocation.helpPath == null;
@@ -149,30 +142,51 @@ class Usage {
     return commandInvocation;
   }
 
-    void _validate(CommandInvocation commandInvocation) {
+  CommandInvocation parse(List<String> arguments) {
+    ArgResults results;
+    try {
+      results = parser.parse(arguments);
+    } catch (e, s) {
+      throw new UsageException(usage: this, cause: e);
+    }
+
+    return convertArgResultsToCommandInvocation(results);
+  }
+
+  void _validate(CommandInvocation commandInvocation) {
     var actual = commandInvocation.positionals != null ?
         commandInvocation.positionals.length : 0;
-    int max;
-    var min = positionals.length;
-    if(rest == null) {
-      max = positionals.length;
-    } else if(rest.required) {
-      min++;
-    }
 
     throwPositionalCountError(String expectation) {
       throw new UsageException(usage: this, cause: 'Received $actual positional command-line '
           'arguments, but $expectation.');
     }
 
-    if(actual < min) {
-      throwPositionalCountError('at least $min required');
+    if(actual < minPositionals) {
+      throwPositionalCountError('at least $minPositionals required');
     }
 
-    if(max != null && actual > max) {
-      throwPositionalCountError('at most $max allowed');
+    if(maxPositionals != null && actual > maxPositionals) {
+      throwPositionalCountError('at most $maxPositionals allowed');
     }
   }
+
+  int get minPositionals {
+    var min = positionals.length;
+    if(rest != null && rest.required) {
+      min++;
+    }
+    return min;
+  }
+
+  int get maxPositionals => rest == null ? positionals.length : null;
+
+  Positional positionalAt(int index) {
+    if(!index.isNegative && index < positionals.length) return positionals[index];
+    if(rest != null) return rest;
+    return null;
+  }
+
 }
 
 class _SubCommandUsage extends Usage {
