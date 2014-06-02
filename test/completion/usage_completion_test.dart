@@ -130,6 +130,16 @@ main() {
         testAllowed(usage, 'aa b', []);
       });
 
+      test('should suggest allowed result when allowed is a func', () {
+        var usage = new Usage()
+            ..addPositional(new Positional())
+            ..rest = new Rest(allowed: ['aa', 'bb', 'cc']);
+
+        testAllowed(usage, '', []);
+        testAllowed(usage, 'x ', ['aa', 'bb', 'cc']);
+        testAllowed(usage, 'x aa b', ['bb']);
+      });
+
     });
 
     group('when completing a command', () {
