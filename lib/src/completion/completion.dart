@@ -2,6 +2,7 @@
 library unscripted.completion;
 
 import 'dart:io';
+import 'dart:async';
 
 import 'package:path/path.dart' as path;
 import 'package:unscripted/src/usage.dart';
@@ -11,11 +12,11 @@ part 'usage_completion.dart';
 part 'command_line.dart';
 part 'completion_script.dart';
 
-void complete (
+Future complete (
     Usage usage,
     CommandInvocation completionCommand,
     {bool isWindows,
-     Map<String, String> environment}) {
+     Map<String, String> environment}) => new Future.sync(() {
 
   if(isWindows == null) isWindows = Platform.isWindows;
   if (isWindows) {
@@ -43,21 +44,23 @@ void complete (
     }
   } else {
     // "Plumbing mode"
-    var output = getCompletionOutput(usage, commandLine);
-    if(output.isNotEmpty) {
-      print(output);
-    }
+    var result = getCompletionOutput(usage, commandLine);
+
+    getCompletionOutput(usage, commandLine).then((String output) {
+      if(output.isNotEmpty) {
+        print(output);
+      }
+    });
   }
-}
+});
 
-String getCompletionOutput(Usage usage, CommandLine commandLine) {
+Future<String> getCompletionOutput(Usage usage, CommandLine commandLine) {
+  return getUsageCompletions(usage, commandLine).then((completions) {
+    completions = filterCompletions(
+      commandLine.partialWord, expandCompletions(completions));
 
-  var completions = getUsageCompletions(usage, commandLine);
-
-  completions = filterCompletions(
-    commandLine.partialWord, expandCompletions(completions));
-
-  return completions.join('\n');
+    return completions.join('\n');
+  });
 }
 
 Iterable<String> expandCompletions(Iterable completions) =>

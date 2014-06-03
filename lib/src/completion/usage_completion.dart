@@ -1,7 +1,7 @@
 
 part of unscripted.completion;
 
-Iterable getUsageCompletions(Usage usage, CommandLine commandLine) {
+Future<Iterable> getUsageCompletions(Usage usage, CommandLine commandLine) => new Future.sync(() {
 
   // Only support completions at the end of lines for now.
   // TODO: Relax this to support the cursor being in the last non-empty word.
@@ -108,26 +108,21 @@ Iterable getUsageCompletions(Usage usage, CommandLine commandLine) {
   }
 
   return [];
-}
+});
 
-Iterable<String> _getCompletionsForOption(Option option, String prefix) {
-  // The word must be a command or positional argument.
+Future<Iterable<String>> _getCompletionsForOption(Option option, String prefix) => new Future.sync(() {
+  // Flags don't have value arguments.
   if(option is Flag) {
     return [];
   }
   return _getCompletionsForAllowed(option.allowed, prefix);
-}
+});
 
-Iterable<String> _getCompletionsForAllowed(allowed, String prefix) {
-  var newAllowed = allowed;
-  if(allowed is Iterable) newAllowed = allowed;
-  else if(allowed is _CompletionFilter) newAllowed = allowed(prefix);
-  else if(allowed is Map) newAllowed = allowed.keys;
-  if(newAllowed != null) {
-    return newAllowed.where((v) => v.startsWith(prefix));
-  }
+Future<Iterable<String>> _getCompletionsForAllowed(allowed, String prefix) => new Future.sync(() {
+  if(allowed is Iterable) return allowed;
+  else if(allowed is Function) return allowed(prefix);
+  else if(allowed is Map) return allowed.keys;
   return [];
-}
+}).then((completions) => completions.where((v) => v.startsWith(prefix)));
 
-// TODO: Allow returning a Future<Iterable<String>>
-typedef Iterable<String> _CompletionFilter(String prefix);
+typedef _CompletionFilter(String prefix);

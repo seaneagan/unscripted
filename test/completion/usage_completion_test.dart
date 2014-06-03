@@ -1,6 +1,8 @@
 
 library usage_completion_test;
 
+import 'dart:async';
+
 import 'package:unscripted/unscripted.dart';
 import 'package:unscripted/src/completion/completion.dart';
 import 'package:unscripted/src/usage.dart';
@@ -24,7 +26,7 @@ main() {
 
   testAllowed(Usage usage, String line, expectedCompletions) {
     var completions = getUsageCompletions(usage, makeSimpleCommandLine(line));
-    expect(completions, expectedCompletions);
+    expect(completions, completion(expectedCompletions));
   }
 
   group('getUsageCompletions', () {
@@ -61,13 +63,13 @@ main() {
       var usage = new Usage()
           ..addOption('opt', new Option(abbr: 'o'));
 
-      var completions = getUsageCompletions(usage, makeSimpleCommandLine('-'));
-      expect(completions, hasLength(2));
-      expect(completions.first, '--');
-      expect(completions.last, hasLength(greaterThan(2)));
-      expect(completions.last, startsWith('--'));
+      return getUsageCompletions(usage, makeSimpleCommandLine('-')).then((completions) {
+        expect(completions, hasLength(2));
+        expect(completions.first, '--');
+        expect(completions.last, hasLength(greaterThan(2)));
+        expect(completions.last, startsWith('--'));
+      });
     });
-
 
     test('should complete short option to long option', () {
       var usage = new Usage()
@@ -96,14 +98,27 @@ main() {
         testAllowed(usage, '-f ', []);
       });
 
-      test('should suggest allowed result when allowed is a func', () {
-        var usage = new Usage()
-            ..addOption('aaa', new Option(abbr: 'a', allowed: (partial) => ['x', 'y', 'z']));
+      group('when allowed is func', () {
 
-        testAllowed(usage, '--aaa ', ['x', 'y', 'z']);
-        testAllowed(usage, '--aaa x', ['x']);
-        testAllowed(usage, '-a ', ['x', 'y', 'z']);
-        testAllowed(usage, '-a x', ['x']);
+        test('should suggest synchronously returned completions', () {
+          var usage = new Usage()
+              ..addOption('aaa', new Option(abbr: 'a', allowed: (partial) => ['x', 'y', 'z']));
+
+          testAllowed(usage, '--aaa ', ['x', 'y', 'z']);
+          testAllowed(usage, '--aaa x', ['x']);
+          testAllowed(usage, '-a ', ['x', 'y', 'z']);
+          testAllowed(usage, '-a x', ['x']);
+        });
+
+        test('should suggest asynchronously returned completions', () {
+          var usage = new Usage()
+              ..addOption('aaa', new Option(abbr: 'a', allowed: (partial) => new Future.value(['x', 'y', 'z'])));
+
+          testAllowed(usage, '--aaa ', ['x', 'y', 'z']);
+          testAllowed(usage, '--aaa x', ['x']);
+          testAllowed(usage, '-a ', ['x', 'y', 'z']);
+          testAllowed(usage, '-a x', ['x']);
+        });
       });
 
     });
@@ -121,16 +136,28 @@ main() {
         testAllowed(usage, 'aa bb c', []);
       });
 
-      test('should suggest allowed result when allowed is a func', () {
-        var usage = new Usage()
-            ..addPositional(new Positional(allowed: (partial) => ['aa', 'bb', 'cc']));
+      group('when allowed is func', () {
 
-        testAllowed(usage, '', ['aa', 'bb', 'cc']);
-        testAllowed(usage, 'a', ['aa']);
-        testAllowed(usage, 'aa b', []);
+        test('should suggest synchronously returned completions', () {
+          var usage = new Usage()
+              ..addPositional(new Positional(allowed: (partial) => ['aa', 'bb', 'cc']));
+
+          testAllowed(usage, '', ['aa', 'bb', 'cc']);
+          testAllowed(usage, 'a', ['aa']);
+          testAllowed(usage, 'aa b', []);
+        });
+
+        test('should suggest asynchronously returned completions', () {
+          var usage = new Usage()
+              ..addPositional(new Positional(allowed: (partial) => new Future.value(['aa', 'bb', 'cc'])));
+
+          testAllowed(usage, '', ['aa', 'bb', 'cc']);
+          testAllowed(usage, 'a', ['aa']);
+          testAllowed(usage, 'aa b', []);
+        });
+
       });
-
-      test('should suggest allowed result when allowed is a func', () {
+      test('should suggest allowed for rest parameter', () {
         var usage = new Usage()
             ..addPositional(new Positional())
             ..rest = new Rest(allowed: ['aa', 'bb', 'cc']);
