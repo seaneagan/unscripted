@@ -52,7 +52,9 @@ class CommentElement extends DivElement with Polymer, ChangeNotifier {
     }
     if (comment != '' && comment != null) {
       // TODO(jmesserly): for now, trusting doc comment HTML.
-      _commentElement = new Element.html(comment, treeSanitizer: nullSanitizer);
+      _commentElement = new Element.div();
+      _commentElement.appendHtml(comment);
+
       var firstParagraph = (_commentElement is ParagraphElement) ?
           _commentElement : _commentElement.querySelector("p");
       if (firstParagraph != null) {
@@ -92,7 +94,9 @@ class CommentElement extends DivElement with Polymer, ChangeNotifier {
   void _resolveLink(AnchorElement link) {
     if (link.href != '') return;
     var loc = new DocsLocation(link.text);
-    if (_replaceWithParameterReference(link, loc)) return;
+    var replaced = _replaceWithParameterReference(link, loc);
+    link.onClick.listen((event) => rerouteLink(event, null, event.target));
+    if (replaced) return;
     if (searchIndex.map.containsKey(link.text)) {
       _setLinkReference(link, loc);
       return;
@@ -119,7 +123,11 @@ class CommentElement extends DivElement with Polymer, ChangeNotifier {
   void _setLinkReference(AnchorElement link, DocsLocation loc) {
     var linkable = new LinkableType(loc.withAnchor);
     link
-      ..href = locationPrefixed(linkable.location)
+      ..href = linkable.prefixedLocation
       ..text = linkable.simpleType;
   }
+
+  /// This is called from the template, so needs to be available
+  /// as an instance method.
+  void rerouteLink(event, detail, target) => routeLink(event, detail, target);
 }

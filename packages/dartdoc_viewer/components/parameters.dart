@@ -11,11 +11,15 @@ import 'package:polymer/polymer.dart';
 import 'package:dartdoc_viewer/item.dart';
 import 'package:dartdoc_viewer/member.dart';
 
+import 'closure.dart';
 import 'type.dart';
 
 @CustomTag("dartdoc-parameter")
 class ParameterElement extends DartdocElement with ChangeNotifier  {
   @reflectable @published List<Parameter> get parameters => __$parameters; List<Parameter> __$parameters = const []; @reflectable set parameters(List<Parameter> value) { __$parameters = notifyPropertyChange(#parameters, __$parameters, value); }
+
+
+  factory ParameterElement() => new Element.tag('dartdoc-parameter');
 
   ParameterElement.created() : super.created();
 
@@ -45,20 +49,29 @@ class ParameterElement extends DartdocElement with ChangeNotifier  {
       outerSpan.appendText(optionalOpeningDelimiter);
     }
     for (var element in elements) {
-      // TODO(kevmoo): Fix annotation rendering for paramaters - Issue 18133
+      // TODO(kevmoo): Fix annotation rendering for parameters - Issue 18133
+
       // Skip dynamic as an outer parameter type (but not as generic)
       var space = '';
       if (!element.type.isDynamic) {
         outerSpan.append(new TypeElement()..type = element.type);
         space = ' ';
       }
-      var parameterName = new AnchorElement()
-        ..text = element.name
-        ..href = element.prefixedAnchorHref
-        ..id = element.anchorHrefLocation.anchor;
+
       outerSpan.appendText(space);
-      outerSpan.append(parameterName);
+      if (element.functionDeclaration != null) {
+        outerSpan.append(
+            new ClosureElement()..closure = element.functionDeclaration);
+      } else {
+        var parameterName = new AnchorElement()
+          ..text = element.name
+          ..href = element.prefixedAnchorHref
+          ..id = element.anchorHrefLocation.anchor;
+
+        outerSpan.append(parameterName);
+      }
       outerSpan.appendText(element.decoration);
+
       if (className == 'required' && optional.isNotEmpty ||
           element != elements.last) {
         outerSpan.appendText(', ');

@@ -3,29 +3,30 @@ library app_bootstrap;
 import 'package:polymer/polymer.dart';
 
 import 'package:dartdoc_viewer/components/comment.dart' as i0;
-import 'package:dartdoc_viewer/components/parameters.dart' as i1;
-import 'package:dartdoc_viewer/components/item.dart' as i2;
-import 'package:dartdoc_viewer/components/annotations.dart' as i3;
-import 'package:dartdoc_viewer/components/link.dart' as i4;
-import 'package:dartdoc_viewer/components/type.dart' as i5;
-import 'package:dartdoc_viewer/components/variable-heading.dart' as i6;
-import 'package:dartdoc_viewer/components/variable.dart' as i7;
-import 'package:dartdoc_viewer/components/method.dart' as i8;
-import 'package:dartdoc_viewer/components/typedef.dart' as i9;
-import 'package:dartdoc_viewer/components/category.dart' as i10;
-import 'package:dartdoc_viewer/components/minimap-element.dart' as i11;
-import 'package:dartdoc_viewer/components/homepage.dart' as i12;
-import 'package:dartdoc_viewer/components/class.dart' as i13;
-import 'package:dartdoc_viewer/components/library.dart' as i14;
-import 'package:dartdoc_viewer/components/page.dart' as i15;
-import 'package:dartdoc_viewer/components/results.dart' as i16;
-import 'package:dartdoc_viewer/components/search.dart' as i17;
-import 'package:dartdoc_viewer/components/minimap-library.dart' as i18;
-import 'package:dartdoc_viewer/components/library-panel.dart' as i19;
-import 'package:dartdoc_viewer/components/minimap-class.dart' as i20;
-import 'package:dartdoc_viewer/components/breadcrumbs.dart' as i21;
-import 'package:dartdoc_viewer/components/main.dart' as i22;
-import 'index.html.0.dart' as i23;
+import 'package:dartdoc_viewer/components/closure.dart' as i1;
+import 'package:dartdoc_viewer/components/parameters.dart' as i2;
+import 'package:dartdoc_viewer/components/item.dart' as i3;
+import 'package:dartdoc_viewer/components/annotations.dart' as i4;
+import 'package:dartdoc_viewer/components/link.dart' as i5;
+import 'package:dartdoc_viewer/components/type.dart' as i6;
+import 'package:dartdoc_viewer/components/variable-heading.dart' as i7;
+import 'package:dartdoc_viewer/components/variable.dart' as i8;
+import 'package:dartdoc_viewer/components/method.dart' as i9;
+import 'package:dartdoc_viewer/components/typedef.dart' as i10;
+import 'package:dartdoc_viewer/components/category.dart' as i11;
+import 'package:dartdoc_viewer/components/minimap-element.dart' as i12;
+import 'package:dartdoc_viewer/components/homepage.dart' as i13;
+import 'package:dartdoc_viewer/components/class.dart' as i14;
+import 'package:dartdoc_viewer/components/library.dart' as i15;
+import 'package:dartdoc_viewer/components/page.dart' as i16;
+import 'package:dartdoc_viewer/components/results.dart' as i17;
+import 'package:dartdoc_viewer/components/search.dart' as i18;
+import 'package:dartdoc_viewer/components/minimap-library.dart' as i19;
+import 'package:dartdoc_viewer/components/library-panel.dart' as i20;
+import 'package:dartdoc_viewer/components/minimap-class.dart' as i21;
+import 'package:dartdoc_viewer/components/breadcrumbs.dart' as i22;
+import 'package:dartdoc_viewer/components/main.dart' as i23;
+import 'index.html.0.dart' as i24;
 import 'package:smoke/smoke.dart' show Declaration, PROPERTY, METHOD;
 import 'package:smoke/static.dart' show useGeneratedCode, StaticConfiguration;
 import 'package:dartdoc_viewer/components/comment.dart' as smoke_0;
@@ -33,35 +34,36 @@ import 'dart:html' as smoke_1;
 import 'package:observe/src/metadata.dart' as smoke_2;
 import 'package:polymer/polymer.dart' as smoke_3;
 import 'package:dartdoc_viewer/item.dart' as smoke_4;
-import 'package:dartdoc_viewer/components/parameters.dart' as smoke_5;
-import 'package:dartdoc_viewer/member.dart' as smoke_6;
-import 'package:dartdoc_viewer/components/item.dart' as smoke_7;
-import 'package:dartdoc_viewer/components/annotations.dart' as smoke_8;
-import 'package:dartdoc_viewer/components/link.dart' as smoke_9;
-import 'package:dartdoc_viewer/components/type.dart' as smoke_10;
-import 'package:dartdoc_viewer/components/variable-heading.dart' as smoke_11;
-import 'package:dartdoc_viewer/components/variable.dart' as smoke_12;
-import 'package:dartdoc_viewer/components/method.dart' as smoke_13;
-import 'package:dartdoc_viewer/components/typedef.dart' as smoke_14;
-import 'package:dartdoc_viewer/components/category.dart' as smoke_15;
-import 'package:observe/src/observable_list.dart' as smoke_16;
-import 'package:dartdoc_viewer/components/minimap-element.dart' as smoke_17;
-import 'package:dartdoc_viewer/components/homepage.dart' as smoke_18;
-import 'package:dartdoc_viewer/components/class.dart' as smoke_19;
-import 'package:dartdoc_viewer/components/library.dart' as smoke_20;
-import 'package:dartdoc_viewer/components/page.dart' as smoke_21;
-import 'package:dartdoc_viewer/components/results.dart' as smoke_22;
-import 'package:dartdoc_viewer/search.dart' as smoke_23;
-import 'package:dartdoc_viewer/components/search.dart' as smoke_24;
-import 'package:dartdoc_viewer/components/minimap-library.dart' as smoke_25;
-import 'package:dartdoc_viewer/components/library-panel.dart' as smoke_26;
-import 'package:dartdoc_viewer/components/minimap-class.dart' as smoke_27;
-import 'package:dartdoc_viewer/components/breadcrumbs.dart' as smoke_28;
-import 'package:dartdoc_viewer/components/main.dart' as smoke_29;
+import 'package:dartdoc_viewer/components/closure.dart' as smoke_5;
+import 'package:dartdoc_viewer/components/parameters.dart' as smoke_6;
+import 'package:dartdoc_viewer/member.dart' as smoke_7;
+import 'package:dartdoc_viewer/components/item.dart' as smoke_8;
+import 'package:dartdoc_viewer/components/annotations.dart' as smoke_9;
+import 'package:dartdoc_viewer/components/link.dart' as smoke_10;
+import 'package:dartdoc_viewer/components/type.dart' as smoke_11;
+import 'package:dartdoc_viewer/components/variable-heading.dart' as smoke_12;
+import 'package:dartdoc_viewer/components/variable.dart' as smoke_13;
+import 'package:dartdoc_viewer/components/method.dart' as smoke_14;
+import 'package:dartdoc_viewer/components/typedef.dart' as smoke_15;
+import 'package:dartdoc_viewer/components/category.dart' as smoke_16;
+import 'package:observe/src/observable_list.dart' as smoke_17;
+import 'package:dartdoc_viewer/components/minimap-element.dart' as smoke_18;
+import 'package:dartdoc_viewer/components/homepage.dart' as smoke_19;
+import 'package:dartdoc_viewer/components/class.dart' as smoke_20;
+import 'package:dartdoc_viewer/components/library.dart' as smoke_21;
+import 'package:dartdoc_viewer/components/page.dart' as smoke_22;
+import 'package:dartdoc_viewer/components/results.dart' as smoke_23;
+import 'package:dartdoc_viewer/search.dart' as smoke_24;
+import 'package:dartdoc_viewer/components/search.dart' as smoke_25;
+import 'package:dartdoc_viewer/components/minimap-library.dart' as smoke_26;
+import 'package:dartdoc_viewer/components/library-panel.dart' as smoke_27;
+import 'package:dartdoc_viewer/components/minimap-class.dart' as smoke_28;
+import 'package:dartdoc_viewer/components/breadcrumbs.dart' as smoke_29;
+import 'package:dartdoc_viewer/components/main.dart' as smoke_30;
 abstract class _M0 {} // DivElement & Polymer
 abstract class _M1 {} // _M0 & ChangeNotifier
-abstract class _M2 {} // DartdocElement & ChangeNotifier
-abstract class _M3 {} // PolymerElement & ChangeNotifier
+abstract class _M2 {} // PolymerElement & ChangeNotifier
+abstract class _M3 {} // DartdocElement & ChangeNotifier
 abstract class _M4 {} // MemberElement & ChangeNotifier
 abstract class _M5 {} // InheritedElement & ChangeNotifier
 abstract class _M6 {} // AnchorElement & Polymer
@@ -75,6 +77,7 @@ void main() {
         #anchorHref: (o) => o.anchorHref,
         #annotations: (o) => o.annotations,
         #annotationsChanged: (o) => o.annotationsChanged,
+        #breadcrumbName: (o) => o.breadcrumbName,
         #breadcrumbs: (o) => o.breadcrumbs,
         #camelCaseName: (o) => o.camelCaseName,
         #caretStyle: (o) => o.caretStyle,
@@ -82,6 +85,8 @@ void main() {
         #categoryChanged: (o) => o.categoryChanged,
         #categoryLink: (o) => o.categoryLink,
         #classes: (o) => o.classes,
+        #closure: (o) => o.closure,
+        #closureChanged: (o) => o.closureChanged,
         #collapseSearchAndOptionsIfNeeded: (o) => o.collapseSearchAndOptionsIfNeeded,
         #commentFrom: (o) => o.commentFrom,
         #constantModifier: (o) => o.constantModifier,
@@ -98,6 +103,7 @@ void main() {
         #hasInheritedComment: (o) => o.hasInheritedComment,
         #hasItems: (o) => o.hasItems,
         #hideShow: (o) => o.hideShow,
+        #highLevelSdkVersion: (o) => o.highLevelSdkVersion,
         #homePage: (o) => o.homePage,
         #idName: (o) => o.idName,
         #inheritedFrom: (o) => o.inheritedFrom,
@@ -139,6 +145,7 @@ void main() {
         #lazyVariables: (o) => o.lazyVariables,
         #libraries: (o) => o.libraries,
         #lineHeight: (o) => o.lineHeight,
+        #location: (o) => o.location,
         #methods: (o) => o.methods,
         #methodsChanged: (o) => o.methodsChanged,
         #modifiers: (o) => o.modifiers,
@@ -153,11 +160,13 @@ void main() {
         #position: (o) => o.position,
         #prefixedAnchorHref: (o) => o.prefixedAnchorHref,
         #prefixedLinkHref: (o) => o.prefixedLinkHref,
-        #prefixedLocation: (o) => o.prefixedLocation,
+        #prefixedLocationWhenPossible: (o) => o.prefixedLocationWhenPossible,
         #preview: (o) => o.preview,
         #previewChanged: (o) => o.previewChanged,
         #previewComment: (o) => o.previewComment,
+        #rerouteLink: (o) => o.rerouteLink,
         #results: (o) => o.results,
+        #sdkVersionString: (o) => o.sdkVersionString,
         #searchQuery: (o) => o.searchQuery,
         #searchQueryChanged: (o) => o.searchQueryChanged,
         #selectDropDownItem: (o) => o.selectDropDownItem,
@@ -171,7 +180,6 @@ void main() {
         #showOrHideMinimap: (o) => o.showOrHideMinimap,
         #showOrHideObjectMembers: (o) => o.showOrHideObjectMembers,
         #showOrHidePackages: (o) => o.showOrHidePackages,
-        #showVersion: (o) => o.showVersion,
         #simpleType: (o) => o.simpleType,
         #staticFunctions: (o) => o.staticFunctions,
         #staticModifier: (o) => o.staticModifier,
@@ -187,10 +195,10 @@ void main() {
         #type: (o) => o.type,
         #typeChanged: (o) => o.typeChanged,
         #typedefs: (o) => o.typedefs,
+        #typedefsChanged: (o) => o.typedefsChanged,
         #url: (o) => o.url,
         #variables: (o) => o.variables,
         #variablesChanged: (o) => o.variablesChanged,
-        #version: (o) => o.version,
         #viewer: (o) => o.viewer,
       },
       setters: {
@@ -202,6 +210,7 @@ void main() {
         #category: (o, v) { o.category = v; },
         #categoryLink: (o, v) { o.categoryLink = v; },
         #classes: (o, v) { o.classes = v; },
+        #closure: (o, v) { o.closure = v; },
         #commentFrom: (o, v) { o.commentFrom = v; },
         #constantModifier: (o, v) { o.constantModifier = v; },
         #constructors: (o, v) { o.constructors = v; },
@@ -253,6 +262,7 @@ void main() {
         #parameters: (o, v) { o.parameters = v; },
         #preview: (o, v) { o.preview = v; },
         #results: (o, v) { o.results = v; },
+        #sdkVersionString: (o, v) { o.sdkVersionString = v; },
         #searchQuery: (o, v) { o.searchQuery = v; },
         #shouldShowClassMinimap: (o, v) { o.shouldShowClassMinimap = v; },
         #shouldShowComment: (o, v) { o.shouldShowComment = v; },
@@ -273,72 +283,78 @@ void main() {
         #typedefs: (o, v) { o.typedefs = v; },
         #url: (o, v) { o.url = v; },
         #variables: (o, v) { o.variables = v; },
-        #version: (o, v) { o.version = v; },
       },
       parents: {
-        smoke_8.AnnotationElement: _M3,
-        smoke_28.Breadcrumbs: _M3,
-        smoke_15.CategoryElement: _M2,
-        smoke_19.ClassElement: smoke_6.MemberElement,
+        smoke_9.AnnotationElement: _M2,
+        smoke_29.Breadcrumbs: _M2,
+        smoke_16.CategoryElement: _M3,
+        smoke_20.ClassElement: smoke_7.MemberElement,
+        smoke_5.ClosureElement: _M2,
         smoke_0.CommentElement: _M1,
-        smoke_18.HomeElement: smoke_6.MemberElement,
-        smoke_7.ItemElement: smoke_6.MemberElement,
-        smoke_26.LibraryPanel: smoke_6.DartdocElement,
-        smoke_20.LibraryElement: smoke_6.MemberElement,
-        smoke_9.LinkElement: _M3,
-        smoke_29.MainElement: _M2,
-        smoke_13.MethodElement: _M5,
-        smoke_27.MinimapElementClass: smoke_6.MemberElement,
-        smoke_17.MinimapElement: _M3,
-        smoke_25.MinimapElementLibrary: smoke_6.MemberElement,
-        smoke_21.PageElement: _M2,
-        smoke_5.ParameterElement: _M2,
-        smoke_22.Result: _M7,
-        smoke_24.Search: _M3,
-        smoke_10.TypeElement: _M3,
-        smoke_14.TypedefElement: smoke_6.MemberElement,
-        smoke_11.VariableHeading: _M4,
-        smoke_12.VariableElement: _M5,
-        smoke_6.DartdocElement: smoke_3.PolymerElement,
-        smoke_6.InheritedElement: _M4,
-        smoke_6.MemberElement: _M2,
+        smoke_19.HomeElement: smoke_7.MemberElement,
+        smoke_8.ItemElement: smoke_7.MemberElement,
+        smoke_27.LibraryPanel: smoke_7.DartdocElement,
+        smoke_21.LibraryElement: smoke_7.MemberElement,
+        smoke_10.LinkElement: _M2,
+        smoke_30.MainElement: _M3,
+        smoke_14.MethodElement: _M5,
+        smoke_28.MinimapElementClass: smoke_7.MemberElement,
+        smoke_18.MinimapElement: _M2,
+        smoke_26.MinimapElementLibrary: smoke_7.MemberElement,
+        smoke_22.PageElement: _M3,
+        smoke_6.ParameterElement: _M3,
+        smoke_23.Result: _M7,
+        smoke_25.Search: _M2,
+        smoke_11.TypeElement: _M2,
+        smoke_15.TypedefElement: smoke_7.MemberElement,
+        smoke_12.VariableHeading: _M4,
+        smoke_13.VariableElement: _M5,
+        smoke_7.DartdocElement: smoke_3.PolymerElement,
+        smoke_7.InheritedElement: _M4,
+        smoke_7.MemberElement: _M3,
         _M0: smoke_1.DivElement,
         _M1: _M0,
-        _M2: smoke_6.DartdocElement,
-        _M3: smoke_3.PolymerElement,
-        _M4: smoke_6.MemberElement,
-        _M5: smoke_6.InheritedElement,
+        _M2: smoke_3.PolymerElement,
+        _M3: smoke_7.DartdocElement,
+        _M4: smoke_7.MemberElement,
+        _M5: smoke_7.InheritedElement,
         _M6: smoke_1.AnchorElement,
         _M7: _M6,
       },
       declarations: {
-        smoke_8.AnnotationElement: {
+        smoke_9.AnnotationElement: {
           #annotations: const Declaration(#annotations, smoke_4.AnnotationGroup, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_3.published]),
           #annotationsChanged: const Declaration(#annotationsChanged, Function, kind: METHOD),
         },
-        smoke_28.Breadcrumbs: {
+        smoke_29.Breadcrumbs: {
           #breadcrumbs: const Declaration(#breadcrumbs, List, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
           #lastCrumb: const Declaration(#lastCrumb, smoke_4.Item, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
         },
-        smoke_15.CategoryElement: {
+        smoke_16.CategoryElement: {
           #accordionStyle: const Declaration(#accordionStyle, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
           #caretStyle: const Declaration(#caretStyle, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
           #category: const Declaration(#category, smoke_4.Category, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_3.published]),
           #categoryChanged: const Declaration(#categoryChanged, Function, kind: METHOD),
           #divClass: const Declaration(#divClass, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
           #hasItems: const Declaration(#hasItems, bool, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
-          #items: const Declaration(#items, smoke_16.ObservableList, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_3.published]),
+          #items: const Declaration(#items, smoke_17.ObservableList, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_3.published]),
           #itemsChanged: const Declaration(#itemsChanged, Function, kind: METHOD),
           #lineHeight: const Declaration(#lineHeight, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
-          #methods: const Declaration(#methods, smoke_16.ObservableList, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_3.published]),
+          #methods: const Declaration(#methods, smoke_17.ObservableList, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_3.published]),
           #methodsChanged: const Declaration(#methodsChanged, Function, kind: METHOD),
           #stylizedName: const Declaration(#stylizedName, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
           #title: const Declaration(#title, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
-          #variables: const Declaration(#variables, smoke_16.ObservableList, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_3.published]),
+          #typedefs: const Declaration(#typedefs, smoke_17.ObservableList, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_3.published]),
+          #typedefsChanged: const Declaration(#typedefsChanged, Function, kind: METHOD),
+          #variables: const Declaration(#variables, smoke_17.ObservableList, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_3.published]),
           #variablesChanged: const Declaration(#variablesChanged, Function, kind: METHOD),
         },
-        smoke_19.ClassElement: {
+        smoke_20.ClassElement: {
           #itemChanged: const Declaration(#itemChanged, Function, kind: METHOD),
+        },
+        smoke_5.ClosureElement: {
+          #closure: const Declaration(#closure, smoke_4.Closure, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
+          #closureChanged: const Declaration(#closureChanged, Function, kind: METHOD),
         },
         smoke_0.CommentElement: {
           #item: const Declaration(#item, smoke_4.Container, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_3.published]),
@@ -346,18 +362,20 @@ void main() {
           #preview: const Declaration(#preview, bool, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_3.published]),
           #previewChanged: const Declaration(#previewChanged, Function, kind: METHOD),
         },
-        smoke_18.HomeElement: const {},
-        smoke_7.ItemElement: const {},
-        smoke_26.LibraryPanel: const {},
-        smoke_20.LibraryElement: {
+        smoke_19.HomeElement: const {},
+        smoke_8.ItemElement: const {},
+        smoke_27.LibraryPanel: const {},
+        smoke_21.LibraryElement: {
           #itemChanged: const Declaration(#itemChanged, Function, kind: METHOD),
         },
-        smoke_9.LinkElement: {
+        smoke_10.LinkElement: {
           #type: const Declaration(#type, smoke_4.LinkableType, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_3.published]),
           #typeChanged: const Declaration(#typeChanged, Function, kind: METHOD),
         },
-        smoke_29.MainElement: {
+        smoke_30.MainElement: {
+          #homePage: const Declaration(#homePage, dynamic, isFinal: true, annotations: const [smoke_2.observable]),
           #pageContentClass: const Declaration(#pageContentClass, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
+          #sdkVersionString: const Declaration(#sdkVersionString, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
           #shouldShowClassMinimap: const Declaration(#shouldShowClassMinimap, bool, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
           #shouldShowLibraryMinimap: const Declaration(#shouldShowLibraryMinimap, bool, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
           #shouldShowLibraryPanel: const Declaration(#shouldShowLibraryPanel, bool, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
@@ -366,28 +384,26 @@ void main() {
           #showOrHideMinimap: const Declaration(#showOrHideMinimap, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
           #showOrHideObjectMembers: const Declaration(#showOrHideObjectMembers, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
           #showOrHidePackages: const Declaration(#showOrHidePackages, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
-          #showVersion: const Declaration(#showVersion, dynamic, kind: PROPERTY, isFinal: true, annotations: const [smoke_2.observable]),
-          #version: const Declaration(#version, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
         },
-        smoke_13.MethodElement: {
+        smoke_14.MethodElement: {
           #constantModifier: const Declaration(#constantModifier, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
           #isNotConstructor: const Declaration(#isNotConstructor, bool, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
           #itemChanged: const Declaration(#itemChanged, Function, kind: METHOD),
           #modifiers: const Declaration(#modifiers, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
           #staticModifier: const Declaration(#staticModifier, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
         },
-        smoke_27.MinimapElementClass: const {},
-        smoke_17.MinimapElement: {
+        smoke_28.MinimapElementClass: const {},
+        smoke_18.MinimapElement: {
           #camelCaseName: const Declaration(#camelCaseName, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
           #category: const Declaration(#category, smoke_4.Category, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_3.published]),
           #categoryChanged: const Declaration(#categoryChanged, Function, kind: METHOD),
           #categoryLink: const Declaration(#categoryLink, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
           #item: const Declaration(#item, smoke_4.Item, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_3.published]),
           #itemChanged: const Declaration(#itemChanged, Function, kind: METHOD),
-          #itemsToShow: const Declaration(#itemsToShow, smoke_16.ObservableList, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
+          #itemsToShow: const Declaration(#itemsToShow, smoke_17.ObservableList, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
         },
-        smoke_25.MinimapElementLibrary: const {},
-        smoke_21.PageElement: {
+        smoke_26.MinimapElementLibrary: const {},
+        smoke_22.PageElement: {
           #isClass: const Declaration(#isClass, bool, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
           #isHome: const Declaration(#isHome, bool, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
           #isLibrary: const Declaration(#isLibrary, bool, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
@@ -396,39 +412,39 @@ void main() {
           #item: const Declaration(#item, smoke_4.Item, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_3.published]),
           #itemChanged: const Declaration(#itemChanged, Function, kind: METHOD),
         },
-        smoke_5.ParameterElement: {
+        smoke_6.ParameterElement: {
           #parameters: const Declaration(#parameters, List, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_3.published]),
           #parametersChanged: const Declaration(#parametersChanged, Function, kind: METHOD),
         },
-        smoke_22.Result: {
+        smoke_23.Result: {
           #descriptiveName: const Declaration(#descriptiveName, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
           #descriptiveType: const Declaration(#descriptiveType, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
-          #item: const Declaration(#item, smoke_23.SearchResult, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_3.published]),
+          #item: const Declaration(#item, smoke_24.SearchResult, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_3.published]),
           #itemChanged: const Declaration(#itemChanged, Function, kind: METHOD),
           #outerLibrary: const Declaration(#outerLibrary, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
         },
-        smoke_24.Search: {
+        smoke_25.Search: {
           #dropdownOpen: const Declaration(#dropdownOpen, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
           #isFocused: const Declaration(#isFocused, bool, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
-          #results: const Declaration(#results, smoke_16.ObservableList, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
+          #results: const Declaration(#results, smoke_17.ObservableList, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
           #searchQuery: const Declaration(#searchQuery, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_3.published]),
           #searchQueryChanged: const Declaration(#searchQueryChanged, Function, kind: METHOD),
         },
-        smoke_10.TypeElement: {
+        smoke_11.TypeElement: {
           #type: const Declaration(#type, smoke_4.NestedType, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_3.published]),
           #typeChanged: const Declaration(#typeChanged, Function, kind: METHOD),
         },
-        smoke_14.TypedefElement: const {},
-        smoke_11.VariableHeading: {
+        smoke_15.TypedefElement: const {},
+        smoke_12.VariableHeading: {
           #getter: const Declaration(#getter, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
           #isNotSetter: const Declaration(#isNotSetter, bool, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
           #itemChanged: const Declaration(#itemChanged, Function, kind: METHOD),
           #name: const Declaration(#name, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
         },
-        smoke_12.VariableElement: {
+        smoke_13.VariableElement: {
           #annotations: const Declaration(#annotations, smoke_4.AnnotationGroup, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
         },
-        smoke_6.InheritedElement: {
+        smoke_7.InheritedElement: {
           #commentFrom: const Declaration(#commentFrom, smoke_4.LinkableType, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
           #hasInheritedComment: const Declaration(#hasInheritedComment, bool, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
           #inheritedFrom: const Declaration(#inheritedFrom, smoke_4.LinkableType, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
@@ -437,7 +453,7 @@ void main() {
           #shouldShowComment: const Declaration(#shouldShowComment, bool, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
           #shouldShowCommentFrom: const Declaration(#shouldShowCommentFrom, bool, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
         },
-        smoke_6.MemberElement: {
+        smoke_7.MemberElement: {
           #idName: const Declaration(#idName, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
           #item: const Declaration(#item, dynamic, kind: PROPERTY, annotations: const [smoke_3.published]),
           #itemChanged: const Declaration(#itemChanged, Function, kind: METHOD),
@@ -451,6 +467,7 @@ void main() {
         #anchorHref: r'anchorHref',
         #annotations: r'annotations',
         #annotationsChanged: r'annotationsChanged',
+        #breadcrumbName: r'breadcrumbName',
         #breadcrumbs: r'breadcrumbs',
         #camelCaseName: r'camelCaseName',
         #caretStyle: r'caretStyle',
@@ -458,6 +475,8 @@ void main() {
         #categoryChanged: r'categoryChanged',
         #categoryLink: r'categoryLink',
         #classes: r'classes',
+        #closure: r'closure',
+        #closureChanged: r'closureChanged',
         #collapseSearchAndOptionsIfNeeded: r'collapseSearchAndOptionsIfNeeded',
         #commentFrom: r'commentFrom',
         #constantModifier: r'constantModifier',
@@ -474,6 +493,7 @@ void main() {
         #hasInheritedComment: r'hasInheritedComment',
         #hasItems: r'hasItems',
         #hideShow: r'hideShow',
+        #highLevelSdkVersion: r'highLevelSdkVersion',
         #homePage: r'homePage',
         #idName: r'idName',
         #inheritedFrom: r'inheritedFrom',
@@ -515,6 +535,7 @@ void main() {
         #lazyVariables: r'lazyVariables',
         #libraries: r'libraries',
         #lineHeight: r'lineHeight',
+        #location: r'location',
         #methods: r'methods',
         #methodsChanged: r'methodsChanged',
         #modifiers: r'modifiers',
@@ -529,11 +550,13 @@ void main() {
         #position: r'position',
         #prefixedAnchorHref: r'prefixedAnchorHref',
         #prefixedLinkHref: r'prefixedLinkHref',
-        #prefixedLocation: r'prefixedLocation',
+        #prefixedLocationWhenPossible: r'prefixedLocationWhenPossible',
         #preview: r'preview',
         #previewChanged: r'previewChanged',
         #previewComment: r'previewComment',
+        #rerouteLink: r'rerouteLink',
         #results: r'results',
+        #sdkVersionString: r'sdkVersionString',
         #searchQuery: r'searchQuery',
         #searchQueryChanged: r'searchQueryChanged',
         #selectDropDownItem: r'selectDropDownItem',
@@ -547,7 +570,6 @@ void main() {
         #showOrHideMinimap: r'showOrHideMinimap',
         #showOrHideObjectMembers: r'showOrHideObjectMembers',
         #showOrHidePackages: r'showOrHidePackages',
-        #showVersion: r'showVersion',
         #simpleType: r'simpleType',
         #staticFunctions: r'staticFunctions',
         #staticModifier: r'staticModifier',
@@ -563,36 +585,37 @@ void main() {
         #type: r'type',
         #typeChanged: r'typeChanged',
         #typedefs: r'typedefs',
+        #typedefsChanged: r'typedefsChanged',
         #url: r'url',
         #variables: r'variables',
         #variablesChanged: r'variablesChanged',
-        #version: r'version',
         #viewer: r'viewer',
       }));
-  startPolymer([
+  configureForDeployment([
       () => Polymer.register('dartdoc-comment', i0.CommentElement),
-      () => Polymer.register('dartdoc-parameter', i1.ParameterElement),
-      () => Polymer.register('dartdoc-item', i2.ItemElement),
-      () => Polymer.register('dartdoc-annotation', i3.AnnotationElement),
-      () => Polymer.register('dartdoc-link', i4.LinkElement),
-      () => Polymer.register('dartdoc-type', i5.TypeElement),
-      () => Polymer.register('variable-heading', i6.VariableHeading),
-      () => Polymer.register('dartdoc-variable', i7.VariableElement),
-      i8.registerMethodElement,
-      () => Polymer.register('dartdoc-typedef', i9.TypedefElement),
-      () => Polymer.register('dartdoc-category', i10.CategoryElement),
-      () => Polymer.register('dartdoc-minimap', i11.MinimapElement),
-      () => Polymer.register('dartdoc-homepage', i12.HomeElement),
-      () => Polymer.register('dartdoc-class', i13.ClassElement),
-      () => Polymer.register('dartdoc-library', i14.LibraryElement),
-      () => Polymer.register('dartdoc-page', i15.PageElement),
-      () => Polymer.register('search-result', i16.Result),
-      () => Polymer.register('search-box', i17.Search),
-      () => Polymer.register('dartdoc-minimap-library', i18.MinimapElementLibrary),
-      () => Polymer.register('dartdoc-library-panel', i19.LibraryPanel),
-      () => Polymer.register('dartdoc-minimap-class', i20.MinimapElementClass),
-      () => Polymer.register('dartdoc-breadcrumbs', i21.Breadcrumbs),
-      () => Polymer.register('dartdoc-main', i22.MainElement),
-      i23.main,
+      () => Polymer.register('dartdoc-closure', i1.ClosureElement),
+      () => Polymer.register('dartdoc-parameter', i2.ParameterElement),
+      () => Polymer.register('dartdoc-item', i3.ItemElement),
+      () => Polymer.register('dartdoc-annotation', i4.AnnotationElement),
+      () => Polymer.register('dartdoc-link', i5.LinkElement),
+      () => Polymer.register('dartdoc-type', i6.TypeElement),
+      () => Polymer.register('variable-heading', i7.VariableHeading),
+      () => Polymer.register('dartdoc-variable', i8.VariableElement),
+      i9.registerMethodElement,
+      () => Polymer.register('dartdoc-typedef', i10.TypedefElement),
+      () => Polymer.register('dartdoc-category', i11.CategoryElement),
+      () => Polymer.register('dartdoc-minimap', i12.MinimapElement),
+      () => Polymer.register('dartdoc-homepage', i13.HomeElement),
+      () => Polymer.register('dartdoc-class', i14.ClassElement),
+      () => Polymer.register('dartdoc-library', i15.LibraryElement),
+      () => Polymer.register('dartdoc-page', i16.PageElement),
+      () => Polymer.register('search-result', i17.Result),
+      () => Polymer.register('search-box', i18.Search),
+      () => Polymer.register('dartdoc-minimap-library', i19.MinimapElementLibrary),
+      () => Polymer.register('dartdoc-library-panel', i20.LibraryPanel),
+      () => Polymer.register('dartdoc-minimap-class', i21.MinimapElementClass),
+      () => Polymer.register('dartdoc-breadcrumbs', i22.Breadcrumbs),
+      () => Polymer.register('dartdoc-main', i23.MainElement),
     ]);
+  i24.main();
 }

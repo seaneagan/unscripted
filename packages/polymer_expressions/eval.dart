@@ -80,7 +80,7 @@ Object update(ExpressionObserver expr, Scope scope) {
  * operators or function invocations, and any index operations must use a
  * literal index.
  */
-void assign(Expression expr, Object value, Scope scope) {
+Object assign(Expression expr, Object value, Scope scope) {
 
   notAssignable() =>
       throw new EvalException("Expression is not assignable: $expr");
@@ -140,6 +140,7 @@ void assign(Expression expr, Object value, Scope scope) {
   } else {
     smoke.write(o, smoke.nameToSymbol(property), value);
   }
+  return value;
 }
 
 
@@ -649,7 +650,12 @@ class IndexObserver extends ExpressionObserver<Index> implements Index {
     var key = argument._value;
     _value = receiverValue[key];
 
-    if (receiverValue is Observable) {
+    if (receiverValue is ObservableList) {
+      _subscription = (receiverValue as ObservableList).listChanges
+          .listen((changes) {
+        if (changes.any((c) => c.indexChanged(key))) _invalidate(scope);
+      });
+    } else if (receiverValue is Observable) {
       _subscription = (receiverValue as Observable).changes.listen((changes) {
         if (changes.any((c) => c is MapChangeRecord && c.key == key)) {
           _invalidate(scope);
