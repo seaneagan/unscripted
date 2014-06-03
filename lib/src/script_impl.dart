@@ -5,76 +5,54 @@ import 'dart:io';
 import 'dart:mirrors';
 
 import 'package:unscripted/unscripted.dart';
-import 'package:unscripted/src/completion/completion.dart';
+import 'package:unscripted/src/plugins/completion/completion.dart';
 import 'package:unscripted/src/string_codecs.dart';
 import 'package:unscripted/src/usage.dart';
 import 'package:unscripted/src/util.dart';
+import 'package:unscripted/src/plugin.dart';
+import 'package:unscripted/src/plugins/help/help.dart';
 
 abstract class ScriptImpl implements Script {
 
   Usage get usage;
 
-  UsageFormatter getUsageFormatter(Usage usage) =>
-      new TerminalUsageFormatter(usage);
+  final Iterable<Plugin> plugins = [new Help()];
 
   execute(
       List<String> arguments,
       {Map<String, String> environment,
        bool isWindows}) {
 
+    if(isWindows == null) isWindows = Platform.isWindows;
+
     CommandInvocation commandInvocation;
 
     try {
-      commandInvocation = usage.validate(arguments);
+      commandInvocation = usage.parse(arguments);
+      if(!plugins.every((plugin) => plugin.onParse(usage, commandInvocation, environment, isWindows))) return;
+      commandInvocation = usage.validate(commandInvocation);
+      if(!plugins.every((plugin) => plugin.onValidate(usage, commandInvocation, environment, isWindows))) return;
     } catch (e) {
       // TODO: ArgParser.parse throws FormatException which does not indicate
       // which sub-command was trying to be executed.
       var helpUsage = e is UsageException ? e.usage : usage;
-      _handleUsageError(helpUsage, e);
+      _handleUsageError(helpUsage, e, isWindows);
       return;
     }
 
-    if(_checkHelp(commandInvocation)) return;
     if(_checkCompletion(
         commandInvocation,
         environment: environment,
         isWindows: isWindows)) return;
-    _handleResults(commandInvocation);
+    _handleResults(commandInvocation, isWindows);
 
   }
 
   /// Handles successfully validated [commandInvocation].
-  _handleResults(CommandInvocation commandInvocation);
+  _handleResults(CommandInvocation commandInvocation, bool isWindows);
 
-  /// Prints help for [helpUsage].  If [error] is not null, prints the help and
-  /// error to [stderr].
-  // TODO: Integrate with Loggers.
-  _printHelp(Usage helpUsage, [error]) {
-    var isError = error != null;
-    var sink = stdout;
-    if(isError) {
-      sink = stderr;
-      sink.writeln(error);
-      sink.writeln();
-    }
-    sink.writeln(getUsageFormatter(helpUsage).format());
-  }
-
-  _handleUsageError(Usage usage, error) {
-    _printHelp(usage, error);
-    exitCode = 2;
-  }
-
-  bool _checkHelp(CommandInvocation commandInvocation) {
-    var path = commandInvocation.helpPath;
-    if(path != null) {
-      var helpUsage = path
-          .fold(usage, (usage, subCommand) =>
-              usage.commands[subCommand]);
-      _printHelp(helpUsage);
-      return true;
-    }
-    return false;
+  _handleUsageError(Usage usage, error, bool isWindows) {
+    plugins.every((plugin) => plugin.onError(usage, error, isWindows));
   }
 
   bool _checkCompletion(
@@ -99,27 +77,37 @@ abstract class DeclarationScript extends ScriptImpl {
 
   DeclarationScript();
 
-  Usage get usage => getUsageFromFunction(_method);
+  Usage get usage {
+    if(_usage == null) {
+      _usage = getUsageFromFunction(_method);
+      plugins.forEach((plugin) => plugin.updateUsage(_usage));
+    }
+    return _usage;
+  }
+  Usage _usage;
 
-  _handleResults(CommandInvocation commandInvocation) {
+  _handleResults(CommandInvocation commandInvocation, bool isWindows) {
 
     var topInvocation = convertCommandInvocationToInvocation(commandInvocation, _method);
 
     var topResult = _getTopCommandResult(topInvocation);
 
-    _handleSubCommands(topResult, commandInvocation.subCommand, usage);
+    _handleSubCommands(topResult, commandInvocation.subCommand, usage, isWindows);
   }
 
   _getTopCommandResult(Invocation invocation);
 
-  _handleSubCommands(InstanceMirror result, CommandInvocation commandInvocation, Usage usage) {
+  _handleSubCommands(InstanceMirror result, CommandInvocation commandInvocation, Usage usage, bool isWindows) {
 
     if(commandInvocation == null) {
       // TODO: Move this to an earlier UsageException instead ?
       if(usage != null && usage.commands.keys.any((commandName) => !['help', 'completion'].contains(commandName))) {
-        _handleUsageError(usage, new UsageException(
-            usage: usage,
-            cause: 'Must specify a sub-command.'));
+        _handleUsageError(
+            usage,
+            new UsageException(
+                usage: usage,
+                cause: 'Must specify a sub-command.'),
+            isWindows);
       }
       return;
     }
@@ -133,7 +121,7 @@ abstract class DeclarationScript extends ScriptImpl {
     var subResult = result.delegate(invocation);
     Usage subUsage;
     if(commandInvocation.subCommand != null) subUsage = usage.commands[commandInvocation.subCommand.name];
-    _handleSubCommands(reflect(subResult), commandInvocation.subCommand, subUsage);
+    _handleSubCommands(reflect(subResult), commandInvocation.subCommand, subUsage, isWindows);
   }
 
 }

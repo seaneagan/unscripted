@@ -5,7 +5,7 @@ part of unscripted;
 ///
 /// See the corresponding method parameters to [ArgParser.addOption]
 /// for descriptions of the fields.
-class Option extends Help {
+class Option extends HelpAnnotation {
   final String abbr;
   /// Either a `List<String>` of allowed values, or `Map<String, String>` of
   /// allowed values to help text.
@@ -49,7 +49,7 @@ class Flag extends Option {
 
 /// An annotation which gives example arguments that can be passed to a
 /// [Command] or [SubCommand].
-class ArgExample extends Help {
+class ArgExample extends HelpAnnotation {
 
   /// The example arguments.
   ///
@@ -62,7 +62,7 @@ class ArgExample extends Help {
 
 /// An annotation which marks required positional parameters as
 /// positional command line parameters.
-class Positional extends Help {
+class Positional extends HelpAnnotation {
 
   /// The name to identify the parameter with in usage text.  By
   /// default the name of the dart parameter is used converted from camelCase

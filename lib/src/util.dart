@@ -9,21 +9,19 @@ import 'package:args/args.dart' show ArgParser, ArgResults;
 import 'package:unscripted/unscripted.dart';
 import 'package:unscripted/src/string_codecs.dart';
 import 'package:unscripted/src/usage.dart';
-import 'package:unscripted/src/completion/completion.dart';
+import 'package:unscripted/src/plugins/completion/completion.dart';
 import 'package:unscripted/src/invocation_maker.dart';
 import 'package:mockable_filesystem/filesystem.dart' as filesystem;
 
-const HELP = 'help';
-
 /// A base class for script annotations which include help.
-class Help {
+class HelpAnnotation {
   /// The help text to include for this part of the command line interface.
   final String help;
 
-  const Help({this.help});
+  const HelpAnnotation({this.help});
 }
 
-class BaseCommand extends Help {
+class BaseCommand extends HelpAnnotation {
   const BaseCommand({String help}) : super(help: help);
 }
 

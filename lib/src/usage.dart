@@ -1,18 +1,13 @@
 
 library unscripted.usage;
 
-import 'dart:convert';
 import 'dart:io';
 
-import 'package:ansicolor/ansicolor.dart';
 import 'package:collection/collection.dart';
-import 'package:path/path.dart' as path;
 import 'package:args/args.dart' show ArgParser, ArgResults;
-import 'package:quiver/strings.dart';
+import 'package:path/path.dart' as path;
 import 'package:unscripted/unscripted.dart';
 import 'package:unscripted/src/util.dart';
-
-part 'usage_formatter.dart';
 
 /// Adds a standard --help (-h) option to [parser].
 /// If [parser] has any sub-commands also add a help sub-command,
@@ -40,7 +35,6 @@ class Usage {
   ArgParser get parser {
     if(_parser == null) {
       _parser = _getParser();
-      _addHelpFlag(_parser);
     }
     return _parser;
   }
@@ -78,12 +72,6 @@ class Usage {
     addOptionToParser(parser, name, option);
     _options[name] = option;
   }
-
-  _addHelpFlag(ArgParser parser) =>
-      addOption(HELP, new Flag(
-          abbr: 'h',
-          help: 'Print this usage information.',
-          negatable: false));
 
   List<String> _commandPath;
   List<String> get commandPath {
@@ -123,24 +111,11 @@ class Usage {
   }
   Usage addCommand(String name) {
     parser.addCommand(name);
-    var command = _commands[name] = new _SubCommandUsage(this, name);
-    if(name != HELP && !commands.keys.contains(HELP)) {
-      addCommand(HELP);
-    }
-    return command;
+    return _commands[name] = new _SubCommandUsage(this, name);
   }
 
-  CommandInvocation validate(List<String> arguments) {
-
-    var commandInvocation = parse(arguments);
-
-    // Don't apply usage if help is requested.
-    var shouldApplyUsage = commandInvocation.helpPath == null;
-    if(shouldApplyUsage) {
-      commandInvocation = applyUsageToCommandInvocation(this, commandInvocation);
-    }
-    return commandInvocation;
-  }
+  CommandInvocation validate(CommandInvocation commandInvocation) =>
+      applyUsageToCommandInvocation(this, commandInvocation);
 
   CommandInvocation parse(List<String> arguments) {
     ArgResults results;
@@ -207,30 +182,6 @@ class CommandInvocation {
   final List positionals;
   final Map<String, dynamic> options;
   final CommandInvocation subCommand;
-  List<String> get helpPath {
-    if(_helpPath == null) _helpPath = _getHelpPath();
-    return _helpPath;
-  }
-  List<String> _getHelpPath() {
-    var path = [];
-    var subCommandInvocation = this;
-    while(true) {
-      if(subCommandInvocation.options.containsKey(HELP) &&
-          subCommandInvocation.options[HELP]) return path;
-      if(subCommandInvocation.subCommand == null) return null;
-      if(subCommandInvocation.subCommand.name == HELP) {
-        var helpCommand = subCommandInvocation.subCommand;
-        if(helpCommand.positionals.isNotEmpty) {
-          path.add(helpCommand.positionals.first);
-        }
-        return path;
-      }
-      subCommandInvocation = subCommandInvocation.subCommand;
-      path.add(subCommandInvocation.name);
-    }
-    return path;
-  }
-  List<String> _helpPath;
 
   CommandInvocation._(this.name, this.positionals, this.options, this.subCommand);
 }
@@ -344,4 +295,13 @@ CommandInvocation applyUsageToCommandInvocation(Usage usage, CommandInvocation i
   }
 
   return new CommandInvocation._(invocation.name, positionals, options, subCommand);
+}
+
+formatCallStyle(CallStyle callStyle) {
+  var commandName = path.basenameWithoutExtension(path.fromUri(Platform.script));
+  switch(callStyle) {
+    case CallStyle.NORMAL: return 'dart $commandName.dart';
+    case CallStyle.SHEBANG: return '$commandName.dart';
+    case CallStyle.SHELL: return commandName;
+  }
 }
