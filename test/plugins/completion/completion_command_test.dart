@@ -14,8 +14,7 @@ main() {
 
     test('installation', () {
       var args = ['completion'];
-      declare(f)
-      .execute(args, isWindows: false);
+      declare(f).execute(args, isWindows: false);
     });
 
     test('completions output is correct', () {
@@ -49,7 +48,7 @@ main() {
 
 }
 
-@Command(completion: true, callStyle: CallStyle.SHELL)
+@Command(plugins: const [const Completion()], callStyle: CallStyle.SHELL)
 f({int foo, String bar}) {}
 
 String captureOutput(f()) {

@@ -1,5 +1,9 @@
 
-part of unscripted.completion;
+library unscripted.plugins.completion.command_line;
+
+import 'dart:io';
+
+import 'util.dart';
 
 class CommandLine {
 
@@ -7,7 +11,6 @@ class CommandLine {
   final int cursor;
   final int wordIndex;
   final Iterable<String> args;
-  final String command;
 
   Iterable<String> get words => args.map(unescape);
   String get word => words.elementAt(wordIndex);
@@ -47,14 +50,12 @@ class CommandLine {
     var line = environment['COMP_LINE'];
     var cursor = int.parse(environment['COMP_POINT']);
     var wordIndex = int.parse(environment['COMP_CWORD']) - 1;
-    var command = args.first;
     var realArgs = args.sublist(1);
     if(line.endsWith(' ')) realArgs.add('');
 
     return new CommandLine._(
         line,
         cursor,
-        command,
         realArgs,
         wordIndex);
   }
@@ -63,6 +64,6 @@ class CommandLine {
       const ['COMP_CWORD', 'COMP_LINE', 'COMP_POINT']
           .every(environment.keys.contains);
 
-  CommandLine._(this.line, this.cursor, this.command, this.args, this.wordIndex);
+  CommandLine._(this.line, this.cursor, this.args, this.wordIndex);
 
 }

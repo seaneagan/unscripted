@@ -11,7 +11,10 @@ class Server {
 
   final String configPath;
 
-  @Command(help: 'Manages a server', completion: true, callStyle: CallStyle.SHEBANG)
+  @Command(
+      help: 'Manages a server',
+      plugins: const [const Completion()],
+      callStyle: CallStyle.SHEBANG)
   Server({@Option(allowed: _getCurrentDirectoryFilenames) this.configPath: 'config.xml'});
 
   @SubCommand(help: 'Start the server')

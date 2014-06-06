@@ -99,10 +99,10 @@ class Rest extends Positional {
 /// An annotation which marks a class as representing a script command.
 class Command extends BaseCommand {
   final CallStyle callStyle;
-  /// Whether or not to include a `completion` sub-command.
-  final bool completion;
+  /// The plugins to use with this command.
+  final Iterable plugins;
 
-  const Command({String help, this.callStyle, this.completion : false})
+  const Command({String help, this.callStyle, this.plugins})
       : super(help: help);
 }
 

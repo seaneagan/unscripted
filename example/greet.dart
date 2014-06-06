@@ -5,7 +5,7 @@ import 'package:unscripted/unscripted.dart';
 main(arguments) => declare(greet).execute(arguments, isWindows: false);
 
 // Optional command-line metadata:
-@Command(help: 'Outputs a greeting', completion: true, callStyle: CallStyle.SHEBANG)
+@Command(help: 'Outputs a greeting', plugins: const [const Completion()], callStyle: CallStyle.SHEBANG)
 @ArgExample('--salutation Welcome --exclaim Bob', help: 'enthusiastic')
 greet(
     @Rest(help: "Name(s) to greet") List<String> who,

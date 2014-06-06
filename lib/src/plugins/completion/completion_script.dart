@@ -1,13 +1,17 @@
 
-part of unscripted.completion;
+library unscripted.plugins.completion.completion_script;
+
+import 'dart:io';
+
+import 'package:path/path.dart' as path;
 
 String getMarker(String command, String type) => '###-$type-$command-completion-###';
 String getBeginMarker(String command) => '\n' + getMarker(command, 'begin');
 String getEndMarker(String command) => getMarker(command, 'end') + '\n';
 
-String getScriptOutput (String command) {
+String getScriptOutput (String command, String completionSyntax) {
 
-  var completionCommand = '$command completion';
+  var completionCommand = '$command $completionSyntax';
   var func = '_${command.replaceAll(new RegExp(r'[.-]'), '_')}_completion';
 
   return '''
@@ -66,46 +70,44 @@ fi
 ${getEndMarker(command)}''';
 }
 
-installScript(String command) {
-  var installCommand = '$command completion install';
-  print('Installing completion for $command');
-
-  var rcText = readRc(command);
-  if(rcText == null) {
-    var fileName = path.basename(shellRc.path);
-    throw "No $fileName file. You'll have to instead run: $command completion >> ~/$fileName";
-  }
-
-  var parts = rcText.split(getBeginMarker(command));
-  if(parts.length >= 2) {
-    print(' ✗ $command completion was already installed. Nothing to do.');
-    return;
-  }
-
-  appendRc(command, getScriptOutput(command));
-  print('''
- ✓ $command completion installed.
-   Now run ". ~/${shellConfig(currentShell)}" to try it without restarting your shell.''');
+installScript(String command, String completionSyntax) {
+  scriptInstallation(
+      'install',
+      command,
+      completionSyntax,
+      'Either run `. ~/${_shellConfig(currentShell)}` or start a new shell to try out',
+      (command, rcText) {
+        if(rcText == null) {
+          var fileName = path.basename(shellRc.path);
+          throw "No $fileName file. You'll have to instead run: $command $completionSyntax >> ~/$fileName";
+        }
+        var parts = rcText.split(getBeginMarker(command));
+        return parts.length >= 2;
+      },
+      (command, completionSyntax, rcText) {
+        appendRc(command, getScriptOutput(command, completionSyntax));
+      });
 }
 
-uninstallScript(String command) {
-  var uninstallCommand = '$command completion uninstall';
-  print('Uninstalling completion for $command');
-
-  var rcText = readRc(command);
-
-  var begin = rcText.indexOf(getBeginMarker(command));
-  var endMarker = getEndMarker(command);
-  var end = rcText.indexOf(getEndMarker(command));
-  if(begin == -1 || end == -1) {
-    print(' ✗ $command completion was not installed. Nothing to do.');
-    return;
-  }
-  end = end + endMarker.length;
-  var prefix = rcText.substring(0, begin);
-  var suffix = rcText.substring(end);
-  shellRc.writeAsStringSync(prefix + suffix);
-  print(' ✓ $command completion uninstalled.');
+uninstallScript(String command, String completionSyntax) {
+  scriptInstallation(
+      'uninstall',
+      command,
+      completionSyntax,
+      '',
+      (command, rcText) {
+        var parts = rcText.split(getBeginMarker(command));
+        return parts.length < 2;
+      },
+      (command, completionSyntax, rcText) {
+        var begin = rcText.indexOf(getBeginMarker(command));
+        var endMarker = getEndMarker(command);
+        var end = rcText.indexOf(getEndMarker(command));
+        end = end + endMarker.length;
+        var prefix = rcText.substring(0, begin);
+        var suffix = rcText.substring(end);
+        shellRc.writeAsStringSync(prefix + suffix);
+      });
 }
 
 String currentShell = new RegExp(r'\/bin\/(\w+)').firstMatch(Platform.environment['SHELL']).group(1);
@@ -115,7 +117,22 @@ File shellRc = () {
   return new File(filePath);
 }();
 
-String readRc(String command) {
+scriptInstallation(String name, String command, String completionSyntax, String postActionMessage, bool alreadyDone(String command, String rcText), bool action(String command, String completionSyntax, String rcText)) {
+  print('${name}ing completion for $command');
+  var rcText = readRc();
+  if(alreadyDone(command, rcText)) {
+    print(' ✗ $command completion was already ${name}ed. Nothing to do.');
+    return;
+  }
+  action(command, completionSyntax, rcText);
+  print('''
+ ✓ $command completion ${name}ed.''');
+  if(postActionMessage.isNotEmpty) {
+    print('   $postActionMessage');
+  }
+}
+
+String readRc() {
   if(shellRc.existsSync()) {
     return shellRc.readAsStringSync();
   }
@@ -127,3 +144,5 @@ appendRc(String command, String text) {
     shellRc.openSync(mode: FileMode.APPEND).writeStringSync(text);
   }
 }
+
+String _shellConfig(shell) => '.${shell}rc';

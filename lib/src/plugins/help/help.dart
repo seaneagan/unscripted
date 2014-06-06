@@ -16,6 +16,8 @@ const _HELP = 'help';
 
 class Help extends Plugin {
 
+  const Help();
+
   updateUsage(Usage usage) {
 
     usage.commands.values.forEach(updateUsage);

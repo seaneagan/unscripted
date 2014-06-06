@@ -9,7 +9,6 @@ import 'package:args/args.dart' show ArgParser, ArgResults;
 import 'package:unscripted/unscripted.dart';
 import 'package:unscripted/src/string_codecs.dart';
 import 'package:unscripted/src/usage.dart';
-import 'package:unscripted/src/plugins/completion/completion.dart';
 import 'package:unscripted/src/invocation_maker.dart';
 import 'package:mockable_filesystem/filesystem.dart' as filesystem;
 
@@ -211,7 +210,6 @@ _addCommandMetadata(Usage usage, DeclarationMirror declaration) {
   if(command is Command && usage.parent == null) {
     var topCommand = command as Command;
     usage.callStyle = topCommand.callStyle;
-    if(topCommand.completion) addCompletionCommand(usage);
   }
   var description = command == null ? '' : command.help;
   usage.description = description;

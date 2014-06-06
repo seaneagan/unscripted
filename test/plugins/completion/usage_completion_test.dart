@@ -4,16 +4,17 @@ library usage_completion_test;
 import 'dart:async';
 
 import 'package:unscripted/unscripted.dart';
-import 'package:unscripted/src/plugins/completion/completion.dart';
+import 'package:unscripted/src/plugins/completion/completion.dart' as completion_plugin;
+import 'package:unscripted/src/plugins/completion/command_line.dart';
+import 'package:unscripted/src/plugins/completion/usage_completion.dart';
 import 'package:unscripted/src/usage.dart';
 import 'package:unscripted/src/plugins/help/help.dart';
 import 'package:unittest/unittest.dart';
 
-var helpPlugin = new Help();
-
-withHelp(Usage usage) {
-  helpPlugin.updateUsage(usage);
-  return usage;
+addPlugins(Usage usage) {
+  [const completion_plugin.Completion(), const Help()].forEach((plugin) {
+    plugin.updateUsage(usage);
+  });
 }
 
 main() {
@@ -41,10 +42,13 @@ main() {
 
     group('when usage empty', () {
 
-      test('should complete -- to --help', () {
+      test('should complete -- to to plugin options', () {
         var usage = new Usage();
-        helpPlugin.updateUsage(usage);
-        testAllowed(usage, '--', ['--help']);
+        addPlugins(usage);
+        testAllowed(usage, '--', [
+          '--completion',
+          '--help'
+        ]);
       });
 
     });
@@ -55,16 +59,21 @@ main() {
         var usage = new Usage()
             ..addOption('aaa', new Option())
             ..addOption('bbb', new Option());
-        helpPlugin.updateUsage(usage);
+        addPlugins(usage);
 
-        testAllowed(usage, '--', unorderedEquals(['--help', '--aaa', '--bbb']));
+        testAllowed(usage, '--', [
+          '--aaa',
+          '--bbb',
+          '--completion',
+          '--help'
+        ]);
       });
 
       test('should suggest long options with same prefix', () {
         var usage = new Usage()
             ..addOption('aaa', new Option())
             ..addOption('bbb', new Option());
-        helpPlugin.updateUsage(usage);
+        addPlugins(usage);
 
         testAllowed(usage, '--a', ['--aaa']);
       });
@@ -74,7 +83,7 @@ main() {
     test('should complete - to --', () {
       var usage = new Usage()
           ..addOption('opt', new Option(abbr: 'o'));
-      helpPlugin.updateUsage(usage);
+      addPlugins(usage);
 
       return getUsageCompletions(usage, makeSimpleCommandLine('-')).then((completions) {
         expect(completions, hasLength(2));
@@ -88,7 +97,7 @@ main() {
       var usage = new Usage()
           ..addOption('opt', new Option(abbr: 'o'))
           ..addOption('flag', new Flag(abbr: 'f'));
-      helpPlugin.updateUsage(usage);
+      addPlugins(usage);
 
       testAllowed(usage, '-o', ['--opt']);
       testAllowed(usage, '-f', ['--flag']);
@@ -102,7 +111,7 @@ main() {
             ..addOption('bbb', new Option(abbr: 'b', allowed: {'x': '', 'y': '', 'z': ''}))
             ..addOption('ccc', new Option(abbr: 'c'))
             ..addOption('flag', new Flag(abbr: 'f'));
-        helpPlugin.updateUsage(usage);
+        addPlugins(usage);
 
         testAllowed(usage, '--aaa ', ['x', 'y', 'z']);
         testAllowed(usage, '-a ', ['x', 'y', 'z']);
@@ -118,7 +127,7 @@ main() {
         test('should suggest synchronously returned completions', () {
           var usage = new Usage()
               ..addOption('aaa', new Option(abbr: 'a', allowed: (partial) => ['x', 'y', 'z']));
-          helpPlugin.updateUsage(usage);
+          addPlugins(usage);
 
           testAllowed(usage, '--aaa ', ['x', 'y', 'z']);
           testAllowed(usage, '--aaa x', ['x']);
@@ -129,7 +138,7 @@ main() {
         test('should suggest asynchronously returned completions', () {
           var usage = new Usage()
               ..addOption('aaa', new Option(abbr: 'a', allowed: (partial) => new Future.value(['x', 'y', 'z'])));
-          helpPlugin.updateUsage(usage);
+          addPlugins(usage);
 
           testAllowed(usage, '--aaa ', ['x', 'y', 'z']);
           testAllowed(usage, '--aaa x', ['x']);
@@ -146,12 +155,12 @@ main() {
         var usage = new Usage()
             ..addPositional(new Positional(allowed: ['aa', 'bb', 'cc']))
             ..addPositional(new Positional(allowed: {'aa': '', 'bb': '', 'cc': ''}));
-        helpPlugin.updateUsage(usage);
+        addPlugins(usage);
 
         testAllowed(usage, '', ['aa', 'bb', 'cc']);
         testAllowed(usage, 'a', ['aa']);
         testAllowed(usage, 'aa b', ['bb']);
-        testAllowed(usage, 'aa bb c', []);
+        testAllowed(usage, 'aa aa a', []);
       });
 
       group('when allowed is func', () {
@@ -159,7 +168,7 @@ main() {
         test('should suggest synchronously returned completions', () {
           var usage = new Usage()
               ..addPositional(new Positional(allowed: (partial) => ['aa', 'bb', 'cc']));
-          helpPlugin.updateUsage(usage);
+          addPlugins(usage);
 
           testAllowed(usage, '', ['aa', 'bb', 'cc']);
           testAllowed(usage, 'a', ['aa']);
@@ -169,7 +178,7 @@ main() {
         test('should suggest asynchronously returned completions', () {
           var usage = new Usage()
               ..addPositional(new Positional(allowed: (partial) => new Future.value(['aa', 'bb', 'cc'])));
-          helpPlugin.updateUsage(usage);
+          addPlugins(usage);
 
           testAllowed(usage, '', ['aa', 'bb', 'cc']);
           testAllowed(usage, 'a', ['aa']);
@@ -181,7 +190,7 @@ main() {
         var usage = new Usage()
             ..addPositional(new Positional())
             ..rest = new Rest(allowed: ['aa', 'bb', 'cc']);
-        helpPlugin.updateUsage(usage);
+        addPlugins(usage);
 
         testAllowed(usage, '', []);
         testAllowed(usage, 'x ', ['aa', 'bb', 'cc']);
@@ -196,16 +205,17 @@ main() {
         var usage = new Usage()
             ..addCommand('xcommand')
             ..addCommand('ycommand');
-        helpPlugin.updateUsage(usage);
+        addPlugins(usage);
 
-        testAllowed(usage, '', unorderedEquals(['help', 'xcommand', 'ycommand']));
+        testAllowed(usage, '', ['xcommand', 'ycommand', 'completion', 'help']);
       });
 
       test('should suggest commands matching incomplete word', () {
         var usage = new Usage()
+            ..addPositional(new Positional())
             ..addCommand('xcommand')
             ..addCommand('ycommand');
-        helpPlugin.updateUsage(usage);
+        addPlugins(usage);
 
         testAllowed(usage, 'x', ['xcommand']);
       });

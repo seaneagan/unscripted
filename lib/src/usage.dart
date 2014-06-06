@@ -80,9 +80,10 @@ class Usage {
       var usage = this;
       while(true) {
         if(usage.parent == null) {
-          _commandPath = path;
+          _commandPath = path.reversed.toList();
           break;
         }
+        path.add(usage.name);
         usage = usage.parent;
       }
     }

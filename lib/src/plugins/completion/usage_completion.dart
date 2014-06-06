@@ -1,5 +1,12 @@
 
-part of unscripted.completion;
+library unscripted.plugins.completion.usage_completion;
+
+import 'dart:async';
+
+import 'package:unscripted/unscripted.dart';
+import 'package:unscripted/src/usage.dart';
+
+import 'command_line.dart';
 
 Future<Iterable> getUsageCompletions(Usage usage, CommandLine commandLine) => new Future.sync(() {
 
@@ -96,6 +103,11 @@ Future<Iterable> getUsageCompletions(Usage usage, CommandLine commandLine) => ne
       }
     }
 
+    // Try completing command.
+    var commandCompletions = leafUsage.commands.keys.where((command) =>
+        command.startsWith(toComplete));
+    if(commandCompletions.isNotEmpty) return commandCompletions;
+
     // Try completing positional.
     var positionalCount = leafCommandInvocation.positionals.length;
     var positional = leafUsage.positionalAt(leafCommandInvocation.positionals.length);
@@ -103,8 +115,6 @@ Future<Iterable> getUsageCompletions(Usage usage, CommandLine commandLine) => ne
       return _getCompletionsForAllowed(positional.allowed, toComplete);
     }
 
-    // Try completing command.
-    return leafUsage.commands.keys.where((command) => command.startsWith(toComplete));
   }
 
   return [];

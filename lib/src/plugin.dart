@@ -1,7 +1,11 @@
 
+library unscripted.plugin;
+
 import 'package:unscripted/src/usage.dart';
 
 class Plugin {
+
+  const Plugin();
 
   updateUsage(Usage usage) {}
 
@@ -20,4 +24,12 @@ class Plugin {
       bool isWindows) {
     return true;
   }
+
+  bool onError(
+      Usage usage,
+      error,
+      bool isWindows) {
+    return true;
+  }
+
 }

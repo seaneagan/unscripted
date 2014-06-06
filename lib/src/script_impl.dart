@@ -5,18 +5,19 @@ import 'dart:io';
 import 'dart:mirrors';
 
 import 'package:unscripted/unscripted.dart';
-import 'package:unscripted/src/plugins/completion/completion.dart';
 import 'package:unscripted/src/string_codecs.dart';
 import 'package:unscripted/src/usage.dart';
 import 'package:unscripted/src/util.dart';
 import 'package:unscripted/src/plugin.dart';
 import 'package:unscripted/src/plugins/help/help.dart';
+import 'package:unscripted/src/plugins/completion/completion.dart' as completion;
+import 'package:unscripted/src/plugins/completion/marker.dart';
 
 abstract class ScriptImpl implements Script {
 
   Usage get usage;
 
-  final Iterable<Plugin> plugins = [new Help()];
+  Iterable<Plugin> get plugins;
 
   execute(
       List<String> arguments,
@@ -40,10 +41,6 @@ abstract class ScriptImpl implements Script {
       return;
     }
 
-    if(_checkCompletion(
-        commandInvocation,
-        environment: environment,
-        isWindows: isWindows)) return;
     _handleResults(commandInvocation, isWindows);
 
   }
@@ -55,18 +52,6 @@ abstract class ScriptImpl implements Script {
     plugins.every((plugin) => plugin.onError(usage, error, isWindows));
   }
 
-  bool _checkCompletion(
-      CommandInvocation commandInvocation,
-      {Map<String, String> environment,
-       bool isWindows}) {
-    var subCommand = commandInvocation.subCommand;
-    if(subCommand != null && subCommand.name == 'completion') {
-      complete(usage, subCommand, environment: environment,
-          isWindows: isWindows);
-      return true;
-    }
-    return false;
-  }
 }
 
 abstract class DeclarationScript extends ScriptImpl {
@@ -74,6 +59,28 @@ abstract class DeclarationScript extends ScriptImpl {
   DeclarationMirror get _declaration;
 
   MethodMirror get _method;
+
+  Iterable<Plugin> get plugins {
+    if(_plugins == null) {
+      _plugins = [];
+      var command = getFirstMetadataMatch(
+          _method, (metadata) => metadata is Command);
+      if(command != null && command.plugins != null) {
+        command.plugins.forEach((plugin) {
+          if(plugin is Completion) {
+            _plugins.add(new completion.Completion());
+          } else {
+            throw 'Unrecognized plugin: $plugin';
+          }
+        });
+      }
+      // Must add help last, so that it can know about any sub-commands it
+      // needs to add help for.
+      _plugins.add(const Help());
+    }
+    return _plugins;
+  }
+  List<Plugin> _plugins;
 
   DeclarationScript();
 
