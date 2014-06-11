@@ -63,17 +63,18 @@ Future<Iterable> getUsageCompletions(Usage usage, CommandLine commandLine) => ne
       // Short option
       var abbrs = toComplete.substring(1).split('');
       if(abbrs.isEmpty) {
-        return ['--', '--this-should-never-be-seen'];
-        // TODO: Return short options like below instead?
+        // Complete option.
+        return completionOptions.keys.map((option) => "--$option");
       }
-      if(abbrs.length == 1) {
-        var abbr = abbrs.single;
-        var opt = completionOptions.keys.firstWhere((opt) {
-          var option = completionOptions[opt];
-          // TODO: Bail out on non-flags here?
-          return option.abbr == abbr;
-        }, orElse: () => null);
-        if(opt != null) return ['--$opt'];
+      String findByAbbr(String abbr) {
+        return completionOptions.keys.firstWhere((option) => completionOptions[option].abbr == abbr, orElse: () => null);
+      }
+      var options = abbrs.map(findByAbbr);
+      var allAbbrsFound = options.every((option) => option != null);
+      var singleOption = options.length == 1;
+      var allFlags = options.every((option) => completionOptions[option] is Flag);
+      if(allAbbrsFound && (singleOption || allFlags)) {
+        return [options.map((option) => '--$option')];
       }
       return [];
     }
@@ -112,11 +113,16 @@ Future<Iterable> getUsageCompletions(Usage usage, CommandLine commandLine) => ne
     var positionalCount = leafCommandInvocation.positionals.length;
     var positional = leafUsage.positionalAt(leafCommandInvocation.positionals.length);
     if(positional != null) {
-      return _getCompletionsForAllowed(positional.allowed, toComplete);
+      if(positional.allowed != null) {
+        return _getCompletionsForAllowed(positional.allowed, toComplete);
+      }
     }
-
   }
 
+  // If empty, assume they want an option.
+  if(toComplete.isEmpty) return completionOptions.keys.map((option) => "--$option");
+
+  // Give up.
   return [];
 });
 

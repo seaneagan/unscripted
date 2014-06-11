@@ -30,7 +30,8 @@ class Help extends Plugin {
     }
 
     if(usage.commands.isNotEmpty && !usage.commands.containsKey(_HELP)){
-      usage.addCommand(_HELP);
+      // TODO: This should be an optional positional if/when that is supported.
+      usage.addCommand(_HELP)..addPositional(new Positional(allowed: usage.commands.keys.toList()..remove(_HELP)));
     }
   }
 

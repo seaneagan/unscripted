@@ -17,7 +17,7 @@ abstract class ScriptImpl implements Script {
 
   Usage get usage;
 
-  Iterable<Plugin> get plugins;
+  List<Plugin> get plugins;
 
   execute(
       List<String> arguments,
@@ -30,9 +30,10 @@ abstract class ScriptImpl implements Script {
 
     try {
       commandInvocation = usage.parse(arguments);
-      if(!plugins.every((plugin) => plugin.onParse(usage, commandInvocation, environment, isWindows))) return;
+      var reversedPlugins = plugins.reversed;
+      if(!reversedPlugins.every((plugin) => plugin.onParse(usage, commandInvocation, environment, isWindows))) return;
       commandInvocation = usage.validate(commandInvocation);
-      if(!plugins.every((plugin) => plugin.onValidate(usage, commandInvocation, environment, isWindows))) return;
+      if(!reversedPlugins.every((plugin) => plugin.onValidate(usage, commandInvocation, environment, isWindows))) return;
     } catch (e) {
       // TODO: ArgParser.parse throws FormatException which does not indicate
       // which sub-command was trying to be executed.
@@ -60,7 +61,7 @@ abstract class DeclarationScript extends ScriptImpl {
 
   MethodMirror get _method;
 
-  Iterable<Plugin> get plugins {
+  List<Plugin> get plugins {
     if(_plugins == null) {
       _plugins = [];
       var command = getFirstMetadataMatch(

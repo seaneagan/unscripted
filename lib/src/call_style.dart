@@ -1,10 +1,15 @@
 
-part of unscripted;
+library unscripted.call_style;
+
+import 'dart:io';
 
 /// How the command is called on the command line.
 class CallStyle {
 
   final String _name;
+
+  static CallStyle current = !Platform.isWindows || Platform.environment['SHELL'] != null ?
+      CallStyle.SHEBANG : CallStyle.NORMAL;
 
   /// Called with the dart executable.
   /// Example:

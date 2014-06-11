@@ -55,11 +55,18 @@ main() {
 
     group('when completing long option', () {
 
-      test('should suggest all long options for --', () {
+      test('should suggest all long options for -- or empty', () {
         var usage = new Usage()
             ..addOption('aaa', new Option())
             ..addOption('bbb', new Option());
         addPlugins(usage);
+
+        testAllowed(usage, '', [
+          '--aaa',
+          '--bbb',
+          '--completion',
+          '--help'
+        ]);
 
         testAllowed(usage, '--', [
           '--aaa',
@@ -85,12 +92,11 @@ main() {
           ..addOption('opt', new Option(abbr: 'o'));
       addPlugins(usage);
 
-      return getUsageCompletions(usage, makeSimpleCommandLine('-')).then((completions) {
-        expect(completions, hasLength(2));
-        expect(completions.first, '--');
-        expect(completions.last, hasLength(greaterThan(2)));
-        expect(completions.last, startsWith('--'));
-      });
+      testAllowed(usage, '-', [
+        '--opt',
+        '--completion',
+        '--help'
+      ]);
     });
 
     test('should complete short option to long option', () {
@@ -99,8 +105,9 @@ main() {
           ..addOption('flag', new Flag(abbr: 'f'));
       addPlugins(usage);
 
-      testAllowed(usage, '-o', ['--opt']);
-      testAllowed(usage, '-f', ['--flag']);
+      testAllowed(usage, '-o', [['--opt']]);
+      testAllowed(usage, '-f', [['--flag']]);
+      testAllowed(usage, '-hf', [['--help', '--flag']]);
     });
 
     group('when completing option value', () {
@@ -160,7 +167,6 @@ main() {
         testAllowed(usage, '', ['aa', 'bb', 'cc']);
         testAllowed(usage, 'a', ['aa']);
         testAllowed(usage, 'aa b', ['bb']);
-        testAllowed(usage, 'aa aa a', []);
       });
 
       group('when allowed is func', () {
@@ -172,7 +178,6 @@ main() {
 
           testAllowed(usage, '', ['aa', 'bb', 'cc']);
           testAllowed(usage, 'a', ['aa']);
-          testAllowed(usage, 'aa b', []);
         });
 
         test('should suggest asynchronously returned completions', () {
@@ -182,7 +187,6 @@ main() {
 
           testAllowed(usage, '', ['aa', 'bb', 'cc']);
           testAllowed(usage, 'a', ['aa']);
-          testAllowed(usage, 'aa b', []);
         });
 
       });
@@ -192,7 +196,6 @@ main() {
             ..rest = new Rest(allowed: ['aa', 'bb', 'cc']);
         addPlugins(usage);
 
-        testAllowed(usage, '', []);
         testAllowed(usage, 'x ', ['aa', 'bb', 'cc']);
         testAllowed(usage, 'x aa b', ['bb']);
       });

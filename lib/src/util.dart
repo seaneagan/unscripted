@@ -209,7 +209,6 @@ _addCommandMetadata(Usage usage, DeclarationMirror declaration) {
       declaration, (metadata) => metadata is BaseCommand);
   if(command is Command && usage.parent == null) {
     var topCommand = command as Command;
-    usage.callStyle = topCommand.callStyle;
   }
   var description = command == null ? '' : command.help;
   usage.description = description;

@@ -13,5 +13,4 @@ export 'package:unscripted/src/plugins/completion/marker.dart';
 
 part 'src/script.dart';
 part 'src/annotations.dart';
-part 'src/call_style.dart';
 part 'src/io.dart';

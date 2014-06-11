@@ -7,6 +7,7 @@ import 'dart:io';
 import 'package:unscripted/src/usage.dart';
 import 'package:unscripted/src/plugin.dart';
 import 'package:unscripted/unscripted.dart';
+import 'package:unscripted/src/call_style.dart';
 
 import 'command_line.dart';
 import 'completion_script.dart';
@@ -25,6 +26,12 @@ class Completion extends Plugin {
 
   bool onParse(Usage usage, CommandInvocation commandInvocation, Map<String,
       String> environment, bool isWindows) {
+    if (usage.callStyle == CallStyle.NORMAL) {
+      var ENOTSUP = 252;
+      exitCode = ENOTSUP;
+      throw new UnsupportedError(
+          "${formatCallStyle(CallStyle.SHEBANG)} completion not supported on windows");
+    }
     return _getAdapter(usage).onParse(usage, commandInvocation, environment,
         isWindows);
   }
@@ -55,13 +62,6 @@ abstract class CompletionAdapter {
       commandInvocation);
   Future _complete(Usage usage, CommandInvocation commandInvocation, {bool
       isWindows, Map<String, String> environment}) => new Future.sync(() {
-
-    if (isWindows) {
-      var ENOTSUP = 252;
-      exitCode = ENOTSUP;
-      throw new UnsupportedError(
-          "${formatCallStyle(usage.callStyle)} completion not supported on windows");
-    }
 
     if (environment == null) environment = Platform.environment;
     var args = commandInvocation.positionals;
@@ -167,8 +167,9 @@ Iterable<String> _expandCompletions(Iterable completions) => completions.map((c)
 
 Iterable<String> _filterCompletions(String partialWord, Iterable<String>
     completions) {
-  return partialWord == null ? completions : completions.where((c) => unescape(c
-      ).startsWith(partialWord));
+  return completions;
+//  return partialWord == null ? completions : completions.where((c) => unescape(c
+//      ).startsWith(partialWord));
 }
 
 String _COMPLETION = 'completion';
@@ -176,7 +177,7 @@ String _COMPLETION = 'completion';
 var _installationNames = _installationNamesHelp.keys;
 // TODO: Replace this with an enum.
 var _installationNamesHelp = {
-  'print': 'Print completion script to stdout',
-  'install': 'Install completion script to .bashrc/.zshrc',
-  'uninstall': 'Uninstall completion script from .bashrc/.zshrc'
+  'print': 'Print completion script to stdout.',
+  'install': 'Install completion script to .bashrc/.zshrc.',
+  'uninstall': 'Uninstall completion script from .bashrc/.zshrc.'
 };

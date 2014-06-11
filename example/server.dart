@@ -5,7 +5,7 @@ import 'dart:io';
 import 'package:unscripted/unscripted.dart';
 import 'package:path/path.dart' as path;
 
-main(arguments) => declare(Server).execute(arguments, isWindows: false);
+main(arguments) => declare(Server).execute(arguments);
 
 class Server {
 
@@ -13,9 +13,8 @@ class Server {
 
   @Command(
       help: 'Manages a server',
-      plugins: const [const Completion()],
-      callStyle: CallStyle.SHEBANG)
-  Server({@Option(allowed: _getCurrentDirectoryFilenames) this.configPath: 'config.xml'});
+      plugins: const [const Completion()])
+  Server({@Option(allowed: _getSamePrefixPaths) this.configPath: 'config.xml'});
 
   @SubCommand(help: 'Start the server')
   start({bool clean}) {
@@ -31,9 +30,12 @@ Config path: $configPath''');
 
 }
 
-Iterable<String> _getCurrentDirectoryFilenames(String prefix) {
-  return Directory.current.listSync()
-      .where((fse) => fse is File)
+Iterable<String> _getSamePrefixPaths(String p) {
+
+  var dirname = path.basename(p).isEmpty ? p : path.dirname(p);
+  var dir = new Directory(dirname);
+  return dir.listSync()
       .map((fse) => path.basename(fse.path))
-      .where((fileName) => fileName.startsWith(prefix));
+      .where((basename) => basename.startsWith(path.basename(p)))
+      .map((basename) => path.join(dirname, basename));
 }

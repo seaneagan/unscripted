@@ -48,7 +48,7 @@ main() {
 
 }
 
-@Command(plugins: const [const Completion()], callStyle: CallStyle.SHELL)
+@Command(plugins: const [const Completion()])
 f({int foo, String bar}) {}
 
 String captureOutput(f()) {

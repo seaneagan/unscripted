@@ -8,6 +8,7 @@ import 'package:args/args.dart' show ArgParser, ArgResults;
 import 'package:path/path.dart' as path;
 import 'package:unscripted/unscripted.dart';
 import 'package:unscripted/src/util.dart';
+import 'package:unscripted/src/call_style.dart';
 
 /// Adds a standard --help (-h) option to [parser].
 /// If [parser] has any sub-commands also add a help sub-command,
@@ -23,7 +24,7 @@ class Usage {
   /// A simple description of what this script does, for use in help text.
   String description;
 
-  CallStyle callStyle = CallStyle.NORMAL;
+  final CallStyle callStyle = CallStyle.current;
 
   // TODO: Make public ?
   bool _allowTrailingOptions = false;
