@@ -7,13 +7,19 @@ library matcher.error_matchers;
 import 'core_matchers.dart';
 import 'interfaces.dart';
 
-/// A matcher for AbstractClassInstantiationError.
-@deprecated
+/// **DEPRECATED**
+///
+/// Will be removed in the next major release.
+// TODO(kevmoo): re-deprecate once 19173 is resolved
+//@deprecated
 const Matcher isAbstractClassInstantiationError =
   const _AbstractClassInstantiationError();
 
-/// A matcher for functions that throw AbstractClassInstantiationError.
-@deprecated
+/// **DEPRECATED**
+///
+/// Will be removed in the next major release.
+// TODO(kevmoo): re-deprecate once 19173 is resolved
+//@deprecated
 const Matcher throwsAbstractClassInstantiationError =
   const Throws(isAbstractClassInstantiationError);
 
@@ -70,12 +76,18 @@ class _Exception extends TypeMatcher {
   bool matches(item, Map matchState) => item is Exception;
 }
 
-/// A matcher for FallThroughError.
-@deprecated
+/// **DEPRECATED**
+///
+/// Will be removed in the next major release.
+// TODO(kevmoo): re-deprecate once 19173 is resolved
+//@deprecated
 const Matcher isFallThroughError = const _FallThroughError();
 
-/// A matcher for functions that throw FallThroughError.
-@deprecated
+/// **DEPRECATED**
+///
+/// Will be removed in the next major release.
+// TODO(kevmoo): re-deprecate once 19173 is resolved
+//@deprecated
 const Matcher throwsFallThroughError = const Throws(isFallThroughError);
 
 class _FallThroughError extends TypeMatcher {

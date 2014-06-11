@@ -30,44 +30,41 @@ import 'index.html.0.dart' as i24;
 import 'package:smoke/smoke.dart' show Declaration, PROPERTY, METHOD;
 import 'package:smoke/static.dart' show useGeneratedCode, StaticConfiguration;
 import 'package:dartdoc_viewer/components/comment.dart' as smoke_0;
-import 'dart:html' as smoke_1;
-import 'package:observe/src/metadata.dart' as smoke_2;
-import 'package:polymer/polymer.dart' as smoke_3;
-import 'package:dartdoc_viewer/item.dart' as smoke_4;
-import 'package:dartdoc_viewer/components/closure.dart' as smoke_5;
-import 'package:dartdoc_viewer/components/parameters.dart' as smoke_6;
-import 'package:dartdoc_viewer/member.dart' as smoke_7;
-import 'package:dartdoc_viewer/components/item.dart' as smoke_8;
-import 'package:dartdoc_viewer/components/annotations.dart' as smoke_9;
-import 'package:dartdoc_viewer/components/link.dart' as smoke_10;
-import 'package:dartdoc_viewer/components/type.dart' as smoke_11;
-import 'package:dartdoc_viewer/components/variable-heading.dart' as smoke_12;
-import 'package:dartdoc_viewer/components/variable.dart' as smoke_13;
-import 'package:dartdoc_viewer/components/method.dart' as smoke_14;
-import 'package:dartdoc_viewer/components/typedef.dart' as smoke_15;
-import 'package:dartdoc_viewer/components/category.dart' as smoke_16;
-import 'package:observe/src/observable_list.dart' as smoke_17;
-import 'package:dartdoc_viewer/components/minimap-element.dart' as smoke_18;
-import 'package:dartdoc_viewer/components/homepage.dart' as smoke_19;
-import 'package:dartdoc_viewer/components/class.dart' as smoke_20;
-import 'package:dartdoc_viewer/components/library.dart' as smoke_21;
-import 'package:dartdoc_viewer/components/page.dart' as smoke_22;
-import 'package:dartdoc_viewer/components/results.dart' as smoke_23;
-import 'package:dartdoc_viewer/search.dart' as smoke_24;
-import 'package:dartdoc_viewer/components/search.dart' as smoke_25;
-import 'package:dartdoc_viewer/components/minimap-library.dart' as smoke_26;
-import 'package:dartdoc_viewer/components/library-panel.dart' as smoke_27;
-import 'package:dartdoc_viewer/components/minimap-class.dart' as smoke_28;
-import 'package:dartdoc_viewer/components/breadcrumbs.dart' as smoke_29;
-import 'package:dartdoc_viewer/components/main.dart' as smoke_30;
-abstract class _M0 {} // DivElement & Polymer
+import 'package:observe/src/metadata.dart' as smoke_1;
+import 'package:polymer/polymer.dart' as smoke_2;
+import 'package:dartdoc_viewer/item.dart' as smoke_3;
+import 'package:dartdoc_viewer/components/closure.dart' as smoke_4;
+import 'package:dartdoc_viewer/components/parameters.dart' as smoke_5;
+import 'package:dartdoc_viewer/member.dart' as smoke_6;
+import 'package:dartdoc_viewer/components/item.dart' as smoke_7;
+import 'package:dartdoc_viewer/components/annotations.dart' as smoke_8;
+import 'package:dartdoc_viewer/components/link.dart' as smoke_9;
+import 'package:dartdoc_viewer/components/type.dart' as smoke_10;
+import 'package:dartdoc_viewer/components/variable-heading.dart' as smoke_11;
+import 'package:dartdoc_viewer/components/variable.dart' as smoke_12;
+import 'package:dartdoc_viewer/components/method.dart' as smoke_13;
+import 'package:dartdoc_viewer/components/typedef.dart' as smoke_14;
+import 'package:dartdoc_viewer/components/category.dart' as smoke_15;
+import 'package:observe/src/observable_list.dart' as smoke_16;
+import 'package:dartdoc_viewer/components/minimap-element.dart' as smoke_17;
+import 'package:dartdoc_viewer/components/homepage.dart' as smoke_18;
+import 'package:dartdoc_viewer/components/class.dart' as smoke_19;
+import 'package:dartdoc_viewer/components/library.dart' as smoke_20;
+import 'package:dartdoc_viewer/components/page.dart' as smoke_21;
+import 'package:dartdoc_viewer/components/results.dart' as smoke_22;
+import 'package:dartdoc_viewer/search.dart' as smoke_23;
+import 'package:dartdoc_viewer/components/search.dart' as smoke_24;
+import 'package:dartdoc_viewer/components/minimap-library.dart' as smoke_25;
+import 'package:dartdoc_viewer/components/library-panel.dart' as smoke_26;
+import 'package:dartdoc_viewer/components/minimap-class.dart' as smoke_27;
+import 'package:dartdoc_viewer/components/breadcrumbs.dart' as smoke_28;
+import 'package:dartdoc_viewer/components/main.dart' as smoke_29;
 abstract class _M1 {} // _M0 & ChangeNotifier
 abstract class _M2 {} // PolymerElement & ChangeNotifier
 abstract class _M3 {} // DartdocElement & ChangeNotifier
 abstract class _M4 {} // MemberElement & ChangeNotifier
 abstract class _M5 {} // InheritedElement & ChangeNotifier
-abstract class _M6 {} // AnchorElement & Polymer
-abstract class _M7 {} // _M6 & ChangeNotifier
+abstract class _M0 {} // Object & Polymer
 
 void main() {
   useGeneratedCode(new StaticConfiguration(
@@ -285,181 +282,178 @@ void main() {
         #variables: (o, v) { o.variables = v; },
       },
       parents: {
-        smoke_9.AnnotationElement: _M2,
-        smoke_29.Breadcrumbs: _M2,
-        smoke_16.CategoryElement: _M3,
-        smoke_20.ClassElement: smoke_7.MemberElement,
-        smoke_5.ClosureElement: _M2,
+        smoke_8.AnnotationElement: _M2,
+        smoke_28.Breadcrumbs: _M2,
+        smoke_15.CategoryElement: _M3,
+        smoke_19.ClassElement: smoke_6.MemberElement,
+        smoke_4.ClosureElement: _M2,
         smoke_0.CommentElement: _M1,
-        smoke_19.HomeElement: smoke_7.MemberElement,
-        smoke_8.ItemElement: smoke_7.MemberElement,
-        smoke_27.LibraryPanel: smoke_7.DartdocElement,
-        smoke_21.LibraryElement: smoke_7.MemberElement,
-        smoke_10.LinkElement: _M2,
-        smoke_30.MainElement: _M3,
-        smoke_14.MethodElement: _M5,
-        smoke_28.MinimapElementClass: smoke_7.MemberElement,
-        smoke_18.MinimapElement: _M2,
-        smoke_26.MinimapElementLibrary: smoke_7.MemberElement,
-        smoke_22.PageElement: _M3,
-        smoke_6.ParameterElement: _M3,
-        smoke_23.Result: _M7,
-        smoke_25.Search: _M2,
-        smoke_11.TypeElement: _M2,
-        smoke_15.TypedefElement: smoke_7.MemberElement,
-        smoke_12.VariableHeading: _M4,
-        smoke_13.VariableElement: _M5,
-        smoke_7.DartdocElement: smoke_3.PolymerElement,
-        smoke_7.InheritedElement: _M4,
-        smoke_7.MemberElement: _M3,
-        _M0: smoke_1.DivElement,
+        smoke_18.HomeElement: smoke_6.MemberElement,
+        smoke_7.ItemElement: smoke_6.MemberElement,
+        smoke_26.LibraryPanel: smoke_6.DartdocElement,
+        smoke_20.LibraryElement: smoke_6.MemberElement,
+        smoke_9.LinkElement: _M2,
+        smoke_29.MainElement: _M3,
+        smoke_13.MethodElement: _M5,
+        smoke_27.MinimapElementClass: smoke_6.MemberElement,
+        smoke_17.MinimapElement: _M2,
+        smoke_25.MinimapElementLibrary: smoke_6.MemberElement,
+        smoke_21.PageElement: _M3,
+        smoke_5.ParameterElement: _M3,
+        smoke_22.Result: _M1,
+        smoke_24.Search: _M2,
+        smoke_10.TypeElement: _M2,
+        smoke_14.TypedefElement: smoke_6.MemberElement,
+        smoke_11.VariableHeading: _M4,
+        smoke_12.VariableElement: _M5,
+        smoke_6.DartdocElement: smoke_2.PolymerElement,
+        smoke_6.InheritedElement: _M4,
+        smoke_6.MemberElement: _M3,
         _M1: _M0,
-        _M2: smoke_3.PolymerElement,
-        _M3: smoke_7.DartdocElement,
-        _M4: smoke_7.MemberElement,
-        _M5: smoke_7.InheritedElement,
-        _M6: smoke_1.AnchorElement,
-        _M7: _M6,
+        _M2: smoke_2.PolymerElement,
+        _M3: smoke_6.DartdocElement,
+        _M4: smoke_6.MemberElement,
+        _M5: smoke_6.InheritedElement,
       },
       declarations: {
-        smoke_9.AnnotationElement: {
-          #annotations: const Declaration(#annotations, smoke_4.AnnotationGroup, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_3.published]),
+        smoke_8.AnnotationElement: {
+          #annotations: const Declaration(#annotations, smoke_3.AnnotationGroup, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_2.published]),
           #annotationsChanged: const Declaration(#annotationsChanged, Function, kind: METHOD),
         },
-        smoke_29.Breadcrumbs: {
-          #breadcrumbs: const Declaration(#breadcrumbs, List, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
-          #lastCrumb: const Declaration(#lastCrumb, smoke_4.Item, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
+        smoke_28.Breadcrumbs: {
+          #breadcrumbs: const Declaration(#breadcrumbs, List, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
+          #lastCrumb: const Declaration(#lastCrumb, smoke_3.Item, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
         },
-        smoke_16.CategoryElement: {
-          #accordionStyle: const Declaration(#accordionStyle, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
-          #caretStyle: const Declaration(#caretStyle, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
-          #category: const Declaration(#category, smoke_4.Category, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_3.published]),
+        smoke_15.CategoryElement: {
+          #accordionStyle: const Declaration(#accordionStyle, String, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
+          #caretStyle: const Declaration(#caretStyle, String, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
+          #category: const Declaration(#category, smoke_3.Category, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_2.published]),
           #categoryChanged: const Declaration(#categoryChanged, Function, kind: METHOD),
-          #divClass: const Declaration(#divClass, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
-          #hasItems: const Declaration(#hasItems, bool, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
-          #items: const Declaration(#items, smoke_17.ObservableList, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_3.published]),
+          #divClass: const Declaration(#divClass, String, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
+          #hasItems: const Declaration(#hasItems, bool, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
+          #items: const Declaration(#items, smoke_16.ObservableList, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_2.published]),
           #itemsChanged: const Declaration(#itemsChanged, Function, kind: METHOD),
-          #lineHeight: const Declaration(#lineHeight, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
-          #methods: const Declaration(#methods, smoke_17.ObservableList, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_3.published]),
+          #lineHeight: const Declaration(#lineHeight, String, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
+          #methods: const Declaration(#methods, smoke_16.ObservableList, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_2.published]),
           #methodsChanged: const Declaration(#methodsChanged, Function, kind: METHOD),
-          #stylizedName: const Declaration(#stylizedName, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
-          #title: const Declaration(#title, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
-          #typedefs: const Declaration(#typedefs, smoke_17.ObservableList, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_3.published]),
+          #stylizedName: const Declaration(#stylizedName, String, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
+          #title: const Declaration(#title, String, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
+          #typedefs: const Declaration(#typedefs, smoke_16.ObservableList, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_2.published]),
           #typedefsChanged: const Declaration(#typedefsChanged, Function, kind: METHOD),
-          #variables: const Declaration(#variables, smoke_17.ObservableList, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_3.published]),
+          #variables: const Declaration(#variables, smoke_16.ObservableList, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_2.published]),
           #variablesChanged: const Declaration(#variablesChanged, Function, kind: METHOD),
         },
-        smoke_20.ClassElement: {
+        smoke_19.ClassElement: {
           #itemChanged: const Declaration(#itemChanged, Function, kind: METHOD),
         },
-        smoke_5.ClosureElement: {
-          #closure: const Declaration(#closure, smoke_4.Closure, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
+        smoke_4.ClosureElement: {
+          #closure: const Declaration(#closure, smoke_3.Closure, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
           #closureChanged: const Declaration(#closureChanged, Function, kind: METHOD),
         },
         smoke_0.CommentElement: {
-          #item: const Declaration(#item, smoke_4.Container, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_3.published]),
+          #item: const Declaration(#item, smoke_3.Container, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_2.published]),
           #itemChanged: const Declaration(#itemChanged, Function, kind: METHOD),
-          #preview: const Declaration(#preview, bool, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_3.published]),
+          #preview: const Declaration(#preview, bool, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_2.published]),
           #previewChanged: const Declaration(#previewChanged, Function, kind: METHOD),
         },
-        smoke_19.HomeElement: const {},
-        smoke_8.ItemElement: const {},
-        smoke_27.LibraryPanel: const {},
-        smoke_21.LibraryElement: {
+        smoke_18.HomeElement: const {},
+        smoke_7.ItemElement: const {},
+        smoke_26.LibraryPanel: const {},
+        smoke_20.LibraryElement: {
           #itemChanged: const Declaration(#itemChanged, Function, kind: METHOD),
         },
-        smoke_10.LinkElement: {
-          #type: const Declaration(#type, smoke_4.LinkableType, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_3.published]),
+        smoke_9.LinkElement: {
+          #type: const Declaration(#type, smoke_3.LinkableType, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_2.published]),
           #typeChanged: const Declaration(#typeChanged, Function, kind: METHOD),
         },
-        smoke_30.MainElement: {
-          #homePage: const Declaration(#homePage, dynamic, isFinal: true, annotations: const [smoke_2.observable]),
-          #pageContentClass: const Declaration(#pageContentClass, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
-          #sdkVersionString: const Declaration(#sdkVersionString, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
-          #shouldShowClassMinimap: const Declaration(#shouldShowClassMinimap, bool, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
-          #shouldShowLibraryMinimap: const Declaration(#shouldShowLibraryMinimap, bool, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
-          #shouldShowLibraryPanel: const Declaration(#shouldShowLibraryPanel, bool, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
-          #showOrHideInherited: const Declaration(#showOrHideInherited, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
-          #showOrHideLibraries: const Declaration(#showOrHideLibraries, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
-          #showOrHideMinimap: const Declaration(#showOrHideMinimap, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
-          #showOrHideObjectMembers: const Declaration(#showOrHideObjectMembers, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
-          #showOrHidePackages: const Declaration(#showOrHidePackages, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
+        smoke_29.MainElement: {
+          #homePage: const Declaration(#homePage, dynamic, isFinal: true, annotations: const [smoke_1.observable]),
+          #pageContentClass: const Declaration(#pageContentClass, String, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
+          #sdkVersionString: const Declaration(#sdkVersionString, String, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
+          #shouldShowClassMinimap: const Declaration(#shouldShowClassMinimap, bool, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
+          #shouldShowLibraryMinimap: const Declaration(#shouldShowLibraryMinimap, bool, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
+          #shouldShowLibraryPanel: const Declaration(#shouldShowLibraryPanel, bool, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
+          #showOrHideInherited: const Declaration(#showOrHideInherited, String, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
+          #showOrHideLibraries: const Declaration(#showOrHideLibraries, String, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
+          #showOrHideMinimap: const Declaration(#showOrHideMinimap, String, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
+          #showOrHideObjectMembers: const Declaration(#showOrHideObjectMembers, String, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
+          #showOrHidePackages: const Declaration(#showOrHidePackages, String, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
         },
-        smoke_14.MethodElement: {
-          #constantModifier: const Declaration(#constantModifier, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
-          #isNotConstructor: const Declaration(#isNotConstructor, bool, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
+        smoke_13.MethodElement: {
+          #constantModifier: const Declaration(#constantModifier, String, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
+          #isNotConstructor: const Declaration(#isNotConstructor, bool, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
           #itemChanged: const Declaration(#itemChanged, Function, kind: METHOD),
-          #modifiers: const Declaration(#modifiers, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
-          #staticModifier: const Declaration(#staticModifier, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
+          #modifiers: const Declaration(#modifiers, String, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
+          #staticModifier: const Declaration(#staticModifier, String, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
         },
-        smoke_28.MinimapElementClass: const {},
-        smoke_18.MinimapElement: {
-          #camelCaseName: const Declaration(#camelCaseName, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
-          #category: const Declaration(#category, smoke_4.Category, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_3.published]),
+        smoke_27.MinimapElementClass: const {},
+        smoke_17.MinimapElement: {
+          #camelCaseName: const Declaration(#camelCaseName, String, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
+          #category: const Declaration(#category, smoke_3.Category, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_2.published]),
           #categoryChanged: const Declaration(#categoryChanged, Function, kind: METHOD),
-          #categoryLink: const Declaration(#categoryLink, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
-          #item: const Declaration(#item, smoke_4.Item, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_3.published]),
+          #categoryLink: const Declaration(#categoryLink, String, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
+          #item: const Declaration(#item, smoke_3.Item, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_2.published]),
           #itemChanged: const Declaration(#itemChanged, Function, kind: METHOD),
-          #itemsToShow: const Declaration(#itemsToShow, smoke_17.ObservableList, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
+          #itemsToShow: const Declaration(#itemsToShow, smoke_16.ObservableList, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
         },
-        smoke_26.MinimapElementLibrary: const {},
-        smoke_22.PageElement: {
-          #isClass: const Declaration(#isClass, bool, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
-          #isHome: const Declaration(#isHome, bool, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
-          #isLibrary: const Declaration(#isLibrary, bool, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
-          #isMethod: const Declaration(#isMethod, bool, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
-          #isTypedef: const Declaration(#isTypedef, bool, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
-          #item: const Declaration(#item, smoke_4.Item, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_3.published]),
+        smoke_25.MinimapElementLibrary: const {},
+        smoke_21.PageElement: {
+          #isClass: const Declaration(#isClass, bool, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
+          #isHome: const Declaration(#isHome, bool, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
+          #isLibrary: const Declaration(#isLibrary, bool, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
+          #isMethod: const Declaration(#isMethod, bool, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
+          #isTypedef: const Declaration(#isTypedef, bool, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
+          #item: const Declaration(#item, smoke_3.Item, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_2.published]),
           #itemChanged: const Declaration(#itemChanged, Function, kind: METHOD),
         },
-        smoke_6.ParameterElement: {
-          #parameters: const Declaration(#parameters, List, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_3.published]),
+        smoke_5.ParameterElement: {
+          #parameters: const Declaration(#parameters, List, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_2.published]),
           #parametersChanged: const Declaration(#parametersChanged, Function, kind: METHOD),
         },
-        smoke_23.Result: {
-          #descriptiveName: const Declaration(#descriptiveName, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
-          #descriptiveType: const Declaration(#descriptiveType, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
-          #item: const Declaration(#item, smoke_24.SearchResult, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_3.published]),
+        smoke_22.Result: {
+          #descriptiveName: const Declaration(#descriptiveName, String, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
+          #descriptiveType: const Declaration(#descriptiveType, String, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
+          #item: const Declaration(#item, smoke_23.SearchResult, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_2.published]),
           #itemChanged: const Declaration(#itemChanged, Function, kind: METHOD),
-          #outerLibrary: const Declaration(#outerLibrary, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
+          #outerLibrary: const Declaration(#outerLibrary, String, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
         },
-        smoke_25.Search: {
-          #dropdownOpen: const Declaration(#dropdownOpen, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
-          #isFocused: const Declaration(#isFocused, bool, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
-          #results: const Declaration(#results, smoke_17.ObservableList, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
-          #searchQuery: const Declaration(#searchQuery, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_3.published]),
+        smoke_24.Search: {
+          #dropdownOpen: const Declaration(#dropdownOpen, String, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
+          #isFocused: const Declaration(#isFocused, bool, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
+          #results: const Declaration(#results, smoke_16.ObservableList, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
+          #searchQuery: const Declaration(#searchQuery, String, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_2.published]),
           #searchQueryChanged: const Declaration(#searchQueryChanged, Function, kind: METHOD),
         },
-        smoke_11.TypeElement: {
-          #type: const Declaration(#type, smoke_4.NestedType, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_3.published]),
+        smoke_10.TypeElement: {
+          #type: const Declaration(#type, smoke_3.NestedType, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_2.published]),
           #typeChanged: const Declaration(#typeChanged, Function, kind: METHOD),
         },
-        smoke_15.TypedefElement: const {},
-        smoke_12.VariableHeading: {
-          #getter: const Declaration(#getter, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
-          #isNotSetter: const Declaration(#isNotSetter, bool, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
+        smoke_14.TypedefElement: const {},
+        smoke_11.VariableHeading: {
+          #getter: const Declaration(#getter, String, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
+          #isNotSetter: const Declaration(#isNotSetter, bool, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
           #itemChanged: const Declaration(#itemChanged, Function, kind: METHOD),
-          #name: const Declaration(#name, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
+          #name: const Declaration(#name, String, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
         },
-        smoke_13.VariableElement: {
-          #annotations: const Declaration(#annotations, smoke_4.AnnotationGroup, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
+        smoke_12.VariableElement: {
+          #annotations: const Declaration(#annotations, smoke_3.AnnotationGroup, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
         },
-        smoke_7.InheritedElement: {
-          #commentFrom: const Declaration(#commentFrom, smoke_4.LinkableType, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
-          #hasInheritedComment: const Declaration(#hasInheritedComment, bool, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
-          #inheritedFrom: const Declaration(#inheritedFrom, smoke_4.LinkableType, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
-          #isInherited: const Declaration(#isInherited, bool, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
+        smoke_6.InheritedElement: {
+          #commentFrom: const Declaration(#commentFrom, smoke_3.LinkableType, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
+          #hasInheritedComment: const Declaration(#hasInheritedComment, bool, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
+          #inheritedFrom: const Declaration(#inheritedFrom, smoke_3.LinkableType, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
+          #isInherited: const Declaration(#isInherited, bool, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
           #itemChanged: const Declaration(#itemChanged, Function, kind: METHOD),
-          #shouldShowComment: const Declaration(#shouldShowComment, bool, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
-          #shouldShowCommentFrom: const Declaration(#shouldShowCommentFrom, bool, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
+          #shouldShowComment: const Declaration(#shouldShowComment, bool, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
+          #shouldShowCommentFrom: const Declaration(#shouldShowCommentFrom, bool, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
         },
-        smoke_7.MemberElement: {
-          #idName: const Declaration(#idName, String, kind: PROPERTY, annotations: const [smoke_2.reflectable, smoke_2.observable]),
-          #item: const Declaration(#item, dynamic, kind: PROPERTY, annotations: const [smoke_3.published]),
+        smoke_6.MemberElement: {
+          #idName: const Declaration(#idName, String, kind: PROPERTY, annotations: const [smoke_1.reflectable, smoke_1.observable]),
+          #item: const Declaration(#item, dynamic, kind: PROPERTY, annotations: const [smoke_2.published]),
           #itemChanged: const Declaration(#itemChanged, Function, kind: METHOD),
         },
         _M4: {
-          #item: const Declaration(#item, dynamic, kind: PROPERTY, annotations: const [smoke_3.published]),
+          #item: const Declaration(#item, dynamic, kind: PROPERTY, annotations: const [smoke_2.published]),
         },
       },
       names: {
