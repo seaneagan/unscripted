@@ -1,3 +1,15 @@
+## 0.4.0
+
+Features:
+
+  - Tab Completion! (#7)
+  - Initial plugin support (see #62)
+  - Improved examples to demo parsers and other metadata
+  
+Breaking changes:
+
+  - Removed `CallStyle`
+
 ## 0.3.2
 
 Bugfixes:

@@ -187,8 +187,8 @@ Add bash/zsh [tab completion][tab completion] to your script:
 longer be required.)
 
 If your script already has sub-commands, this will add a `completion` 
-sub-command, otherwise it adds a `--completion` option.  These can then be used 
-as follows:
+sub-command (similar to [npm completion][npm completion]), otherwise it adds a 
+`--completion` option.  These can then be used as follows:
 
 ```shell
 # Try the tab-completion without permanently installing.
@@ -253,3 +253,4 @@ utility using unscripted.
 [old_greet]: https://github.com/seaneagan/unscripted/tree/master/example/old_greet.dart
 [tab completion]: http://en.wikipedia.org/wiki/Command-line_completion
 [cygwin]: http://en.wikipedia.org/wiki/Cygwin
+[npm completion]: https://www.npmjs.org/doc/cli/npm-completion.html
