@@ -9,7 +9,7 @@ unscripted
 
 Add the [unscripted package][pkg] to your pubspec.yaml dependencies:
 
-`unscripted: >=0.4.0 <0.5.0`
+`unscripted: '>=0.4.0 <0.5.0'`
 
 ##Usage
 
@@ -45,9 +45,9 @@ greet(
 We can call this script as follows:
 
 ```shell
-$ greet Bob
+$ greet.dart Bob
 Hello Bob
-$ greet --salutation Hi --enthusiasm 3 -l Alice Bob
+$ greet.dart --salutation Hi --enthusiasm 3 -l Alice Bob
 Hi
   Alice,
   Bob!!!
@@ -126,7 +126,7 @@ Config path: $configPath''');
 We can call this script as follows:
 
 ```shell
-$ dart server.dart start --config-path my-config.xml --clean
+$ server.dart start --config-path my-config.xml --clean
 Starting the server.
 Config path: my-config.xml
 ```
@@ -134,21 +134,21 @@ Config path: my-config.xml
 Help is also available for sub-commands:
 
 ```shell
-$ dart server.dart help
+$ server.dart help
 Available commands:
 
   start
   help
   stop
 
-Use "dart server.dart help [command]" for more information about a command.
+Use "server.dart help [command]" for more information about a command.
 
-$ dart server.dart help stop
+$ server.dart help stop
 Stop the server
 
 Usage:
 
-dart server.dart stop [options]
+server.dart stop [options]
 
 Options:
 
