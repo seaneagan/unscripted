@@ -1,7 +1,7 @@
 unscripted
 ==========
 
-[![Build Status](https://drone.io/github.com/seaneagan/unscripted/status.png)](https://drone.io/github.com/seaneagan/unscripted/latest) | [API docs][api_docs]
+[![Build Status](https://drone.io/github.com/seaneagan/unscripted/status.png)](https://drone.io/github.com/seaneagan/unscripted/latest)
 
 *Define command-line interfaces using ordinary dart methods and classes.*
 
@@ -245,7 +245,6 @@ utility using unscripted.
 
 [pkg]: http://pub.dartlang.org/packages/unscripted
 [cat.dart]: https://github.com/seaneagan/unscripted/blob/master/example/cat.dart
-[api_docs]: https://seaneagan.github.com/unscripted
 [declare]: https://seaneagan.github.com/unscripted/unscripted.html#declare
 [examples]: https://github.com/seaneagan/unscripted/tree/master/example
 [greet.dart]: https://github.com/seaneagan/unscripted/tree/master/example/greet.dart
