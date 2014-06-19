@@ -129,11 +129,36 @@ main() {
         testAllowed(usage, '-f ', []);
       });
 
-      group('when allowed is func', () {
+      group('when allowed is a unary func', () {
 
         test('should suggest synchronously returned completions', () {
           var usage = new Usage()
               ..addOption('aaa', new Option(abbr: 'a', allowed: (partial) => ['x', 'y', 'z']));
+          addPlugins(usage);
+
+          testAllowed(usage, '--aaa ', ['x', 'y', 'z']);
+          testAllowed(usage, '--aaa x', ['x', 'y', 'z']);
+          testAllowed(usage, '-a ', ['x', 'y', 'z']);
+          testAllowed(usage, '-a x', ['x', 'y', 'z']);
+        });
+
+        test('should suggest asynchronously returned completions', () {
+          var usage = new Usage()
+              ..addOption('aaa', new Option(abbr: 'a', allowed: (partial) => new Future.value(['x', 'y', 'z'])));
+          addPlugins(usage);
+
+          testAllowed(usage, '--aaa ', ['x', 'y', 'z']);
+          testAllowed(usage, '--aaa x', ['x', 'y', 'z']);
+          testAllowed(usage, '-a ', ['x', 'y', 'z']);
+          testAllowed(usage, '-a x', ['x', 'y', 'z']);
+        });
+      });
+
+      group('when allowed is a nullary func', () {
+
+        test('should suggest synchronously returned completions', () {
+          var usage = new Usage()
+              ..addOption('aaa', new Option(abbr: 'a', allowed: () => ['x', 'y', 'z']));
           addPlugins(usage);
 
           testAllowed(usage, '--aaa ', ['x', 'y', 'z']);
@@ -144,7 +169,7 @@ main() {
 
         test('should suggest asynchronously returned completions', () {
           var usage = new Usage()
-              ..addOption('aaa', new Option(abbr: 'a', allowed: (partial) => new Future.value(['x', 'y', 'z'])));
+              ..addOption('aaa', new Option(abbr: 'a', allowed: () => new Future.value(['x', 'y', 'z'])));
           addPlugins(usage);
 
           testAllowed(usage, '--aaa ', ['x', 'y', 'z']);
@@ -169,7 +194,7 @@ main() {
         testAllowed(usage, 'aa b', ['bb']);
       });
 
-      group('when allowed is func', () {
+      group('when allowed is a unary func', () {
 
         test('should suggest synchronously returned completions', () {
           var usage = new Usage()
@@ -177,7 +202,7 @@ main() {
           addPlugins(usage);
 
           testAllowed(usage, '', ['aa', 'bb', 'cc']);
-          testAllowed(usage, 'a', ['aa']);
+          testAllowed(usage, 'a', ['aa', 'bb', 'cc']);
         });
 
         test('should suggest asynchronously returned completions', () {
@@ -186,10 +211,33 @@ main() {
           addPlugins(usage);
 
           testAllowed(usage, '', ['aa', 'bb', 'cc']);
+          testAllowed(usage, 'a', ['aa', 'bb', 'cc']);
+        });
+
+      });
+
+      group('when allowed is a nullary func', () {
+
+        test('should suggest synchronously returned completions', () {
+          var usage = new Usage()
+              ..addPositional(new Positional(allowed: () => ['aa', 'bb', 'cc']));
+          addPlugins(usage);
+
+          testAllowed(usage, '', ['aa', 'bb', 'cc']);
+          testAllowed(usage, 'a', ['aa']);
+        });
+
+        test('should suggest asynchronously returned completions', () {
+          var usage = new Usage()
+              ..addPositional(new Positional(allowed: () => new Future.value(['aa', 'bb', 'cc'])));
+          addPlugins(usage);
+
+          testAllowed(usage, '', ['aa', 'bb', 'cc']);
           testAllowed(usage, 'a', ['aa']);
         });
 
       });
+
       test('should suggest allowed for rest parameter', () {
         var usage = new Usage()
             ..addPositional(new Positional())

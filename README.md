@@ -220,16 +220,26 @@ longCommandName` method, that becomes a `long-command-name` sub-command in your
 cli, and the user can type `l[TAB]` and it will be completed to 
 `long-command-name`.
 
-**Option/Positional/Rest values:** The `allowed` named parameter of `Option` and 
-`Positional` specifies the allowed values, and thus completions, for those 
-parameters.  For example if you have 
+**Option/Positional/Rest values:** The `allowed` named parameter of `Option`,
+`Positional`, and `Rest` specifies the allowed values, and thus completions, 
+for those parameters.  For example if you have 
 `@Option(allowed: const ['red', 'yellow', 'green']) textColor`, and the user 
-types `--text-color g[TAB]` this will become `--text-color green`.  In addition
-to `Iterable<String>`, allowed can also be a function of the form 
-`Iterable<String> complete(String text)`, or it can even return a Future 
-`Future<Iterable<String>> complete(String text)`.  For example if the 
-option/positional represents a file name, you could emulate the builtin shell
-file name completion by returning a list of filenames in the current directory.
+types `--text-color g[TAB]` this will become `--text-color green`.  `allowed` 
+can also be a callback of one of the following forms: 
+
+```dart
+Iterable<String> complete(String text);
+Iterable<String> complete();
+Future<Iterable<String>> complete(String text);
+Future<Iterable<String>> complete();
+```
+
+where if an arg (e.g. `text` here) is specified, it represents the last partial 
+word typed by the user when completion is requested, which can be used to filter
+the results to match that prefix.  If the arg is omitted, the filtering is done
+automatically for you.  For example if the option/positional/rest represents a 
+file name, you could emulate the builtin shell file name completion by returning 
+a list of filenames in the current directory.
 
 Tab completion is supported in [cygwin][cygwin], with one minor bug (#64).
 

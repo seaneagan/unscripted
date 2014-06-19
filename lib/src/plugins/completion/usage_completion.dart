@@ -134,11 +134,15 @@ Future<Iterable<String>> _getCompletionsForOption(Option option, String prefix) 
   return _getCompletionsForAllowed(option.allowed, prefix);
 });
 
-Future<Iterable<String>> _getCompletionsForAllowed(allowed, String prefix) => new Future.sync(() {
-  if(allowed is Iterable) return allowed;
-  else if(allowed is Function) return allowed(prefix);
-  else if(allowed is Map) return allowed.keys;
-  return [];
-}).then((completions) => completions.where((v) => v.startsWith(prefix)));
+Future<Iterable<String>> _getCompletionsForAllowed(allowed, String prefix) {
+  if(allowed is _CompleteText) return new Future.sync(() => allowed(prefix));
+  return new Future.sync(() {
+    if(allowed is Iterable) return allowed;
+    else if(allowed is _Complete) return allowed();
+    else if(allowed is Map) return allowed.keys;
+    return [];
+  }).then((completions) => completions.where((v) => v.startsWith(prefix)));
+}
 
-typedef _CompletionFilter(String prefix);
+typedef _CompleteText(String prefix);
+typedef _Complete();
