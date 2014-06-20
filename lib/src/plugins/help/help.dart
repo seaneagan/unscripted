@@ -73,7 +73,7 @@ class Help extends Plugin {
     if(isError) {
       sink = stderr;
       sink.writeln();
-      sink.writeln(errorPen(error));
+      sink.writeln(errorPen(error.toString()));
     }
     sink.writeln(_getUsageFormatter(helpUsage, isWindows).format());
   }

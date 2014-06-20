@@ -116,7 +116,7 @@ class Usage {
   }
   Usage addCommand(String name, [SubCommand command]) {
     parser.addCommand(name);
-    var hide = command != null && command.hide;
+    var hide = command != null && command.hide != null && command.hide;
     return _commands[name] = new _SubCommandUsage(this, name, hide);
   }
 
