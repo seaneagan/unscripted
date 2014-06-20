@@ -6,6 +6,8 @@ import 'dart:mirrors';
 import 'dart:io';
 
 import 'package:args/args.dart' show ArgParser, ArgResults;
+import 'package:quiver/core.dart';
+import 'package:quiver/iterables.dart';
 import 'package:unscripted/unscripted.dart';
 import 'package:unscripted/src/string_codecs.dart';
 import 'package:unscripted/src/usage.dart';
@@ -63,7 +65,8 @@ Rest getRestFromMethod(MethodMirror method) {
 }
 
 getDefaultPositionalName(Symbol symbol) {
-  return MirrorSystem.getName(symbol).toUpperCase();
+  return dashesToCamelCase.decode(MirrorSystem.getName(symbol));
+  // return MirrorSystem.getName(symbol).toUpperCase();
 }
 
 Usage getUsageFromFunction(MethodMirror methodMirror, {Usage usage}) {
@@ -199,7 +202,7 @@ _addSubCommandsForClass(Usage usage, TypeMirror typeMirror) {
           .decode(MirrorSystem.getName(methodMirror.simpleName));
       var subCommandUsage = getUsageFromFunction(
           methodMirror,
-          usage: usage.addCommand(commandName));
+          usage: usage.addCommand(commandName, subCommand));
     });
   }
 }
@@ -416,3 +419,28 @@ List<String> _getStdinLines(Stdin stdin, [bool retainNewlines = false]) {
   }
   return lines;
 }
+
+String formatColumns(
+    Iterable<Iterable<String>> cells,
+    Iterable<Function> formatters, {
+      int separateBy: 4
+    }) {
+
+  formatters = formatters.map((f) => firstNonNull(f, (x) => x));
+  var widths = zip(cells).map((column) => max(column.map((s) => s.length))).toList();
+  var cellsWithMetadata = cells.map((line) => zip([line, widths, formatters]));
+  var formattedCells = cellsWithMetadata.map((lineCells) => lineCells.map((cellWithMetadata) {
+    var cell = cellWithMetadata[0];
+    var width = cellWithMetadata[1];
+    var formatter = cellWithMetadata[2];
+    return formatter(cell) + (' ' * ((width - cell.length) + separateBy));
+  }));
+
+  return formattedCells.map((formattedLineCells) => formattedLineCells.join()).join('\n');
+}
+
+// TODO: Move to quiver.
+Map mapWhere(Map map, bool where(key, value)) => map.keys.fold({}, (result, key) {
+  if(where(key, map[key])) result[key] = map[key];
+  return result;
+});

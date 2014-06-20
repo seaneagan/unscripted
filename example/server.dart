@@ -17,7 +17,8 @@ class Server {
   Server({@Option(allowed: _getSamePrefixPaths) this.configPath: 'config.xml'});
 
   @SubCommand(help: 'Start the server')
-  start({bool clean}) {
+  @ArgExample('foo/bar --clean')
+  start(@Positional(help: 'Top-level dir to deploy.') String context, {bool clean}) {
     print('''
 Starting the server.
 Config path: $configPath''');

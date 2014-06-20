@@ -1,3 +1,4 @@
+#!/usr/bin/env dart
 
 import 'dart:async';
 import 'dart:convert';
@@ -12,7 +13,8 @@ main(arguments) => declare(cat).execute(arguments);
 // TODO: Add tests, see https://gist.github.com/sandal/1293709
 /// A dart implementation of the [cat][1] unix utility.
 /// [1]: http://en.wikipedia.org/wiki/Cat_(Unix)
-@Command(help: 'Concatenate FILE(s), or standard input, to standard output.')
+@Command(help: 'Concatenate FILE(s), or standard input, to standard output.',
+    plugins: const [const Completion()])
 @ArgExample('f - g', help: "Output f's contents, then standard input, then g's contents.")
 @ArgExample('', help: 'Copy standard input to standard output.')
 cat(

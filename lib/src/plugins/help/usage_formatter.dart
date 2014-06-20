@@ -10,10 +10,6 @@ abstract class UsageFormatter {
   UsageFormatter(this.usage);
 }
 
-AnsiPen get titlePen {
-  return new AnsiPen()..white(bold: true);
-}
-
 // TODO: Add tests for this.
 class TerminalUsageFormatter extends UsageFormatter {
 
@@ -36,53 +32,71 @@ class TerminalUsageFormatter extends UsageFormatter {
     var hasOptions = parser.options.isNotEmpty;
 
     if(hasOptions) {
-      blocks.add(['Options', parser.getUsage()]);
+      var optionHelp = new OptionHelp(usage).generate();
+      blocks.add(['Options', optionHelp]);
     }
 
     if(usage.examples.isNotEmpty) {
       blocks.add([
           'Examples',
-          usage.examples.map((example) => _formatExample(example))
-              .join('\n')]);
+          formatColumns(
+              usage.examples.map((ArgExample example) => [_getCommandString(), example.example, example.help == null ? '' : '# ${example.help}']),
+              [namePen, null, textPen], separateBy: 1)]);
     }
 
     var usageParts = [_formatCommands()];
 
-    var optionsPlaceholder = '[options]';
-    var args = parser.commands.isEmpty ? optionsPlaceholder : 'command';
-    usageParts.add(args);
+    var optionsPlaceholder = optionPen('[options]');
+    var commandPlaceholder = '${commandPen('<command>')} ${textPen('[<args>]')}';
+    usageParts.add(optionsPlaceholder);
+    if(usage.commands.isNotEmpty) usageParts.add(commandPlaceholder);
 
-    var positionalNames = usage.positionals.map((positional) => positional.name);
+    var positionalNames = usage.positionals.map((positional) => positionalPen('<${positional.name}>'));
     usageParts.addAll(positionalNames);
 
     var restName = usage.rest == null ? '' : usage.rest.name;
 
     if(restName != null && restName.isNotEmpty) {
+      restName = '<$restName>...';
       if(!usage.rest.required) restName = '[$restName]';
-      restName = '$restName...';
-      usageParts.add(restName);
+      usageParts.add(positionalPen(restName));
     }
 
-    if(parser.commands.isNotEmpty) {
-      blocks.add(['Available commands', '''
-${parser.commands.keys.join('\n')}
+    var visibleCommands = mapWhere(usage.commands, (key, value) => !value.hide);
+    if(visibleCommands.isNotEmpty) {
+      blocks.add(['Commands', '''
+${formatColumns(
+    visibleCommands.keys.map((command) => [command, nullToEmpty(visibleCommands[command].description)]),
+    [commandPen, textPen])}
 
-Use "${_formatRootCommand()} $_HELP [command]" for more information about a command.''']);
+${textPen("See '")}${_formatCommands()} $_HELP ${commandPen('[command]')}${textPen("' for more information about a command.")}''']);
     }
 
     var usageString = usageParts.join(' ');
 
+    var positionalsWithRest = usage.positionals;
+    if(usage.rest != null) positionalsWithRest = positionalsWithRest.toList()..add(usage.rest);
+    positionalsWithRest = positionalsWithRest.where((positional) => positional.help != null);
+    if(positionalsWithRest.isNotEmpty) {
+      usageString = '''
+$usageString
+
+${indentLines(formatColumns(
+    positionalsWithRest.map((positional) => [positional.name, positional.help]),
+    [positionalPen, textPen]))}''';
+    }
+
     blocks.insert(0, ['Usage', usageString]);
+
+    if(description.isNotEmpty) blocks.insert(0, ['Description', textPen(description)]);
 
     var blockStrings = blocks
         .map((block) => _formatBlock(block[0], block[1]))
         .toList();
 
-    if(description.isNotEmpty) blockStrings.insert(0, description);
-
     color_disabled = oldColorDisabled;
 
-    return blockStrings.join('\n\n') + '\n';
+    return '\n' + blockStrings.join('\n\n') + '\n';
   }
 
   _formatExample(ArgExample example) {
@@ -93,10 +107,11 @@ Use "${_formatRootCommand()} $_HELP [command]" for more information about a comm
     return parts.join(' ');
   }
 
-  String _formatRootCommand() => formatCallStyle(usage.callStyle);
-
   String _formatCommands() =>
-      ([_formatRootCommand()]..addAll(usage.commandPath)).join(' ');
+      namePen(_getCommandString());
+
+  String _getCommandString() =>
+      ([formatCallStyle(usage.callStyle)]..addAll(usage.commandPath)).join(' ');
 
   String _formatBlock(String title, String content) {
     return '''

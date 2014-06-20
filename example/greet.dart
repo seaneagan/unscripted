@@ -5,7 +5,7 @@ import 'package:unscripted/unscripted.dart';
 main(arguments) => declare(greet).execute(arguments);
 
 // All metadata annotations are optional.
-@Command(help: 'Print a configurable greeting', plugins: const [const Completion()])
+@Command(help: 'Print a configurable greeting.', plugins: const [const Completion()])
 @ArgExample('--salutation Hi --enthusiasm 3 Bob', help: 'enthusiastic')
 greet(
     @Rest(help: 'Name(s) to greet.')

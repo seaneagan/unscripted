@@ -21,6 +21,9 @@ class Usage {
   /// The parent command's usage.  This is null for root commands.
   final Usage parent = null;
 
+  /// Whether to hide this usage.
+  final bool hide = false;
+
   /// A simple description of what this script does, for use in help text.
   String description;
 
@@ -111,9 +114,10 @@ class Usage {
     }
     return _commandsView;
   }
-  Usage addCommand(String name) {
+  Usage addCommand(String name, [SubCommand command]) {
     parser.addCommand(name);
-    return _commands[name] = new _SubCommandUsage(this, name);
+    var hide = command != null && command.hide;
+    return _commands[name] = new _SubCommandUsage(this, name, hide);
   }
 
   CommandInvocation validate(CommandInvocation commandInvocation) =>
@@ -170,10 +174,11 @@ class _SubCommandUsage extends Usage {
 
   final Usage parent;
   final String name;
+  final bool hide;
 
   CallStyle get callStyle => parent.callStyle;
 
-  _SubCommandUsage(this.parent, this.name);
+  _SubCommandUsage(this.parent, this.name, this.hide);
 
   ArgParser _getParser() => parent.parser.commands[name];
 }

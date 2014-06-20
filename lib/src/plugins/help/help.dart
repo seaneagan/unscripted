@@ -8,7 +8,11 @@ import 'package:ansicolor/ansicolor.dart';
 import 'package:unscripted/unscripted.dart';
 import 'package:unscripted/src/plugin.dart';
 import 'package:unscripted/src/usage.dart';
+import 'package:unscripted/src/util.dart';
 import 'package:quiver/strings.dart';
+
+import 'option_help.dart';
+import 'pens.dart';
 
 part 'usage_formatter.dart';
 
@@ -31,7 +35,7 @@ class Help extends Plugin {
 
     if(usage.commands.isNotEmpty && !usage.commands.containsKey(_HELP)){
       // TODO: This should be an optional positional if/when that is supported.
-      usage.addCommand(_HELP)..addPositional(new Positional(allowed: usage.commands.keys.toList()..remove(_HELP)));
+      usage.addCommand(_HELP, new SubCommand(hide: true))..addPositional(new Positional(allowed: usage.commands.keys.toList()..remove(_HELP)));
     }
   }
 
@@ -68,8 +72,8 @@ class Help extends Plugin {
     var sink = stdout;
     if(isError) {
       sink = stderr;
-      sink.writeln(error);
       sink.writeln();
+      sink.writeln(errorPen(error));
     }
     sink.writeln(_getUsageFormatter(helpUsage, isWindows).format());
   }
@@ -100,4 +104,4 @@ class Help extends Plugin {
 }
 
 // TODO: May need to also disable when testing help formatting output.
-bool shouldDisableColor(bool isWindows) => isWindows || !stdout.hasTerminal;
+bool shouldDisableColor(bool isWindows) => isWindows; // || !stdout.hasTerminal;

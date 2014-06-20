@@ -24,7 +24,7 @@ abstract class ScriptImpl implements Script {
       {Map<String, String> environment,
        bool isWindows}) {
 
-    if(isWindows == null) isWindows = Platform.isWindows;
+    if(isWindows == null) isWindows = Platform.isWindows && Platform.environment['SHELL'] == null;
 
     CommandInvocation commandInvocation;
 

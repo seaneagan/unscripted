@@ -6,11 +6,13 @@ part of unscripted;
 /// See the corresponding method parameters to [ArgParser.addOption]
 /// for descriptions of the fields.
 class Option extends HelpAnnotation {
+
   final String abbr;
   /// Either a `List<String>` of allowed values, or `Map<String, String>` of
   /// allowed values to help text.
   final allowed;
   final bool allowMultiple;
+  /// Whether to hide this option.
   final bool hide;
   final defaultsTo;
   /// A function which validates and/or transforms the raw command-line String
@@ -35,6 +37,9 @@ class Option extends HelpAnnotation {
 /// See the corresponding method parameters to [ArgParser.addFlag]
 /// for descriptions of the fields.
 class Flag extends Option {
+
+  /// Whether this flag can be negated, e.g. with `--no-color` for a `--color`
+  /// option.
   final bool negatable;
 
   const Flag({
@@ -88,8 +93,7 @@ class Positional extends HelpAnnotation {
 /// it should be `List` or `List<String>`.
 class Rest extends Positional {
 
-  /// The minimum amount of arguments that should be passed to the rest
-  /// parameter to avoid an error being thrown.
+  /// Whether at least one rest argument is required.
   final bool required;
 
   const Rest({String name, String help, parser(String arg), allowed, this.required: false})
@@ -108,5 +112,9 @@ class Command extends BaseCommand {
 /// An annotation which marks an instance method of a [Command] as a
 /// sub-command.
 class SubCommand extends BaseCommand {
-  const SubCommand({String help}) : super(help: help);
+
+  /// Whether to hide this sub-command.
+  final bool hide;
+
+  const SubCommand({String help, this.hide}) : super(help: help);
 }
