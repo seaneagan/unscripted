@@ -244,7 +244,7 @@ CommandInvocation applyUsageToCommandInvocation(Usage usage, CommandInvocation i
   var positionalParsers =
       positionalParams.map((positional) => positional.parser);
   var positionalNames =
-      positionalParams.map((positional) => positional.name);
+      positionalParams.map((positional) => positional.valueHelp);
 
   parseArg(parser, arg, name) {
     if(parser == null || arg == null) return arg;
@@ -271,7 +271,7 @@ CommandInvocation applyUsageToCommandInvocation(Usage usage, CommandInvocation i
     var rest = zipParsedArgs(
         rawRest,
         new Iterable.generate(rawRest.length, (_) => usage.rest.parser),
-        new Iterable.generate(rawRest.length, (_) => usage.rest.name));
+        new Iterable.generate(rawRest.length, (_) => usage.rest.valueHelp));
     positionals.add(rest);
   }
 

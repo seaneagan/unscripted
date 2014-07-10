@@ -8,9 +8,9 @@ main(arguments) => declare(greet).execute(arguments);
 @Command(help: 'Print a configurable greeting.', plugins: const [const Completion()])
 @ArgExample('--salutation Hi --enthusiasm 3 Bob', help: 'enthusiastic')
 greet(
-    @Rest(help: 'Name(s) to greet.')
+    @Rest(valueHelp: 'who', help: 'Name(s) to greet.')
     List<String> who, {
-      @Option(help: 'Alternate word to greet with e.g. "Hi".')
+      @Option(valueHelp: 'greeting', help: 'Alternate <greeting> to greet with e.g. "Hi".')
       String salutation : 'Hello',
       @Option(help: 'How many !\'s to append.')
       int enthusiasm : 0,

@@ -19,6 +19,8 @@ class Option extends HelpAnnotation {
   /// value into a form accepted by the [Script].  It should throw to indicate
   /// that the argument is invalid.
   final Function parser;
+  /// A function which validates and/or transforms the raw command-line String
+  final String valueHelp;
 
   const Option({
       String help,
@@ -27,7 +29,8 @@ class Option extends HelpAnnotation {
       this.allowed,
       this.allowMultiple,
       this.hide,
-      this.defaultsTo})
+      this.defaultsTo,
+      this.valueHelp})
       : this.parser = parser,
         super(help: help);
 }
@@ -47,9 +50,10 @@ class Flag extends Option {
       String abbr,
       defaultsTo,
       bool hide,
-      bool negatable})
+      bool negatable,
+      String metaName})
       : this.negatable = negatable == null ? false : negatable,
-        super(help: help, abbr: abbr, defaultsTo: defaultsTo, hide: hide);
+        super(help: help, abbr: abbr, defaultsTo: defaultsTo, hide: hide, valueHelp: metaName);
 }
 
 /// An annotation which gives example arguments that can be passed to a
@@ -72,7 +76,7 @@ class Positional extends HelpAnnotation {
   /// The name to identify the parameter with in usage text.  By
   /// default the name of the dart parameter is used converted from camelCase
   /// to dash-erized.
-  final String name;
+  final String valueHelp;
 
   /// A function which validates and/or transforms the raw command-line String
   /// value into a form accepted by the [Script].  It should throw to indicate
@@ -83,7 +87,7 @@ class Positional extends HelpAnnotation {
   /// allowed values to help text.
   final allowed;
 
-  const Positional({String help, parser(String arg), this.name, this.allowed})
+  const Positional({String help, parser(String arg), this.valueHelp, this.allowed})
       : this.parser = parser,
       super(help: help);
 }
@@ -96,8 +100,8 @@ class Rest extends Positional {
   /// Whether at least one rest argument is required.
   final bool required;
 
-  const Rest({String name, String help, parser(String arg), allowed, this.required: false})
-      : super(name: name, parser: parser, help: help, allowed: allowed);
+  const Rest({String valueHelp, String help, parser(String arg), allowed, this.required: false})
+      : super(valueHelp: valueHelp, parser: parser, help: help, allowed: allowed);
 }
 
 /// An annotation which marks a class as representing a script command.

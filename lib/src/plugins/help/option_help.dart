@@ -42,7 +42,21 @@ class OptionHelp {
   List<int> columnWidths;
 
   /** The width in characters of each column. */
-  List<Function> columnFormatters = [optionPen, optionPen, textPen];
+  List<Function> columnFormatters = [abbrFormatter, optionPen, helpFormatter];
+
+  static String abbrFormatter(String help) {
+    return help.splitMapJoin(
+        ',',
+        onMatch: (match) => textPen(match.group(0)),
+        onNonMatch: optionPen);
+  }
+
+  static String helpFormatter(String help) {
+    return help.splitMapJoin(
+        new RegExp(r'<[^>]+>'),
+        onMatch: (match) => optionPen(match.group(0)),
+        onNonMatch: textPen);
+  }
 
   /**
    * The number of sequential lines of text that have been written to the last
@@ -92,12 +106,14 @@ class OptionHelp {
       } else if (getAllowedValues(option) != null) {
         write(2, buildAllowedList(option));
       } else if (option.defaultsTo != null) {
-        if (option is Flag && option.defaultsTo == true) {
-          write(2, '(defaults to on)');
-        } else if (option is! Flag) {
-          write(2, '(defaults to "${option.defaultsTo}")');
+        var defaultsTo = option is Flag && option.defaultsTo == true ?
+            'on' :
+            option is! Flag ? option.defaultsTo : null;
+        if(defaultsTo != null) {
+          write(2, '(defaults to "$defaultsTo")');
         }
       }
+
 
       // If any given option displays more than one line of text on the right
       // column (i.e. help, default value, allowed options, etc.) then put a
@@ -125,6 +141,13 @@ class OptionHelp {
   }
 
   String getLongOption(String name, Option option) {
+    var long = _getLongOption(name, option);
+    return option.valueHelp == null ?
+        long :
+        '$long=<${option.valueHelp}>';
+  }
+
+  String _getLongOption(String name, Option option) {
     if (option is Flag && option.negatable) {
       return '--[no-]$name';
     } else {

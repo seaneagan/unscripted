@@ -59,7 +59,10 @@ A `--help`/`-h` flag is automatically defined:
 
 ```shell
 $ greet.dart --help
-Print a configurable greeting
+
+Description:
+
+  Print a configurable greeting
 
 Usage:
 
@@ -67,16 +70,16 @@ Usage:
 
 Options:
 
-      --salutation         Alternate word to greet with e.g. "Hi".
-      --enthusiasm         How many !'s to append.
-  -l, --line-mode          Put names on separate lines.
-      --completion         Tab completion for this command.
+      --salutation=<greeting>    Alternate <greeting> to greet with e.g. "Hi".
+      --enthusiasm               How many !'s to append.
+  -l, --line-mode                Put names on separate lines.
+      --completion               Tab completion for this command.
 
-            [install]      Install completion script to .bashrc/.zshrc.
-            [print]        Print completion script to stdout.
-            [uninstall]    Uninstall completion script from .bashrc/.zshrc.
+            [install]            Install completion script to .bashrc/.zshrc.
+            [print]              Print completion script to stdout.
+            [uninstall]          Uninstall completion script from .bashrc/.zshrc.
 
-  -h, --help               Print this usage information.
+  -h, --help                     Print this usage information.
 
 Examples:
 
@@ -135,6 +138,7 @@ Help is also available for sub-commands:
 
 ```shell
 $ server.dart help
+
 Available commands:
 
   start
@@ -144,15 +148,18 @@ Available commands:
 Use "server.dart help [command]" for more information about a command.
 
 $ server.dart help stop
-Stop the server
+
+Description:
+
+  Stop the server
 
 Usage:
 
-server.dart stop [options]
+  server.dart stop [options]
 
 Options:
 
--h, --help    Print this usage information.
+  -h, --help    Print this usage information.
 ```
 
 ##Parsers

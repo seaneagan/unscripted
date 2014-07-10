@@ -51,10 +51,10 @@ class TerminalUsageFormatter extends UsageFormatter {
     usageParts.add(optionsPlaceholder);
     if(usage.commands.isNotEmpty) usageParts.add(commandPlaceholder);
 
-    var positionalNames = usage.positionals.map((positional) => positionalPen('<${positional.name}>'));
+    var positionalNames = usage.positionals.map((positional) => positionalPen('<${positional.valueHelp}>'));
     usageParts.addAll(positionalNames);
 
-    var restName = usage.rest == null ? '' : usage.rest.name;
+    var restName = usage.rest == null ? '' : usage.rest.valueHelp;
 
     if(restName != null && restName.isNotEmpty) {
       restName = '<$restName>...';
@@ -82,7 +82,7 @@ ${textPen("See '")}${_formatCommands()} $_HELP ${commandPen('[command]')}${textP
 $usageString
 
 ${indentLines(formatColumns(
-    positionalsWithRest.map((positional) => [positional.name, positional.help]),
+    positionalsWithRest.map((positional) => [positional.valueHelp, positional.help]),
     [positionalPen, textPen]))}''';
     }
 

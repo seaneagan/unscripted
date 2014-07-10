@@ -47,16 +47,16 @@ Rest getRestFromMethod(MethodMirror method) {
       if(parser == null) {
         parser = parserFromTypeArgument;
       }
-      if(rest.name != null) {
-        restName = rest.name;
+      if(rest.valueHelp != null) {
+        restName = rest.valueHelp;
       }
       rest = new Rest(
           required: rest.required,
           help: rest.help,
-          name: restName,
+          valueHelp: restName,
           parser: parser);
     } else if(parserFromTypeArgument != null) {
-      rest = new Rest(name: restName, parser: parserFromTypeArgument);
+      rest = new Rest(valueHelp: restName, parser: parserFromTypeArgument);
     }
 
     return rest;
@@ -92,8 +92,8 @@ Usage getUsageFromFunction(MethodMirror methodMirror, {Usage usage}) {
     var parser;
 
     if(positional != null) {
-      if(positional.name != null) {
-        positionalName = positional.name;
+      if(positional.valueHelp != null) {
+        positionalName = positional.valueHelp;
       }
       positionalHelp = positional.help;
       parser = positional.parser;
@@ -103,7 +103,7 @@ Usage getUsageFromFunction(MethodMirror methodMirror, {Usage usage}) {
       parser = getParserFromType(parameter.type);
     }
 
-    return new Positional(name: positionalName, help: positionalHelp, parser: parser);
+    return new Positional(valueHelp: positionalName, help: positionalHelp, parser: parser);
   });
 
   positionals.forEach((positional) =>
@@ -155,7 +155,7 @@ Usage getUsageFromFunction(MethodMirror methodMirror, {Usage usage}) {
         new Option(help: option.help, abbr: option.abbr,
             defaultsTo: defaultValue, allowed: option.allowed,
             allowMultiple: allowMultiple, hide: option.hide,
-            parser: parser);
+            valueHelp: option.valueHelp, parser: parser);
 
     var optionName = dashesToCamelCase.decode(parameterName);
 
