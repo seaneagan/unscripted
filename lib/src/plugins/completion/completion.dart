@@ -26,12 +26,6 @@ class Completion extends Plugin {
 
   bool onParse(Usage usage, CommandInvocation commandInvocation, Map<String,
       String> environment, bool isWindows) {
-    if (usage.callStyle == CallStyle.NORMAL) {
-      var ENOTSUP = 252;
-      exitCode = ENOTSUP;
-      throw new UnsupportedError(
-          "${formatCallStyle(CallStyle.SHEBANG)} completion not supported on windows");
-    }
     return _getAdapter(usage).onParse(usage, commandInvocation, environment,
         isWindows);
   }
@@ -52,6 +46,12 @@ abstract class CompletionAdapter {
       String> environment, bool isWindows) {
     var completionCommandInvocation = _getCompletionCommandInvocation(commandInvocation);
     if (completionCommandInvocation != null) {
+      if (usage.callStyle == CallStyle.NORMAL) {
+        var ENOTSUP = 252;
+        exitCode = ENOTSUP;
+        throw new UnsupportedError(
+            "${formatCallStyle(CallStyle.SHEBANG)} completion not supported on windows");
+      }
       _complete(usage, completionCommandInvocation,
           environment: environment, isWindows: isWindows);
       return false;
