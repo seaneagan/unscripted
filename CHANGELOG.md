@@ -1,3 +1,20 @@
+## 0.4.3
+
+Features:
+
+  - Colorful help output (#68)
+  - Add help output for positional arguments (#42)
+  - Add metaVar configuration (#43)
+  - Only fail completion in windows on actual usage not definition (#75)
+  - Support hidden commands (#69)
+  - Allow omitting arg to `allowed` callback (#67)
+  - Allow latest args version (#74)
+
+Bugfixes:
+
+  - Fix some checked mode errors
+  - Fix running scripts via pub run
+
 ## 0.4.0
 
 Features:
