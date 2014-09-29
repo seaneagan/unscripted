@@ -305,7 +305,7 @@ CommandInvocation applyUsageToCommandInvocation(Usage usage, CommandInvocation i
 }
 
 formatCallStyle(CallStyle callStyle) {
-  var commandName = path.basenameWithoutExtension(path.fromUri(Platform.script));
+  var commandName = path.basenameWithoutExtension(Platform.script.pathSegments.last);
   switch(callStyle) {
     case CallStyle.NORMAL: return 'dart $commandName.dart';
     case CallStyle.SHEBANG: return '$commandName.dart';
