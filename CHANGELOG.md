@@ -1,3 +1,9 @@
+## 0.4.4
+
+Bugfixes:
+
+  - Fixed omission of {Rest,Positional}.allowed (#79)
+
 ## 0.4.3
 
 Features:
