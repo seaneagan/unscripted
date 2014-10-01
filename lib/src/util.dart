@@ -50,7 +50,12 @@ Rest getRestFromMethod(MethodMirror method) {
       if(rest.valueHelp != null) {
         restName = rest.valueHelp;
       }
+      var allowed;
+      if(rest.allowed != null) {
+        allowed = rest.allowed;
+      }
       rest = new Rest(
+          allowed: allowed,
           required: rest.required,
           help: rest.help,
           valueHelp: restName,
@@ -90,10 +95,14 @@ Usage getUsageFromFunction(MethodMirror methodMirror, {Usage usage}) {
     String positionalName = getDefaultPositionalName(parameter.simpleName);
     String positionalHelp;
     var parser;
+    var allowed;
 
     if(positional != null) {
       if(positional.valueHelp != null) {
         positionalName = positional.valueHelp;
+      }
+      if(positional.allowed != null) {
+        allowed = positional.allowed;
       }
       positionalHelp = positional.help;
       parser = positional.parser;
@@ -103,7 +112,7 @@ Usage getUsageFromFunction(MethodMirror methodMirror, {Usage usage}) {
       parser = getParserFromType(parameter.type);
     }
 
-    return new Positional(valueHelp: positionalName, help: positionalHelp, parser: parser);
+    return new Positional(allowed: allowed, valueHelp: positionalName, help: positionalHelp, parser: parser);
   });
 
   positionals.forEach((positional) =>
