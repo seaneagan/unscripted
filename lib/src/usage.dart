@@ -310,5 +310,6 @@ formatCallStyle(CallStyle callStyle) {
     case CallStyle.NORMAL: return 'dart $commandName.dart';
     case CallStyle.SHEBANG: return '$commandName.dart';
     case CallStyle.SHELL: return commandName;
+    case CallStyle.BAT: return '$commandName.bat';
   }
 }

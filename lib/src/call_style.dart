@@ -8,8 +8,10 @@ class CallStyle {
 
   final String _name;
 
-  static CallStyle current = !Platform.isWindows || Platform.environment['SHELL'] != null ?
-      CallStyle.SHEBANG : CallStyle.NORMAL;
+  static bool isCygwin() => Platform.isWindows && Platform.environment['SHELL'] != null;
+  
+  static CallStyle current = isCygwin() ?
+      CallStyle.BAT : CallStyle.SHELL;
 
   /// Called with the dart executable.
   /// Example:
@@ -24,6 +26,10 @@ class CallStyle {
   /// Example:
   ///     foo ...
   static const CallStyle SHELL = const CallStyle._('SHELL');
+  /// Called without the '.dart' file extension, similar to a shell command.
+  /// Example:
+  ///     foo ...
+  static const CallStyle BAT = const CallStyle._('BAT');
 
   const CallStyle._(this._name);
 
