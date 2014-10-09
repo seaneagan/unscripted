@@ -1,3 +1,10 @@
+# 0.4.5
+
+Features:
+
+  - Reference scripts as `foo` instead of `foo.dart` (expect `foo.bat` in cygwin) (#80)
+  - Add allowTrailingOptions to Command and SubCommand (#70)
+
 ## 0.4.4
 
 Bugfixes:
