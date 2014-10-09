@@ -1,7 +1,5 @@
-unscripted
+unscripted [![pub package](http://img.shields.io/pub/v/unscripted.svg)](https://pub.dartlang.org/packages/unscripted) [![Build Status](https://drone.io/github.com/seaneagan/unscripted/status.png)](https://drone.io/github.com/seaneagan/unscripted/latest)
 ==========
-
-[![Build Status](https://drone.io/github.com/seaneagan/unscripted/status.png)](https://drone.io/github.com/seaneagan/unscripted/latest)
 
 *Define command-line interfaces using ordinary dart methods and classes.*
 
