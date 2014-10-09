@@ -120,6 +120,16 @@ main() {
         expect(flagValue, true);
       });
 
+      test('allowTrailingOptions should be false by default', () {
+        var restValue, optionValue;
+        new FunctionScript((@Rest() rest, {var option}) {
+          restValue = rest;
+          optionValue = option;
+        }).execute(['x', 'y', '--option', 'option']);
+        expect(restValue, ['x', 'y', '--option', 'option']);
+        expect(optionValue, null);
+      });
+
       test('--help prevents command from executing', () {
         new FunctionScript(() {
           _happened = true;
@@ -269,6 +279,20 @@ main() {
         unit.execute(['recursive1', '--flag1', 'recursive2', '--flag2']);
       });
 
+      group('allowTrailingOptions', () {
+
+        test('should allow trailing options when true', () {
+          unit.execute(['command', 'positional', '--command-flag']);
+          expect(_lastSeenRest, ['positional']);
+          expect(CommandScriptTest._lastSeenCommandFlag, isTrue);
+        });
+
+        test('should not allow trailing options when false', () {
+          unit.execute(['no-trailing', 'positional', '--command-flag']);
+          expect(_lastSeenRest, ['positional', '--command-flag']);
+          expect(CommandScriptTest._lastSeenCommandFlag, isFalse);
+        });
+      });
     });
   });
 }
@@ -280,14 +304,24 @@ class CommandScriptTest {
   static CommandScriptTest _lastSeen;
   static bool _commandHappened;
   static bool _dashedCommandHappened;
-
-  @Command(help: 'Test command with sub-commands')
+  static bool _lastSeenCommandFlag;
+  
+  @Command(help: 'Test command with sub-commands', allowTrailingOptions: true)
   CommandScriptTest({this.flag: false, this.option: 'default'});
 
   @SubCommand()
   command(@Rest() rest, {bool commandFlag}) {
     _lastSeen = this;
     _lastSeenRest = rest;
+    _lastSeenCommandFlag = commandFlag;
+    _commandHappened = true;
+  }
+
+  @SubCommand(allowTrailingOptions: false)
+  noTrailing(@Rest() rest, {bool commandFlag}) {
+    _lastSeen = this;
+    _lastSeenRest = rest;
+    _lastSeenCommandFlag = commandFlag;
     _commandHappened = true;
   }
 

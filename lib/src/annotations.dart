@@ -109,8 +109,8 @@ class Command extends BaseCommand {
   /// The plugins to use with this command.
   final Iterable plugins;
 
-  const Command({String help, this.plugins})
-      : super(help: help);
+  const Command({String help, bool allowTrailingOptions: false, this.plugins})
+      : super(help: help, allowTrailingOptions: allowTrailingOptions);
 }
 
 /// An annotation which marks an instance method of a [Command] as a
@@ -120,5 +120,7 @@ class SubCommand extends BaseCommand {
   /// Whether to hide this sub-command.
   final bool hide;
 
-  const SubCommand({String help, this.hide}) : super(help: help);
+  /// [allowTrailingOptions] is inherited from the parent command by default.
+  const SubCommand({String help, bool allowTrailingOptions, this.hide}) 
+      : super(help: help, allowTrailingOptions: allowTrailingOptions);
 }

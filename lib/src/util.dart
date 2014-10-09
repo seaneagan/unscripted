@@ -23,7 +23,10 @@ class HelpAnnotation {
 }
 
 class BaseCommand extends HelpAnnotation {
-  const BaseCommand({String help}) : super(help: help);
+  /// Whether to allow options after positional arguments.
+  final bool allowTrailingOptions;
+
+  const BaseCommand({String help, this.allowTrailingOptions}) : super(help: help);
 }
 
 Rest getRestFromMethod(MethodMirror method) {
@@ -221,6 +224,9 @@ _addCommandMetadata(Usage usage, DeclarationMirror declaration) {
       declaration, (metadata) => metadata is BaseCommand);
   if(command is Command && usage.parent == null) {
     var topCommand = command as Command;
+    usage.allowTrailingOptions = (command.allowTrailingOptions != null) ? 
+        command.allowTrailingOptions : 
+        false;
   }
   var description = command == null ? '' : command.help;
   usage.description = description;

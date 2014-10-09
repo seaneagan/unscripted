@@ -29,8 +29,8 @@ class Usage {
 
   final CallStyle callStyle = CallStyle.current;
 
-  // TODO: Make public ?
-  bool _allowTrailingOptions = false;
+  /// Whether to allow options after positional arguments.
+  bool allowTrailingOptions;
 
   Usage();
 
@@ -42,7 +42,10 @@ class Usage {
     }
     return _parser;
   }
-  ArgParser _getParser() => new ArgParser(allowTrailingOptions: _allowTrailingOptions);
+  ArgParser _getParser() {
+    return new ArgParser(allowTrailingOptions: allowTrailingOptions);
+  }
+  
   ArgParser _parser;
 
   // Positionals
@@ -115,8 +118,11 @@ class Usage {
     return _commandsView;
   }
   Usage addCommand(String name, [SubCommand command]) {
-    parser.addCommand(name);
     var hide = command != null && command.hide != null && command.hide;
+    var allowTrailingOptions = (command != null && command.allowTrailingOptions != null) ?
+        command.allowTrailingOptions :
+        this.allowTrailingOptions;
+    parser.addCommand(name, new ArgParser(allowTrailingOptions: allowTrailingOptions));
     return _commands[name] = new _SubCommandUsage(this, name, hide);
   }
 
@@ -175,8 +181,9 @@ class _SubCommandUsage extends Usage {
   final Usage parent;
   final String name;
   final bool hide;
-
+  
   CallStyle get callStyle => parent.callStyle;
+  bool get allowTrailingOptions => parser.allowTrailingOptions;
 
   _SubCommandUsage(this.parent, this.name, this.hide);
 
