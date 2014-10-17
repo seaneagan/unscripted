@@ -10,6 +10,7 @@ import 'package:unscripted/src/plugin.dart';
 import 'package:unscripted/src/usage.dart';
 import 'package:unscripted/src/util.dart';
 import 'package:quiver/strings.dart';
+import 'package:supports_color/supports_color.dart';
 
 import 'option_help.dart';
 import 'pens.dart';
@@ -79,7 +80,7 @@ class Help extends Plugin {
   }
 
   UsageFormatter _getUsageFormatter(Usage usage, bool isWindows) =>
-      new TerminalUsageFormatter(usage, shouldDisableColor(isWindows));
+      new TerminalUsageFormatter(usage, supportsColor);
 
   List<String> _getHelpPath(CommandInvocation commandInvocation) {
     var path = [];
@@ -102,6 +103,3 @@ class Help extends Plugin {
   }
 
 }
-
-// TODO: May need to also disable when testing help formatting output.
-bool shouldDisableColor(bool isWindows) => isWindows; // || !stdout.hasTerminal;

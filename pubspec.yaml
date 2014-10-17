@@ -1,5 +1,5 @@
 name: unscripted
-version: 0.4.5
+version: 0.4.6
 author: Sean Eagan <seaneagan1@gmail.com>
 description: Declarative command-line interface programming.
 homepage: http://github.com/seaneagan/unscripted
@@ -10,5 +10,6 @@ dependencies:
   mockable_filesystem: any
   path: any
   quiver: any
+  supports_color: any
 dev_dependencies:
   unittest: any

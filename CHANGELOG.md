@@ -1,4 +1,11 @@
-# 0.4.5
+
+## 0.4.6
+
+Features:
+
+  - Improve color-support detection (#73)
+
+## 0.4.5
 
 Features:
 

@@ -21,7 +21,7 @@ class TerminalUsageFormatter extends UsageFormatter {
 
     var oldColorDisabled = color_disabled;
 
-    color_disabled = color;
+    color_disabled = !color;
 
     var parser = usage.parser;
     var description = usage.description;
