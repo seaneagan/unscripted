@@ -82,7 +82,7 @@ ${textPen("See '")}${_formatCommands()} $_HELP ${commandPen('[command]')}${textP
 $usageString
 
 ${indentLines(formatColumns(
-    positionalsWithRest.map((positional) => [positional.valueHelp, positional.help]),
+    positionalsWithRest.map((positional) => ['<${positional.valueHelp}>', positional.help]),
     [positionalPen, textPen]))}''';
     }
 
