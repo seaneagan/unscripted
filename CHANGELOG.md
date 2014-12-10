@@ -1,3 +1,9 @@
+## 0.5.0
+
+Breaking changes:
+
+  - Flags without a null default value now default to null instead of false 
+    when neither the flag nor it's negation occur on the command-line (#86)
 
 ## 0.4.6
 

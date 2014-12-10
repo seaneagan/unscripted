@@ -20,25 +20,25 @@ main(arguments) => declare(cat).execute(arguments);
 cat(
     List<Input> files,
     {@Flag(abbr: 'n', help: 'number all output lines')
-     bool number,
+     bool number: false,
      @Flag(abbr: 'b', help: 'number nonblank output lines')
-     bool numberNonblank,
+     bool numberNonblank: false,
      @Flag(abbr: 's', help: 'never more than one single blank line')
-     bool squeezeBlank,
+     bool squeezeBlank: false,
      @Flag(abbr: 'A', help: 'equivalent to -vET')
-     bool showAll,
+     bool showAll: false,
      @Flag(abbr: 'e', help: 'equivalent to -vE')
-     bool e,
+     bool e: false,
      @Flag(abbr: 't', help: 'equivalent to -vT')
-     bool t,
+     bool t: false,
      @Flag(abbr: 'T', help: 'display TAB characters as ^I')
-     bool showTabs,
+     bool showTabs: false,
      @Flag(abbr: 'E', help: r'display $ at end of each line')
-     bool showEnds,
+     bool showEnds: false,
      @Flag(abbr: 'v', help: 'use ^ and M- notation, except for LFD and TAB')
-     bool showNonprinting,
+     bool showNonprinting: false,
      @Flag(hide: true)
-     bool version}) {
+     bool version: false}) {
 
   // Placeholder: see https://github.com/seaneagan/unscripted/issues/21
   if(version) {

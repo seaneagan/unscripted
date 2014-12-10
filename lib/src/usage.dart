@@ -45,7 +45,7 @@ class Usage {
   ArgParser _getParser() {
     return new ArgParser(allowTrailingOptions: allowTrailingOptions);
   }
-  
+
   ArgParser _parser;
 
   // Positionals
@@ -137,7 +137,7 @@ class Usage {
       throw new UsageException(usage: this, cause: e);
     }
 
-    return convertArgResultsToCommandInvocation(results);
+    return convertArgResultsToCommandInvocation(results, parser);
   }
 
   void _validate(CommandInvocation commandInvocation) {
@@ -181,7 +181,7 @@ class _SubCommandUsage extends Usage {
   final Usage parent;
   final String name;
   final bool hide;
-  
+
   CallStyle get callStyle => parent.callStyle;
   bool get allowTrailingOptions => parser.allowTrailingOptions;
 
@@ -216,20 +216,22 @@ class UsageException {
   }
 }
 
-CommandInvocation convertArgResultsToCommandInvocation(ArgResults results) {
+CommandInvocation convertArgResultsToCommandInvocation(ArgResults results, ArgParser parser) {
 
   var positionals = results.rest;
 
   var options = results.options.fold({}, (options, optionName) {
-        options[optionName] = results[optionName];
-        return options;
-      });
+    if (results.wasParsed(optionName)) {
+      options[optionName] = results[optionName];
+    }
+    return options;
+  });
 
   CommandInvocation subCommand;
 
   if(results.command != null) {
     subCommand =
-        convertArgResultsToCommandInvocation(results.command);
+        convertArgResultsToCommandInvocation(results.command, parser.commands[results.command.name]);
   }
 
   return new CommandInvocation._(results.name, positionals, options, subCommand);
@@ -284,22 +286,19 @@ CommandInvocation applyUsageToCommandInvocation(Usage usage, CommandInvocation i
 
   var options = <String, dynamic> {};
 
-  usage.options
-      .forEach((optionName, option) {
-        var optionValue = invocation.options[optionName];
-        var resolvedOptionValue;
-        if(option.defaultsTo != null && optionValue == null) {
-          resolvedOptionValue = option.defaultsTo;
-        } else {
-          var optionValue = invocation.options[optionName];
-          var values = optionValue is List ? optionValue : [optionValue];
-          parseValue(value) => parseArg(option.parser, value, optionName);
-          resolvedOptionValue = optionValue is List ?
-              new UnmodifiableListView(optionValue.map(parseValue)) :
-              parseValue(optionValue);
-        }
-        options[optionName] = resolvedOptionValue;
-      });
+  usage.options.forEach((optionName, option) {
+    var resolvedOptionValue;
+    if (!invocation.options.containsKey(optionName)) {
+      resolvedOptionValue = option.defaultsTo;
+    } else {
+      var optionValue = invocation.options[optionName];
+      parseValue(value) => parseArg(option.parser, value, optionName);
+      resolvedOptionValue = optionValue is List ?
+          new UnmodifiableListView(optionValue.map(parseValue)) :
+          parseValue(optionValue);
+    }
+    options[optionName] = resolvedOptionValue;
+  });
 
   CommandInvocation subCommand;
 

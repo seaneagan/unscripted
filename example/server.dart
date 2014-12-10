@@ -18,7 +18,7 @@ class Server {
 
   @SubCommand(help: 'Start the server')
   @ArgExample('foo/bar --clean')
-  start(@Positional(help: 'Top-level dir to deploy.') String context, {bool clean}) {
+  start(@Positional(help: 'Top-level dir to deploy.') String context, {bool clean: false}) {
     print('''
 Starting the server.
 Config path: $configPath''');

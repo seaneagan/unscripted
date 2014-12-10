@@ -62,6 +62,14 @@ main() {
         expect(flagValue, true);
       });
 
+      test('flag defaults to null by default', () {
+        var flagValue;
+        new FunctionScript(({@Flag() flag}) {
+          flagValue = flag;
+        }).execute([]);
+        expect(flagValue, isNull);
+      });
+
       test('option from Option', () {
         var optionValue;
         new FunctionScript(({@Option() option}) {
@@ -290,7 +298,7 @@ main() {
         test('should not allow trailing options when false', () {
           unit.execute(['no-trailing', 'positional', '--command-flag']);
           expect(_lastSeenRest, ['positional', '--command-flag']);
-          expect(CommandScriptTest._lastSeenCommandFlag, isFalse);
+          expect(CommandScriptTest._lastSeenCommandFlag, isNull);
         });
       });
     });
@@ -305,7 +313,7 @@ class CommandScriptTest {
   static bool _commandHappened;
   static bool _dashedCommandHappened;
   static bool _lastSeenCommandFlag;
-  
+
   @Command(help: 'Test command with sub-commands', allowTrailingOptions: true)
   CommandScriptTest({this.flag: false, this.option: 'default'});
 

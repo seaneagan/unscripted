@@ -110,7 +110,7 @@ class Server {
   Server({this.configPath: 'config.xml'});
 
   @SubCommand(help: 'Start the server')
-  start({bool clean}) {
+  start({bool clean: false}) {
     print('''
 Starting the server.
 Config path: $configPath''');
