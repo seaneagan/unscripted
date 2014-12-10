@@ -5,9 +5,10 @@ unscripted [![pub package](http://img.shields.io/pub/v/unscripted.svg)](https://
 
 ##Installation
 
-Add the [unscripted package][pkg] to your pubspec.yaml dependencies:
-
-`unscripted: '>=0.4.0 <0.5.0'`
+```shell
+pub global activate den
+den install unscripted
+```
 
 ##Usage
 
