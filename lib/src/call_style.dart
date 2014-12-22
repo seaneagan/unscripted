@@ -9,7 +9,7 @@ class CallStyle {
   final String _name;
 
   static bool isCygwin() => Platform.isWindows && Platform.environment['SHELL'] != null;
-  
+
   static CallStyle current = isCygwin() ?
       CallStyle.BAT : CallStyle.SHELL;
 
@@ -33,4 +33,5 @@ class CallStyle {
 
   const CallStyle._(this._name);
 
+  String toString() => 'CallStyle.${_name}';
 }
