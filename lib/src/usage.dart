@@ -313,7 +313,7 @@ CommandInvocation applyUsageToCommandInvocation(Usage usage, CommandInvocation i
 formatCallStyle(CallStyle callStyle) {
   var basename = path.basename(Platform.script.pathSegments.last);
   var extension = path.extension(basename);
-  if (extension == 'snapshot') {
+  if (extension == '.snapshot') {
     basename = path.basenameWithoutExtension(basename);
     extension = path.extension(basename);
   }
