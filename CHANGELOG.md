@@ -1,3 +1,12 @@
+## 0.6.0
+
+  - Deprecated `declare` in favor of `new Script`.
+
+Breaking changes:
+
+  - Script.execute now calls the method asynchronously so that it can return 
+    a Future for the return value.
+
 ## 0.5.0
 
 Breaking changes:
