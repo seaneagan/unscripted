@@ -1,6 +1,7 @@
 
 library script_test;
 
+import 'dart:async';
 import 'dart:io';
 
 import 'package:unscripted/unscripted.dart';
@@ -27,122 +28,154 @@ main() {
 
     expectUsageError() {
       expect(_happened, isFalse);
-      // TODO: Uncomment once http://dartbug.com/16217 is fixed.
-      // expect(exitCode, 2);
+      expect(exitCode, 2);
     }
 
     group('FunctionScript', () {
 
       test('no args', () {
-        new FunctionScript(() {_happened = true;}).execute([]);
-        expect(_happened, true);
+        return new FunctionScript(() {_happened = true;}).execute([]).then((_) {
+          expect(_happened, true);
+        });
+      });
+
+      test('forwards error', () {
+        var error;
+        return new FunctionScript(() { throw 'e';}).execute([]).catchError((e) {
+          error = e;
+        }).whenComplete(() {
+          expect(error, 'e');
+        });
+      });
+
+      test('forwards result', () {
+        return new FunctionScript(() => 0).execute([])
+            .then((result) => expect(result, 0));
+      });
+
+      test('forwards future result', () {
+        return new FunctionScript(() => new Future.value(0)).execute([])
+            .then((result) => expect(result, 0));
       });
 
       test('flag from bool', () {
         var flagValue;
-        new FunctionScript(({bool flag}) {
+        return new FunctionScript(({bool flag}) {
           flagValue = flag;
-        }).execute(['--flag']);
-        expect(flagValue, true);
+        }).execute(['--flag']).then((_) {
+          expect(flagValue, true);
+        });
       });
 
       test('option from String', () {
         var optionValue;
-        new FunctionScript(({String option}) {
+        return new FunctionScript(({String option}) {
           optionValue = option;
-        }).execute(['--option', 'value']);
-        expect(optionValue, 'value');
+        }).execute(['--option', 'value']).then((_) {
+          expect(optionValue, 'value');
+        });
       });
 
       test('flag from Flag', () {
         var flagValue;
-        new FunctionScript(({@Flag() flag}) {
+        return new FunctionScript(({@Flag() flag}) {
           flagValue = flag;
-        }).execute(['--flag']);
-        expect(flagValue, true);
+        }).execute(['--flag']).then((_) {
+          expect(flagValue, true);
+        });
       });
 
       test('flag defaults to null by default', () {
         var flagValue;
-        new FunctionScript(({@Flag() flag}) {
+        return new FunctionScript(({@Flag() flag}) {
           flagValue = flag;
-        }).execute([]);
-        expect(flagValue, isNull);
+        }).execute([]).then((_) {
+          expect(flagValue, isNull);
+        });
       });
 
       test('option from Option', () {
         var optionValue;
-        new FunctionScript(({@Option() option}) {
+        return new FunctionScript(({@Option() option}) {
           optionValue = option;
-        }).execute(['--option', 'value']);
-        expect(optionValue, 'value');
+        }).execute(['--option', 'value']).then((_) {
+          expect(optionValue, 'value');
+        });
       });
 
       test('positionals', () {
         var firstValue;
         var secondValue;
-        new FunctionScript((String first, String second, {bool flag}) {
+        return new FunctionScript((String first, String second, {bool flag}) {
           firstValue = first;
           secondValue = second;
-        }).execute(['--flag', 'first', 'second']);
-        expect(firstValue, 'first');
-        expect(secondValue, 'second');
+        }).execute(['--flag', 'first', 'second']).then((_) {
+          expect(firstValue, 'first');
+          expect(secondValue, 'second');
+        });
       });
 
       test('too many positionals', () {
-        new FunctionScript((String first) {
+        return new FunctionScript((String first) {
           _happened = true;
-        }).execute(['first', 'extra']);
-        expectUsageError();
+        }).execute(['first', 'extra']).then((_) {
+          expectUsageError();
+        });
       });
 
       test('not enough positionals', () {
-        new FunctionScript((String first) {
+        return new FunctionScript((String first) {
           _happened = true;
-        }).execute([]);
-        expectUsageError();
+        }).execute([]).then((_) {
+          expectUsageError();
+        });
       });
 
       test('rest from Rest', () {
         var firstValue;
-        new FunctionScript((String first, @Rest() rest) {
+        return new FunctionScript((String first, @Rest() rest) {
           firstValue = first;
           _lastSeenRest = rest;
-        }).execute(['first', 'second', 'third', 'fourth']);
-        expect(firstValue, 'first');
-        expect(_lastSeenRest, ['second', 'third', 'fourth']);
+        }).execute(['first', 'second', 'third', 'fourth']).then((_) {
+          expect(firstValue, 'first');
+          expect(_lastSeenRest, ['second', 'third', 'fourth']);
+        });
       });
 
       test('not enough rest', () {
-        new FunctionScript((String first, @Rest(required: true) rest) {
+        return new FunctionScript((String first, @Rest(required: true) rest) {
           _happened = true;
-        }).execute(['first']);
-        expectUsageError();
+        }).execute(['first']).then((_) {
+          expectUsageError();
+        });
       });
 
       test('dashed arg', () {
         var flagValue;
-        new FunctionScript(({bool dashedFlag}) {
+        return new FunctionScript(({bool dashedFlag}) {
           flagValue = dashedFlag;
-        }).execute(['--dashed-flag']);
-        expect(flagValue, true);
+        }).execute(['--dashed-flag']).then((_) {
+          expect(flagValue, true);
+        });
       });
 
       test('allowTrailingOptions should be false by default', () {
         var restValue, optionValue;
-        new FunctionScript((@Rest() rest, {var option}) {
+        return new FunctionScript((@Rest() rest, {var option}) {
           restValue = rest;
           optionValue = option;
-        }).execute(['x', 'y', '--option', 'option']);
-        expect(restValue, ['x', 'y', '--option', 'option']);
-        expect(optionValue, null);
+        }).execute(['x', 'y', '--option', 'option']).then((_) {
+          expect(restValue, ['x', 'y', '--option', 'option']);
+          expect(optionValue, null);
+        });
       });
 
       test('--help prevents command from executing', () {
-        new FunctionScript(() {
+        return new FunctionScript(() {
           _happened = true;
-        }).execute(['--help']);
-        expect(_happened, false);
+        }).execute(['--help']).then((_) {
+          expect(_happened, false);
+        });
       });
 
       SubCommandScriptTest withSubCommands({bool flag1}) {
@@ -150,7 +183,7 @@ main() {
       }
 
       test('with sub-commands', () {
-        new FunctionScript(withSubCommands).execute(['--flag1', 'recursive2', '--flag2']);
+        return new FunctionScript(withSubCommands).execute(['--flag1', 'recursive2', '--flag2']);
       });
 
     });
@@ -158,82 +191,91 @@ main() {
     group('parser', () {
       test('for Option - valid input', () {
         var optionValue;
-        new FunctionScript(({@Option(parser: int.parse) int option}) {
+        return new FunctionScript(({@Option(parser: int.parse) int option}) {
           optionValue = option;
-        }).execute(['--option', '123']);
-        expect(optionValue, 123);
+        }).execute(['--option', '123']).then((_) {
+          expect(optionValue, 123);
+        });
       });
 
       test('for Option - from type annotation', () {
         var optionValue;
-        new FunctionScript(({int option}) {
+        return new FunctionScript(({int option}) {
           optionValue = option;
-        }).execute(['--option', '123']);
-        expect(optionValue, 123);
+        }).execute(['--option', '123']).then((_) {
+          expect(optionValue, 123);
+        });
       });
 
       test('for Option - invalid input throws', () {
-        new FunctionScript(({@Option(parser: int.parse) int option}) {
+        return new FunctionScript(({@Option(parser: int.parse) int option}) {
           _happened = true;
-        }).execute(['--option', 'abc']);
-        expectUsageError();
+        }).execute(['--option', 'abc']).then((_) {
+          expectUsageError();
+        });
       });
 
       test('for Option - with allowMultiple', () {
         var optionValues;
-        new FunctionScript(({@Option(parser: int.parse, allowMultiple: true) List<int> option}) {
+        return new FunctionScript(({@Option(parser: int.parse, allowMultiple: true) List<int> option}) {
           optionValues = option;
-        }).execute(['--option', '1', '--option', '2']);
-        expect(optionValues, [1, 2]);
+        }).execute(['--option', '1', '--option', '2']).then((_) {
+          expect(optionValues, [1, 2]);
+        });
       });
 
       test('for Option - from List type annotation', () {
         var optionValues;
-        new FunctionScript(({List<int> option}) {
+        return new FunctionScript(({List<int> option}) {
           optionValues = option;
-        }).execute(['--option', '1', '--option', '2']);
-        expect(optionValues, [1, 2]);
+        }).execute(['--option', '1', '--option', '2']).then((_) {
+          expect(optionValues, [1, 2]);
+        });
       });
 
       test('for Positional - valid input', () {
         var positionalValue;
         var restValue;
-        new FunctionScript((
+        return new FunctionScript((
             @Positional(parser: int.parse) int first,
             @Rest(parser: int.parse) List<int> rest) {
           positionalValue = first;
           restValue = rest;
-        }).execute(['123', '4', '5', '6']);
-        expect(positionalValue, 123);
-        expect(restValue, [4, 5, 6]);
+        }).execute(['123', '4', '5', '6']).then((_) {
+          expect(positionalValue, 123);
+          expect(restValue, [4, 5, 6]);
+        });
       });
 
       test('for Positional - from type annotation', () {
         var positionalValue;
         var restValue;
-        new FunctionScript((
+        return new FunctionScript((
             int first,
             List<int> rest) {
           positionalValue = first;
           restValue = rest;
-        }).execute(['123', '4', '5', '6']);
-        expect(positionalValue, 123);
-        expect(restValue, [4, 5, 6]);
+        }).execute(['123', '4', '5', '6']).then((_) {
+          expect(positionalValue, 123);
+          expect(restValue, [4, 5, 6]);
+        });
       });
 
       test('not called on default values', () {
         var optionValue;
-        new FunctionScript(({int option : 1}) {
+        return new FunctionScript(({int option : 1}) {
           optionValue = option;
-        }).execute([]);
-        expect(optionValue, 1);
+        }).execute([]).then((_) {
+          expect(optionValue, 1);
+        });
       });
 
       test('for Positional - invalid input throws', () {
-        new FunctionScript((@Positional(parser: int.parse) int first) {
+        return new FunctionScript((@Positional(parser: int.parse) int first) {
           _happened = true;
-        }).execute(['abc']);
-        expectUsageError();
+        }).execute(['abc']).then((_) {
+          expectUsageError();
+        });
       });
 
     });
@@ -249,56 +291,71 @@ main() {
       });
 
       test('default values', () {
-        unit.execute(['command']);
-        expect(CommandScriptTest._commandHappened, isTrue);
-        expect(CommandScriptTest._lastSeen.flag, false);
-        expect(CommandScriptTest._lastSeen.option, 'default');
+        return unit.execute(['command']).then((_) {
+          expect(CommandScriptTest._commandHappened, isTrue);
+          expect(CommandScriptTest._lastSeen.flag, false);
+          expect(CommandScriptTest._lastSeen.option, 'default');
+        });
       });
 
       test('args resolved', () {
-        unit.execute(['--flag', '--option', 'value', 'command']);
-        expect(CommandScriptTest._commandHappened, isTrue);
-        expect(CommandScriptTest._lastSeen.flag, true);
-        expect(CommandScriptTest._lastSeen.option, 'value');
+        return unit.execute(['--flag', '--option', 'value', 'command']).then((result) {
+          expect(CommandScriptTest._commandHappened, isTrue);
+          expect(CommandScriptTest._lastSeen.flag, true);
+          expect(CommandScriptTest._lastSeen.option, 'value');
+          expect(result, 0);
+        });
+      });
+
+      test('returns future result', () {
+        return unit.execute(['future']).then((result) {
+          expect(result, 0);
+        });
       });
 
       test('rest', () {
-        unit.execute(['command', '1', '2']);
-        expect(CommandScriptTest._commandHappened, isTrue);
-        expect(_lastSeenRest, ['1', '2']);
+        return unit.execute(['command', '1', '2']).then((_) {
+          expect(CommandScriptTest._commandHappened, isTrue);
+          expect(_lastSeenRest, ['1', '2']);
+        });
       });
 
       test('bad base args', () {
-        unit.execute(['--bogusflag', '--bogusoption', 'value', 'command']);
-        expect(CommandScriptTest._commandHappened, isFalse);
+        return unit.execute(['--bogusflag', '--bogusoption', 'value', 'command']).then((_) {
+          expect(CommandScriptTest._commandHappened, isFalse);
+        });
       });
 
       test('no command', () {
-        unit.execute([]);
-        expect(CommandScriptTest._commandHappened, isFalse);
+        return unit.execute([]).then((_) {
+          expect(CommandScriptTest._commandHappened, isFalse);
+        });
       });
 
       test('dashed command', () {
-        unit.execute(['dashed-command']);
-        expect(CommandScriptTest._dashedCommandHappened, isTrue);
+        return unit.execute(['dashed-command']).then((_) {
+          expect(CommandScriptTest._dashedCommandHappened, isTrue);
+        });
       });
 
       test('recursive sub-commands', () {
-        unit.execute(['recursive1', '--flag1', 'recursive2', '--flag2']);
+        return unit.execute(['recursive1', '--flag1', 'recursive2', '--flag2']);
       });
 
       group('allowTrailingOptions', () {
 
         test('should allow trailing options when true', () {
-          unit.execute(['command', 'positional', '--command-flag']);
-          expect(_lastSeenRest, ['positional']);
-          expect(CommandScriptTest._lastSeenCommandFlag, isTrue);
+          return unit.execute(['command', 'positional', '--command-flag']).then((_) {
+            expect(_lastSeenRest, ['positional']);
+            expect(CommandScriptTest._lastSeenCommandFlag, isTrue);
+          });
         });
 
         test('should not allow trailing options when false', () {
-          unit.execute(['no-trailing', 'positional', '--command-flag']);
-          expect(_lastSeenRest, ['positional', '--command-flag']);
-          expect(CommandScriptTest._lastSeenCommandFlag, isNull);
+          return unit.execute(['no-trailing', 'positional', '--command-flag']).then((_) {
+            expect(_lastSeenRest, ['positional', '--command-flag']);
+            expect(CommandScriptTest._lastSeenCommandFlag, isNull);
+          });
         });
       });
     });
@@ -318,11 +375,17 @@ class CommandScriptTest {
   CommandScriptTest({this.flag: false, this.option: 'default'});
 
   @SubCommand()
-  command(@Rest() rest, {bool commandFlag}) {
+  int command(@Rest() rest, {bool commandFlag}) {
     _lastSeen = this;
     _lastSeenRest = rest;
     _lastSeenCommandFlag = commandFlag;
     _commandHappened = true;
+    return 0;
+  }
+
+  @SubCommand()
+  Future<int> future() {
+    return new Future<int>.value(0);
   }
 
   @SubCommand(allowTrailingOptions: false)

@@ -49,7 +49,9 @@ part of unscripted;
 /// sub-command was specified on the command-line, it is invoked with it's
 /// corresponding command-line arguments, and so forth (recursively).  If a
 /// model has sub-commands, but no sub-command was specified, this is treated
-/// as an error, and the help text is displayed.
+/// as an error, and the help text is displayed.  The method call's return
+/// value is captured, and if a future, resolved to a completion value.  A
+/// future for this value is then returned.
 ///
 /// Basic example:
 ///
@@ -115,8 +117,9 @@ abstract class Script {
   /// First, the [arguments] are parsed.  If the arguments were invalid *or*
   /// if help was requested, help text is printed and the method returns.
   /// Otherwise, script-specific logic is executed on the successfully parsed
-  /// arguments.
-  execute(
+  /// arguments, from which a result is captured.  A future for this result
+  /// is returned.
+  Future execute(
       List<String> arguments,
       {Map<String, String> environment,
        bool isWindows});
