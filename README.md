@@ -184,13 +184,8 @@ following plugins are available:
 Add bash/zsh [tab completion][tab completion] to your script:
 
 ```dart
-#!/usr/bin/env dart
-// ...
-@Command(plugins: const [const Completion()])
+@Command(/*...*/ plugins: const [const Completion()])
 ```
-
-(Once [pub supports cli's](http://dartbug.com/7874), the "shebang" line will no 
-longer be required.)
 
 If your script already has sub-commands, this will add a `completion` 
 sub-command (similar to [npm completion][npm completion]), otherwise it adds a 
