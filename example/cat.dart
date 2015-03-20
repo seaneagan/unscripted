@@ -8,7 +8,7 @@ import 'package:quiver/streams.dart' as streams;
 import 'package:quiver/strings.dart';
 import 'package:unscripted/unscripted.dart';
 
-main(arguments) => declare(cat).execute(arguments);
+main(arguments) => new Script(cat).execute(arguments);
 
 // TODO: Add tests, see https://gist.github.com/sandal/1293709
 /// A dart implementation of the [cat][1] unix utility.

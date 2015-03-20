@@ -19,7 +19,7 @@ The following [greet.dart][greet.dart] script outputs a configurable greeting:
 
 import 'package:unscripted/unscripted.dart';
 
-main(arguments) => declare(greet).execute(arguments);
+main(arguments) => new Script(greet).execute(arguments);
 
 // All metadata annotations are optional.
 @Command(help: 'Print a configurable greeting', plugins: const [const Completion()])
@@ -99,7 +99,7 @@ import 'dart:io';
 import 'package:unscripted/unscripted.dart';
 import 'package:path/path.dart' as path;
 
-main(arguments) => declare(Server).execute(arguments);
+main(arguments) => new Script(Server).execute(arguments);
 
 class Server {
 
@@ -256,7 +256,6 @@ utility using unscripted.
 
 [pkg]: http://pub.dartlang.org/packages/unscripted
 [cat.dart]: https://github.com/seaneagan/unscripted/blob/master/example/cat.dart
-[declare]: https://seaneagan.github.com/unscripted/unscripted.html#declare
 [examples]: https://github.com/seaneagan/unscripted/tree/master/example
 [greet.dart]: https://github.com/seaneagan/unscripted/tree/master/example/greet.dart
 [server.dart]: https://github.com/seaneagan/unscripted/tree/master/example/server.dart

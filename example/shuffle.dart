@@ -3,7 +3,7 @@ import 'dart:math';
 
 import 'package:unscripted/unscripted.dart';
 
-main(arguments) => declare(shuffle).execute(arguments);
+main(arguments) => new Script(shuffle).execute(arguments);
 
 @Command(help: 'Shuffles a list of numbers')
 @ArgExample('7 1.4 2', help: 'might output "1.4 2 7"')

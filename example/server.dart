@@ -5,7 +5,7 @@ import 'dart:io';
 import 'package:unscripted/unscripted.dart';
 import 'package:path/path.dart' as path;
 
-main(arguments) => declare(Server).execute(arguments);
+main(arguments) => new Script(Server).execute(arguments);
 
 class Server {
 

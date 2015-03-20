@@ -2,7 +2,7 @@
 
 import 'package:unscripted/unscripted.dart';
 
-main(arguments) => declare(greet).execute(arguments);
+main(arguments) => new Script(greet).execute(arguments);
 
 // All metadata annotations are optional.
 @Command(help: 'Print a configurable greeting.', plugins: const [const Completion()])

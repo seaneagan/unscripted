@@ -1,12 +1,12 @@
 
 part of unscripted;
 
-/// Declares a [Script] from [model].
+/// Represents a command-line script.
 ///
-/// The model is generally a closure of a method, which is annotated with
-/// command-line metadata.  The model can also be a class (see below).
+/// A script is modeled by a method or class declaration, annotated with
+/// command-line metadata.  This model is passed is passed to the constructor.
 ///
-/// The method itself can be annotated as a [Command].
+/// The model itself can be annotated as a [Command].
 ///
 /// The method's parameters define the script's command-line parameters.
 /// Named parameters with [bool] type or [Flag] metadata represent command-line
@@ -41,21 +41,9 @@ part of unscripted;
 /// 'help' as a synonym for '--help', or by specifying a sub-command e.g.
 /// 'help sub-command'.
 ///
-/// When the returned script is [executed][Script.execute], if the user
-/// requested help for, or incorrectly invoked, the command or a sub-command,
-/// then the help text is displayed, along with any specific error.  Otherwise,
-/// the command-line arguments are valid, and are injected into the
-/// corresponding method parameters.  If the model has sub-commands, then if a
-/// sub-command was specified on the command-line, it is invoked with it's
-/// corresponding command-line arguments, and so forth (recursively).  If a
-/// model has sub-commands, but no sub-command was specified, this is treated
-/// as an error, and the help text is displayed.  The method call's return
-/// value is captured, and if a future, resolved to a completion value.  A
-/// future for this value is then returned.
-///
 /// Basic example:
 ///
-///     main(arguments) => declare(greet).execute(arguments);
+///     main(arguments) => new Script(greet).execute(arguments);
 ///
 ///     // Optional command-line metadata:
 ///     @Command(help: 'Outputs a greeting')
@@ -72,7 +60,7 @@ part of unscripted;
 ///
 /// Sub-command example:
 ///
-///     main(arguments) => declare(Server).execute(arguments);
+///     main(arguments) => new Script(Server).execute(arguments);
 ///
 ///     class Server {
 ///
@@ -101,27 +89,35 @@ part of unscripted;
 /// Parameter and command names which are camelCased are mapped to their
 /// dash-erized command-line equivalents.  For example, `fooBar` would map to
 /// `foo-bar`.
-Script declare(model) {
-  if(model is Function) return new FunctionScript(model);
-  if(model is Type) return new ClassScript(model);
-  throw new ArgumentError('model must be a Type or Function');
-}
-
-/// Represents a command-line script.
-///
-/// The main way to interact with a script is to [execute] it.
 abstract class Script {
+
+  factory Script(model) {
+    if (model is Function) return new FunctionScript(model);
+    if (model is Type) return new ClassScript(model);
+    throw new ArgumentError('model must be a Type or Function');
+  }
 
   /// Executes this script.
   ///
   /// First, the [arguments] are parsed.  If the arguments were invalid *or*
   /// if help was requested, help text is printed and the method returns.
-  /// Otherwise, script-specific logic is executed on the successfully parsed
-  /// arguments, from which a result is captured.  A future for this result
-  /// is returned.
+  /// When the returned script is [executed][execute], if the user
+  /// requested help for, or incorrectly invoked, the command or a sub-command,
+  /// then the help text is displayed, along with any specific error.
+  /// Otherwise, the command-line arguments are valid, and are injected into
+  /// the corresponding method parameters.  If the model has sub-commands, then
+  /// if a sub-command was specified on the command-line, it is invoked with
+  /// it's corresponding command-line arguments, and so forth (recursively).
+  /// If a model has sub-commands, but no sub-command was specified, this is
+  /// treated as an error, and the help text is displayed.  The terminal method
+  /// call's return value is captured, and if a future, resolved to a
+  /// completion value.  A future for this value is then returned.
   Future execute(
       List<String> arguments,
       {Map<String, String> environment,
        bool isWindows});
 
 }
+
+@Deprecated('Use `new Script(model)` instead.')
+Script declare(model) => new Script(model);
