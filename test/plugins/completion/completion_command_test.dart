@@ -4,7 +4,7 @@ library completion_command_test;
 import 'dart:async';
 
 import 'package:unscripted/unscripted.dart';
-import 'package:unittest/unittest.dart';
+import 'package:test/test.dart';
 
 import 'util.dart';
 
@@ -14,14 +14,14 @@ main() {
 
     test('installation', () {
       var args = ['completion'];
-      declare(f).execute(args, isWindows: false);
+      new Script(f).execute(args, isWindows: false);
     });
 
     test('completions output is correct', () {
 
       var output = captureOutput(() {
         var args = ['completion', 'foo_command', '--'];
-        declare(f)
+        new Script(f)
             .execute(args, environment: makeEnv(args), isWindows: false);
       });
 
@@ -37,7 +37,7 @@ main() {
 
       var output = captureOutput(() {
         var args = ['completion', 'foo_command', '--blah'];
-        declare(f)
+        new Script(f)
             .execute(args, environment: makeEnv(args), isWindows: false);
       });
 

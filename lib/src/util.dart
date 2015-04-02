@@ -6,8 +6,7 @@ import 'dart:mirrors';
 import 'dart:io';
 
 import 'package:args/args.dart' show ArgParser, ArgResults;
-import 'package:quiver/core.dart';
-import 'package:quiver/iterables.dart';
+import 'package:collection/iterable_zip.dart';
 import 'package:unscripted/unscripted.dart';
 import 'package:unscripted/src/string_codecs.dart';
 import 'package:unscripted/src/usage.dart';
@@ -207,12 +206,10 @@ _addSubCommandsForClass(Usage usage, TypeMirror typeMirror) {
       }
     });
 
-    var commands = {};
-
     subCommands.forEach((methodMirror, subCommand) {
       var commandName = dashesToCamelCase
           .decode(MirrorSystem.getName(methodMirror.simpleName));
-      var subCommandUsage = getUsageFromFunction(
+      getUsageFromFunction(
           methodMirror,
           usage: usage.addCommand(commandName, subCommand));
     });
@@ -223,9 +220,8 @@ _addCommandMetadata(Usage usage, DeclarationMirror declaration) {
   BaseCommand command = getFirstMetadataMatch(
       declaration, (metadata) => metadata is BaseCommand);
   if(command is Command && usage.parent == null) {
-    var topCommand = command as Command;
-    usage.allowTrailingOptions = (command.allowTrailingOptions != null) ? 
-        command.allowTrailingOptions : 
+    usage.allowTrailingOptions = (command.allowTrailingOptions != null) ?
+        command.allowTrailingOptions :
         false;
   }
   var description = command == null ? '' : command.help;
@@ -441,9 +437,10 @@ String formatColumns(
       int separateBy: 4
     }) {
 
-  formatters = formatters.map((f) => firstNonNull(f, (x) => x));
-  var widths = zip(cells).map((column) => max(column.map((s) => s.length))).toList();
-  var cellsWithMetadata = cells.map((line) => zip([line, widths, formatters]));
+  formatters = formatters.map((f) => f == null ? (x) => x : f);
+  var widths = new IterableZip(cells).map((column) =>
+      column.isEmpty ? null : column.map((s) => s.length).reduce((a, b) => Comparable.compare(a, b) > 0 ? a : b)).toList();
+  var cellsWithMetadata = cells.map((line) => new IterableZip([line, widths, formatters]));
   var formattedCells = cellsWithMetadata.map((lineCells) => lineCells.map((cellWithMetadata) {
     var cell = cellWithMetadata[0];
     var width = cellWithMetadata[1];

@@ -22,7 +22,7 @@ Future<Iterable> getUsageCompletions(Usage usage, CommandLine commandLine) => ne
     try {
       commandInvocation = usage.parse(validWords);
       break;
-    } on UsageException catch (e, s) {
+    } on UsageException {
       // TODO: Log?
     }
   }
@@ -110,7 +110,6 @@ Future<Iterable> getUsageCompletions(Usage usage, CommandLine commandLine) => ne
     if(commandCompletions.isNotEmpty) return commandCompletions;
 
     // Try completing positional.
-    var positionalCount = leafCommandInvocation.positionals.length;
     var positional = leafUsage.positionalAt(leafCommandInvocation.positionals.length);
     if(positional != null) {
       if(positional.allowed != null) {

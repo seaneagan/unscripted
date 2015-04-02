@@ -6,7 +6,7 @@ import 'dart:io';
 
 import 'package:unscripted/unscripted.dart';
 import 'package:unscripted/src/script_impl.dart';
-import 'package:unittest/unittest.dart';
+import 'package:test/test.dart';
 
 List _lastSeenRest;
 

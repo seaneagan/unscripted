@@ -9,7 +9,7 @@ import 'package:unscripted/src/plugins/completion/command_line.dart';
 import 'package:unscripted/src/plugins/completion/usage_completion.dart';
 import 'package:unscripted/src/usage.dart';
 import 'package:unscripted/src/plugins/help/help.dart';
-import 'package:unittest/unittest.dart';
+import 'package:test/test.dart';
 
 addPlugins(Usage usage) {
   [const completion_plugin.Completion(), const Help()].forEach((plugin) {

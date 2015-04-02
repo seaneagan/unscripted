@@ -133,7 +133,7 @@ class Usage {
     ArgResults results;
     try {
       results = parser.parse(arguments);
-    } catch (e, s) {
+    } catch (e) {
       throw new UsageException(usage: this, cause: e);
     }
 

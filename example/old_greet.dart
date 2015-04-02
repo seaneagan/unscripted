@@ -63,7 +63,7 @@ $command [options] <WHO>'
 
 Options:
 
-${parser.getUsage()}
+${parser.usage}
 
 Examples:
 

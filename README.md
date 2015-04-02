@@ -251,11 +251,11 @@ is planned, see #62.
 
 ##Demo
 
-[cat.dart][cat.dart] is a complete implementation of the *nix `cat` 
-utility using unscripted.
+[den][] uses a large subset of the features above.  Run `pub global activate den`
+to install, and then `den -h` to get a feel for the UX provided by unscripted.
 
 [pkg]: http://pub.dartlang.org/packages/unscripted
-[cat.dart]: https://github.com/seaneagan/unscripted/blob/master/example/cat.dart
+[den]: https://github.com/seaneagan/den
 [examples]: https://github.com/seaneagan/unscripted/tree/master/example
 [greet.dart]: https://github.com/seaneagan/unscripted/tree/master/example/greet.dart
 [server.dart]: https://github.com/seaneagan/unscripted/tree/master/example/server.dart

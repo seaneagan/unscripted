@@ -6,7 +6,7 @@ import 'dart:io';
 import 'package:unscripted/unscripted.dart';
 import 'package:unscripted/src/util.dart';
 import 'package:mockable_filesystem/mock_filesystem.dart';
-import 'package:unittest/unittest.dart';
+import 'package:test/test.dart';
 
 
 main() {

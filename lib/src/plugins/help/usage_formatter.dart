@@ -66,7 +66,7 @@ class TerminalUsageFormatter extends UsageFormatter {
     if(visibleCommands.isNotEmpty) {
       blocks.add(['Commands', '''
 ${formatColumns(
-    visibleCommands.keys.map((command) => [command, nullToEmpty(visibleCommands[command].description)]),
+    visibleCommands.keys.map((command) => [command, ((s) => s == null ? '' : s)(visibleCommands[command].description)]),
     [commandPen, textPen])}
 
 ${textPen("See '")}${_formatCommands()} $_HELP ${commandPen('[command]')}${textPen("' for more information about a command.")}''']);
@@ -99,14 +99,6 @@ ${indentLines(formatColumns(
     return '\n' + blockStrings.join('\n\n') + '\n';
   }
 
-  _formatExample(ArgExample example) {
-    var parts = [_formatCommands(), example.example];
-    if(example.help != null && example.help.isNotEmpty) {
-      parts..add('#')..add(example.help);
-    }
-    return parts.join(' ');
-  }
-
   String _formatCommands() =>
       namePen(_getCommandString());
 
@@ -124,4 +116,4 @@ ${indentLines(content)}''';
 indentLines(String text) =>
     const LineSplitter().convert(text).map((line) => indentLine(line, 2)).join('\n');
 
-indentLine(String line, int spaces, {int depth: 1}) => '${repeat(' ', spaces * depth)}$line';
+indentLine(String line, int spaces, {int depth: 1}) => '${' ' * (spaces * depth)}$line';
