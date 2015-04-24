@@ -1,4 +1,4 @@
-unscripted [![pub package](http://img.shields.io/pub/v/unscripted.svg)](https://pub.dartlang.org/packages/unscripted) [![Build Status](https://drone.io/github.com/seaneagan/unscripted/status.png)](https://drone.io/github.com/seaneagan/unscripted/latest) [![Coverage Status](https://img.shields.io/coveralls/seaneagan/unscripted.svg)](https://coveralls.io/r/seaneagan/unscripted?branch=master)
+unscripted [![pub package](https://img.shields.io/pub/v/unscripted.svg)](https://pub.dartlang.org/packages/unscripted) [![Build Status](https://drone.io/github.com/seaneagan/unscripted/status.png)](https://drone.io/github.com/seaneagan/unscripted/latest) [![Coverage Status](https://img.shields.io/coveralls/seaneagan/unscripted.svg)](https://coveralls.io/r/seaneagan/unscripted?branch=master)
 ==========
 
 *Define command-line interfaces using ordinary dart methods and classes.*
