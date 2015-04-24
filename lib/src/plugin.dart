@@ -1,7 +1,7 @@
 
 library unscripted.plugin;
 
-import 'package:unscripted/src/usage.dart';
+import 'usage.dart';
 
 class Plugin {
 

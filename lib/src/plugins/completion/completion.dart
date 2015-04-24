@@ -4,11 +4,10 @@ library unscripted.completion;
 import 'dart:async';
 import 'dart:io';
 
-import 'package:unscripted/src/usage.dart';
-import 'package:unscripted/src/plugin.dart';
-import 'package:unscripted/unscripted.dart';
-import 'package:unscripted/src/call_style.dart';
-
+import '../../../unscripted.dart';
+import '../../usage.dart';
+import '../../plugin.dart';
+import '../../call_style.dart';
 import 'command_line.dart';
 import 'completion_script.dart';
 import 'usage_completion.dart';

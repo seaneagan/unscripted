@@ -7,16 +7,19 @@ import 'dart:io';
 
 import 'package:args/args.dart' show ArgParser, ArgResults;
 import 'package:collection/iterable_zip.dart';
-import 'package:unscripted/unscripted.dart';
-import 'package:unscripted/src/string_codecs.dart';
-import 'package:unscripted/src/usage.dart';
-import 'package:unscripted/src/invocation_maker.dart';
 import 'package:mockable_filesystem/filesystem.dart' as filesystem;
+
+import '../unscripted.dart';
+import 'string_codecs.dart';
+import 'usage.dart';
+import 'invocation_maker.dart';
 
 /// A base class for script annotations which include help.
 class HelpAnnotation {
   /// The help text to include for this part of the command line interface.
-  final String help;
+  ///
+  /// Can either be a `String` or a nullary function which returns one.
+  final help;
 
   const HelpAnnotation({this.help});
 }
@@ -25,7 +28,7 @@ class BaseCommand extends HelpAnnotation {
   /// Whether to allow options after positional arguments.
   final bool allowTrailingOptions;
 
-  const BaseCommand({String help, this.allowTrailingOptions}) : super(help: help);
+  const BaseCommand({help, this.allowTrailingOptions}) : super(help: help);
 }
 
 Rest getRestFromMethod(MethodMirror method) {
@@ -456,3 +459,5 @@ Map mapWhere(Map map, bool where(key, value)) => map.keys.fold({}, (result, key)
   if(where(key, map[key])) result[key] = map[key];
   return result;
 });
+
+typedef Nullary();

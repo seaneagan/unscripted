@@ -6,10 +6,10 @@ library args.src.usage;
 
 import 'dart:math';
 
-import 'package:unscripted/unscripted.dart';
-import 'package:unscripted/src/usage.dart';
-
+import '../../../unscripted.dart';
+import '../../usage.dart';
 import 'pens.dart';
+import 'util.dart';
 
 /**
  * Takes an [ArgParser] and generates a string of usage (i.e. help) text for its
@@ -92,7 +92,10 @@ class OptionHelp {
       write(0, getAbbreviation(option));
       write(1, getLongOption(name, option));
 
-      if (option.help != null) write(2, option.help);
+      var help = getHelp(option.help);
+      if (help != null) {
+        write(2, help);
+      }
 
       if (option.allowed is Map) {
         var allowedValues = getAllowedValues(option).toList(growable: false);
@@ -113,7 +116,6 @@ class OptionHelp {
           write(2, '(defaults to "$defaultsTo")');
         }
       }
-
 
       // If any given option displays more than one line of text on the right
       // column (i.e. help, default value, allowed options, etc.) then put a

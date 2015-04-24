@@ -5,14 +5,14 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:mirrors';
 
-import 'package:unscripted/unscripted.dart';
-import 'package:unscripted/src/string_codecs.dart';
-import 'package:unscripted/src/usage.dart';
-import 'package:unscripted/src/util.dart';
-import 'package:unscripted/src/plugin.dart';
-import 'package:unscripted/src/plugins/help/help.dart';
-import 'package:unscripted/src/plugins/completion/completion.dart' as completion;
-import 'package:unscripted/src/plugins/completion/marker.dart';
+import '../unscripted.dart';
+import 'string_codecs.dart';
+import 'usage.dart';
+import 'util.dart';
+import 'plugin.dart';
+import 'plugins/help/help.dart';
+import 'plugins/completion/completion.dart' as completion;
+import 'plugins/completion/marker.dart';
 
 abstract class ScriptImpl implements Script {
 

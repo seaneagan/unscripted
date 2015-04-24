@@ -6,10 +6,10 @@ library unscripted;
 import 'dart:async';
 import 'dart:io';
 
-import 'package:unscripted/src/script_impl.dart';
-import 'package:unscripted/src/util.dart';
+import 'src/script_impl.dart';
+import 'src/util.dart';
 
-export 'package:unscripted/src/plugins/completion/marker.dart';
+export 'src/plugins/completion/marker.dart';
 
 part 'src/script.dart';
 part 'src/annotations.dart';

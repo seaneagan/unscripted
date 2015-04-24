@@ -3,8 +3,8 @@ library unscripted.plugins.completion.usage_completion;
 
 import 'dart:async';
 
-import 'package:unscripted/unscripted.dart';
-import 'package:unscripted/src/usage.dart';
+import '../../../unscripted.dart';
+import '../../usage.dart';
 
 import 'command_line.dart';
 

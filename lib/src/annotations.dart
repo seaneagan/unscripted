@@ -23,7 +23,7 @@ class Option extends HelpAnnotation {
   final String valueHelp;
 
   const Option({
-      String help,
+      help,
       parser(String arg),
       this.abbr,
       this.allowed,
@@ -46,7 +46,7 @@ class Flag extends Option {
   final bool negatable;
 
   const Flag({
-      String help,
+      help,
       String abbr,
       defaultsTo,
       bool hide,
@@ -66,7 +66,7 @@ class ArgExample extends HelpAnnotation {
   /// itself, just the arguments.
   final String example;
 
-  const ArgExample(this.example, {String help}) : super(help: help);
+  const ArgExample(this.example, {help}) : super(help: help);
 }
 
 /// An annotation which marks required positional parameters as
@@ -87,7 +87,7 @@ class Positional extends HelpAnnotation {
   /// allowed values to help text.
   final allowed;
 
-  const Positional({String help, parser(String arg), this.valueHelp, this.allowed})
+  const Positional({help, parser(String arg), this.valueHelp, this.allowed})
       : this.parser = parser,
       super(help: help);
 }
@@ -109,7 +109,7 @@ class Command extends BaseCommand {
   /// The plugins to use with this command.
   final Iterable plugins;
 
-  const Command({String help, bool allowTrailingOptions: false, this.plugins})
+  const Command({help, bool allowTrailingOptions: false, this.plugins})
       : super(help: help, allowTrailingOptions: allowTrailingOptions);
 }
 
@@ -121,6 +121,6 @@ class SubCommand extends BaseCommand {
   final bool hide;
 
   /// [allowTrailingOptions] is inherited from the parent command by default.
-  const SubCommand({String help, bool allowTrailingOptions, this.hide}) 
+  const SubCommand({help, bool allowTrailingOptions, this.hide})
       : super(help: help, allowTrailingOptions: allowTrailingOptions);
 }

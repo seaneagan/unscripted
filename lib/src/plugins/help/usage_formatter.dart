@@ -24,7 +24,7 @@ class TerminalUsageFormatter extends UsageFormatter {
     color_disabled = !color;
 
     var parser = usage.parser;
-    var description = usage.description;
+    var description = getHelp(usage.description);
     if(description == null) description = '';
 
     var blocks = [];
@@ -40,7 +40,10 @@ class TerminalUsageFormatter extends UsageFormatter {
       blocks.add([
           'Examples',
           formatColumns(
-              usage.examples.map((ArgExample example) => [_getCommandString(), example.example, example.help == null ? '' : '# ${example.help}']),
+              usage.examples.map((ArgExample example) {
+                var help = getHelp(example.help);
+                return [_getCommandString(), example.example, help == null ? '' : '# $help'];
+              }),
               [namePen, null, textPen], separateBy: 1)]);
     }
 
@@ -66,7 +69,7 @@ class TerminalUsageFormatter extends UsageFormatter {
     if(visibleCommands.isNotEmpty) {
       blocks.add(['Commands', '''
 ${formatColumns(
-    visibleCommands.keys.map((command) => [command, ((s) => s == null ? '' : s)(visibleCommands[command].description)]),
+    visibleCommands.keys.map((command) => [command, ((s) => s == null ? '' : s)(getHelp(visibleCommands[command].description))]),
     [commandPen, textPen])}
 
 ${textPen("See '")}${_formatCommands()} $_HELP ${commandPen('[command]')}${textPen("' for more information about a command.")}''']);
@@ -82,7 +85,7 @@ ${textPen("See '")}${_formatCommands()} $_HELP ${commandPen('[command]')}${textP
 $usageString
 
 ${indentLines(formatColumns(
-    positionalsWithRest.map((positional) => ['<${positional.valueHelp}>', positional.help]),
+    positionalsWithRest.map((positional) => ['<${positional.valueHelp}>', getHelp(positional.help)]),
     [positionalPen, textPen]))}''';
     }
 

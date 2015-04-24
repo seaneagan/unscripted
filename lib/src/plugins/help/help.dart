@@ -5,14 +5,15 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:ansicolor/ansicolor.dart';
-import 'package:unscripted/unscripted.dart';
-import 'package:unscripted/src/plugin.dart';
-import 'package:unscripted/src/usage.dart';
-import 'package:unscripted/src/util.dart';
 import 'package:supports_color/supports_color.dart';
 
+import '../../../unscripted.dart';
+import '../../plugin.dart';
+import '../../usage.dart';
+import '../../util.dart';
 import 'option_help.dart';
 import 'pens.dart';
+import 'util.dart';
 
 part 'usage_formatter.dart';
 
