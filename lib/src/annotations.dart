@@ -100,7 +100,7 @@ class Rest extends Positional {
   /// Whether at least one rest argument is required.
   final bool required;
 
-  const Rest({String valueHelp, String help, parser(String arg), allowed, this.required: false})
+  const Rest({String valueHelp, help, parser(String arg), allowed, this.required: false})
       : super(valueHelp: valueHelp, parser: parser, help: help, allowed: allowed);
 }
 
