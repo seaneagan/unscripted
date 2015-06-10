@@ -57,8 +57,8 @@ main() {
 
       test('should suggest all long options for -- or empty', () {
         var usage = new Usage()
-            ..addOption('aaa', new Option())
-            ..addOption('bbb', new Option());
+            ..addOption(new Option(name: 'aaa'))
+            ..addOption(new Option(name: 'bbb'));
         addPlugins(usage);
 
         testAllowed(usage, '', [
@@ -78,8 +78,8 @@ main() {
 
       test('should suggest long options with same prefix', () {
         var usage = new Usage()
-            ..addOption('aaa', new Option())
-            ..addOption('bbb', new Option());
+            ..addOption(new Option(name: 'aaa'))
+            ..addOption(new Option(name: 'bbb'));
         addPlugins(usage);
 
         testAllowed(usage, '--a', ['--aaa']);
@@ -89,7 +89,7 @@ main() {
 
     test('should complete - to --', () {
       var usage = new Usage()
-          ..addOption('opt', new Option(abbr: 'o'));
+          ..addOption(new Option(name: 'opt', abbr: 'o'));
       addPlugins(usage);
 
       testAllowed(usage, '-', [
@@ -101,8 +101,8 @@ main() {
 
     test('should complete short option to long option', () {
       var usage = new Usage()
-          ..addOption('opt', new Option(abbr: 'o'))
-          ..addOption('flag', new Flag(abbr: 'f'));
+          ..addOption(new Option(name: 'opt', abbr: 'o'))
+          ..addOption(new Flag(name: 'flag', abbr: 'f'));
       addPlugins(usage);
 
       testAllowed(usage, '-o', [['--opt']]);
@@ -114,10 +114,10 @@ main() {
 
       test('should suggest allowed', () {
         var usage = new Usage()
-            ..addOption('aaa', new Option(abbr: 'a', allowed: ['x', 'y', 'z']))
-            ..addOption('bbb', new Option(abbr: 'b', allowed: {'x': '', 'y': '', 'z': ''}))
-            ..addOption('ccc', new Option(abbr: 'c'))
-            ..addOption('flag', new Flag(abbr: 'f'));
+            ..addOption(new Option(name: 'aaa', abbr: 'a', allowed: ['x', 'y', 'z']))
+            ..addOption(new Option(name: 'bbb', abbr: 'b', allowed: {'x': '', 'y': '', 'z': ''}))
+            ..addOption(new Option(name: 'ccc', abbr: 'c'))
+            ..addOption(new Flag(name: 'flag', abbr: 'f'));
         addPlugins(usage);
 
         testAllowed(usage, '--aaa ', ['x', 'y', 'z']);
@@ -133,7 +133,7 @@ main() {
 
         test('should suggest synchronously returned completions', () {
           var usage = new Usage()
-              ..addOption('aaa', new Option(abbr: 'a', allowed: (partial) => ['x', 'y', 'z']));
+              ..addOption(new Option(name: 'aaa', abbr: 'a', allowed: (partial) => ['x', 'y', 'z']));
           addPlugins(usage);
 
           testAllowed(usage, '--aaa ', ['x', 'y', 'z']);
@@ -144,7 +144,7 @@ main() {
 
         test('should suggest asynchronously returned completions', () {
           var usage = new Usage()
-              ..addOption('aaa', new Option(abbr: 'a', allowed: (partial) => new Future.value(['x', 'y', 'z'])));
+              ..addOption(new Option(name: 'aaa', abbr: 'a', allowed: (partial) => new Future.value(['x', 'y', 'z'])));
           addPlugins(usage);
 
           testAllowed(usage, '--aaa ', ['x', 'y', 'z']);
@@ -158,7 +158,7 @@ main() {
 
         test('should suggest synchronously returned completions', () {
           var usage = new Usage()
-              ..addOption('aaa', new Option(abbr: 'a', allowed: () => ['x', 'y', 'z']));
+              ..addOption(new Option(name: 'aaa', abbr: 'a', allowed: () => ['x', 'y', 'z']));
           addPlugins(usage);
 
           testAllowed(usage, '--aaa ', ['x', 'y', 'z']);
@@ -169,7 +169,7 @@ main() {
 
         test('should suggest asynchronously returned completions', () {
           var usage = new Usage()
-              ..addOption('aaa', new Option(abbr: 'a', allowed: () => new Future.value(['x', 'y', 'z'])));
+              ..addOption(new Option(name: 'aaa', abbr: 'a', allowed: () => new Future.value(['x', 'y', 'z'])));
           addPlugins(usage);
 
           testAllowed(usage, '--aaa ', ['x', 'y', 'z']);

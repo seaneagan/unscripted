@@ -19,8 +19,10 @@ class Option extends HelpAnnotation {
   /// value into a form accepted by the [Script].  It should throw to indicate
   /// that the argument is invalid.
   final Function parser;
-  /// A function which validates and/or transforms the raw command-line String
+  /// A short label or description of the option's value.
   final String valueHelp;
+  /// The non-abbreviated name used to identify the option on the command-line.
+  final String name;
 
   const Option({
       help,
@@ -30,7 +32,8 @@ class Option extends HelpAnnotation {
       this.allowMultiple,
       this.hide,
       this.defaultsTo,
-      this.valueHelp})
+      this.valueHelp,
+      this.name})
       : this.parser = parser,
         super(help: help);
 }
@@ -51,9 +54,10 @@ class Flag extends Option {
       defaultsTo,
       bool hide,
       bool negatable,
-      String metaName})
+      String valueHelp,
+      String name})
       : this.negatable = negatable == null ? false : negatable,
-        super(help: help, abbr: abbr, defaultsTo: defaultsTo, hide: hide, valueHelp: metaName);
+        super(help: help, abbr: abbr, defaultsTo: defaultsTo, hide: hide, valueHelp: valueHelp, name: name);
 }
 
 /// An annotation which gives example arguments that can be passed to a

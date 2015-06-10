@@ -10,12 +10,12 @@ main(arguments) => new Script(greet).execute(arguments);
 greet(
     @Rest(valueHelp: 'who', help: 'Name(s) to greet.')
     List<String> who, {
-      @Option(valueHelp: 'greeting', help: 'Alternate <greeting> to greet with e.g. "Hi".')
-      String salutation : 'Hello',
       @Option(help: 'How many !\'s to append.')
       int enthusiasm : 0,
       @Flag(abbr: 'l', help: 'Put names on separate lines.')
-      bool lineMode : false
+      bool lineMode : false,
+      @Option(name: 'greeting', help: 'Alternate word to greet with e.g. "Hi".')
+      String salutation : 'Hello'
     }) {
 
   print(salutation +

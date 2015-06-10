@@ -77,9 +77,12 @@ class Usage {
     }
     return _optionsView;
   }
-  addOption(String name, Option option) {
-    addOptionToParser(parser, name, option);
-    _options[name] = option;
+  addOption(Option option) {
+    if (option.name == null) {
+      throw new ArgumentError('option.name cannot be null');
+    }
+    addOptionToParser(parser, option);
+    _options[option.name] = option;
   }
 
   List<String> _commandPath;

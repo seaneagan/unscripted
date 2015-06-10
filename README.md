@@ -27,12 +27,12 @@ main(arguments) => new Script(greet).execute(arguments);
 greet(
     @Rest(help: 'Name(s) to greet.')
     List<String> who, {
-      @Option(help: 'Alternate word to greet with e.g. "Hi".')
-      String salutation : 'Hello',
       @Option(help: 'How many !\'s to append.')
       int enthusiasm : 0,
       @Flag(abbr: 'l', help: 'Put names on separate lines.')
-      bool lineMode : false
+      bool lineMode : false,
+      @Option(name: 'greeting', help: 'Alternate word to greet with e.g. "Hi".')
+      String salutation : 'Hello'
     }) {
 
   print(salutation +
@@ -46,7 +46,7 @@ We can call this script as follows:
 ```shell
 $ greet.dart Bob
 Hello Bob
-$ greet.dart --salutation Hi --enthusiasm 3 -l Alice Bob
+$ greet.dart --enthusiasm 3 -l --greeting Hi Alice Bob
 Hi
   Alice,
   Bob!!!

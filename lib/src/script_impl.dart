@@ -64,6 +64,8 @@ abstract class DeclarationScript extends ScriptImpl {
 
   MethodMirror get _method;
 
+  final Map<Usage, Map<String, String>> usageOptionParameterMap = {};
+
   List<Plugin> get plugins {
     if(_plugins == null) {
       _plugins = [];
@@ -90,7 +92,7 @@ abstract class DeclarationScript extends ScriptImpl {
 
   Usage get usage {
     if(_usage == null) {
-      _usage = getUsageFromFunction(_method);
+      _usage = getUsageFromFunction(_method, this);
       plugins.forEach((plugin) => plugin.updateUsage(_usage));
     }
     return _usage;
@@ -99,7 +101,7 @@ abstract class DeclarationScript extends ScriptImpl {
 
   _handleResults(CommandInvocation commandInvocation, bool isWindows) {
 
-    var topInvocation = convertCommandInvocationToInvocation(commandInvocation, _method);
+    var topInvocation = convertCommandInvocationToInvocation(commandInvocation, _method, usageOptionParameterMap[usage]);
 
     var topResult = _getTopCommandResult(topInvocation);
 
@@ -131,10 +133,11 @@ abstract class DeclarationScript extends ScriptImpl {
     var classMirror = result.type;
     var methods = classMirror.instanceMembers;
     var commandMethod = methods[commandSymbol];
-    var invocation = convertCommandInvocationToInvocation(commandInvocation, commandMethod, memberName: commandSymbol);
-    var subResult = result.delegate(invocation);
     Usage subUsage;
-    if (commandInvocation.subCommand != null) subUsage = usage.commands[commandInvocation.subCommand.name];
+    subUsage = usage.commands[commandInvocation.name];
+    var optionParameterMap = subUsage != null ? usageOptionParameterMap[subUsage] : {};
+    var invocation = convertCommandInvocationToInvocation(commandInvocation, commandMethod, optionParameterMap, memberName: commandSymbol);
+    var subResult = result.delegate(invocation);
     return _handleSubCommands(reflect(subResult), commandInvocation.subCommand, subUsage, isWindows);
   }
 
@@ -172,3 +175,4 @@ class ClassScript extends DeclarationScript {
       invocation.positionalArguments,
       invocation.namedArguments);
 }
+

@@ -134,7 +134,8 @@ class CompletionOptionAdapter extends CompletionAdapter {
   CompletionOptionAdapter() : super._();
 
   updateUsage(Usage usage) {
-    usage.addOption(_COMPLETION, new Option(
+    usage.addOption(new Option(
+        name: _COMPLETION,
         allowed: _installationNamesHelp,
         help: 'Tab completion for this command.'));
   }

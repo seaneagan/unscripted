@@ -85,6 +85,15 @@ main() {
         });
       });
 
+      test('flag from renamed Flag', () {
+        var flagValue;
+        return new FunctionScript(({@Flag(name: 'renamed-flag') flag}) {
+          flagValue = flag;
+        }).execute(['--renamed-flag']).then((_) {
+          expect(flagValue, true);
+        });
+      });
+
       test('flag defaults to null by default', () {
         var flagValue;
         return new FunctionScript(({@Flag() flag}) {
@@ -99,6 +108,15 @@ main() {
         return new FunctionScript(({@Option() option}) {
           optionValue = option;
         }).execute(['--option', 'value']).then((_) {
+          expect(optionValue, 'value');
+        });
+      });
+
+      test('option from renamed Option', () {
+        var optionValue;
+        return new FunctionScript(({@Option(name: 'renamed-option') option}) {
+          optionValue = option;
+        }).execute(['--renamed-option', 'value']).then((_) {
           expect(optionValue, 'value');
         });
       });
@@ -345,16 +363,18 @@ main() {
       group('allowTrailingOptions', () {
 
         test('should allow trailing options when true', () {
-          return unit.execute(['command', 'positional', '--command-flag']).then((_) {
+          return unit.execute(['command', 'positional', '--command-flag', '--opt', '5']).then((_) {
             expect(_lastSeenRest, ['positional']);
             expect(CommandScriptTest._lastSeenCommandFlag, isTrue);
+            expect(CommandScriptTest._lastSeenCommandOption, '5');
           });
         });
 
         test('should not allow trailing options when false', () {
-          return unit.execute(['no-trailing', 'positional', '--command-flag']).then((_) {
-            expect(_lastSeenRest, ['positional', '--command-flag']);
+          return unit.execute(['no-trailing', 'positional', '--command-flag', '--opt', '5']).then((_) {
+            expect(_lastSeenRest, ['positional', '--command-flag', '--opt', '5']);
             expect(CommandScriptTest._lastSeenCommandFlag, isNull);
+            expect(CommandScriptTest._lastSeenCommandOption, isNull);
           });
         });
       });
@@ -370,14 +390,16 @@ class CommandScriptTest {
   static bool _commandHappened;
   static bool _dashedCommandHappened;
   static bool _lastSeenCommandFlag;
+  static String _lastSeenCommandOption;
 
   @Command(help: 'Test command with sub-commands', allowTrailingOptions: true)
   CommandScriptTest({this.flag: false, this.option: 'default'});
 
   @SubCommand()
-  int command(@Rest() rest, {bool commandFlag}) {
+  int command(@Rest() rest, {bool commandFlag, @Option(name: 'opt') option}) {
     _lastSeen = this;
     _lastSeenRest = rest;
+    _lastSeenCommandOption = option;
     _lastSeenCommandFlag = commandFlag;
     _commandHappened = true;
     return 0;
@@ -389,10 +411,11 @@ class CommandScriptTest {
   }
 
   @SubCommand(allowTrailingOptions: false)
-  noTrailing(@Rest() rest, {bool commandFlag}) {
+  noTrailing(@Rest() rest, {bool commandFlag, @Option(name: 'opt') option}) {
     _lastSeen = this;
     _lastSeenRest = rest;
     _lastSeenCommandFlag = commandFlag;
+    _lastSeenCommandOption = option;
     _commandHappened = true;
   }
 
