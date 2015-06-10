@@ -1,3 +1,11 @@
+## Unreleased
+
+  - Add `name` parameter to `Option` and `Flag` ( #102 )
+
+## 0.6.1
+
+  - Allow dynamic help content
+
 ## 0.6.0
 
   - Deprecated `declare` in favor of `new Script`.

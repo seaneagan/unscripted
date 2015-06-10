@@ -10,6 +10,7 @@ import 'package:collection/iterable_zip.dart';
 import 'package:mockable_filesystem/filesystem.dart' as filesystem;
 
 import '../unscripted.dart';
+import 'script_impl.dart';
 import 'string_codecs.dart';
 import 'usage.dart';
 import 'invocation_maker.dart';
@@ -79,9 +80,10 @@ getDefaultPositionalName(Symbol symbol) {
   // return MirrorSystem.getName(symbol).toUpperCase();
 }
 
-Usage getUsageFromFunction(MethodMirror methodMirror, {Usage usage}) {
+Usage getUsageFromFunction(MethodMirror methodMirror, DeclarationScript script, {Usage usage}) {
 
   if(usage == null) usage = new Usage();
+  script.usageOptionParameterMap[usage] = {};
 
   usage.rest = getRestFromMethod(methodMirror);
 
@@ -160,23 +162,26 @@ Usage getUsageFromFunction(MethodMirror methodMirror, {Usage usage}) {
       defaultValue = parameter.defaultValue.reflectee;
     }
 
+    var optionName = dashesToCamelCase.decode(option.name != null
+        ? option.name : parameterName);
+
     // Update option with any configuration detected in the parameter.
     // TODO: This is not very maintainable.
     // Use reflection instead to copy values over?
     option = option is Flag ?
         new Flag(help: option.help, abbr: option.abbr, hide: option.hide,
-            defaultsTo: defaultValue, negatable: option.negatable) :
+            defaultsTo: defaultValue, negatable: option.negatable,
+            name: optionName) :
         new Option(help: option.help, abbr: option.abbr,
             defaultsTo: defaultValue, allowed: option.allowed,
             allowMultiple: allowMultiple, hide: option.hide,
-            valueHelp: option.valueHelp, parser: parser);
+            valueHelp: option.valueHelp, parser: parser, name: optionName);
 
-    var optionName = dashesToCamelCase.decode(parameterName);
-
-    usage.addOption(optionName, option);
+    script.usageOptionParameterMap[usage][optionName] = parameterName;
+    usage.addOption(option);
   });
 
-  _addSubCommandsForClass(usage, methodMirror.returnType);
+  _addSubCommandsForClass(usage, script, methodMirror.returnType);
 
   return usage;
 }
@@ -190,7 +195,7 @@ getParserFromType(TypeMirror typeMirror) {
   return null;
 }
 
-_addSubCommandsForClass(Usage usage, TypeMirror typeMirror) {
+_addSubCommandsForClass(Usage usage, DeclarationScript script, TypeMirror typeMirror) {
   if(typeMirror is ClassMirror) {
 
     var methods = typeMirror.instanceMembers.values;
@@ -214,6 +219,7 @@ _addSubCommandsForClass(Usage usage, TypeMirror typeMirror) {
           .decode(MirrorSystem.getName(methodMirror.simpleName));
       getUsageFromFunction(
           methodMirror,
+          script,
           usage: usage.addCommand(commandName, subCommand));
     });
   }
@@ -241,7 +247,7 @@ getFirstMetadataMatch(DeclarationMirror declaration, bool match(metadata)) {
       .firstWhere(match, orElse: () => null);
 }
 
-void addOptionToParser(ArgParser parser, String name, Option option) {
+void addOptionToParser(ArgParser parser, Option option) {
 
   var suffix;
 
@@ -282,7 +288,7 @@ void addOptionToParser(ArgParser parser, String name, Option option) {
 
   var parserMethod = 'add$suffix';
 
-  reflect(parser).invoke(new Symbol(parserMethod), [name], namedParameters);
+  reflect(parser).invoke(new Symbol(parserMethod), [option.name], namedParameters);
 }
 
 // Returns a List whose elements are the required argument count, and whether
@@ -329,18 +335,20 @@ MethodMirror getUnnamedConstructor(ClassMirror classMirror) {
       constructor.constructorName == const Symbol(''), orElse: () => null);
 }
 
-convertCommandInvocationToInvocation(CommandInvocation commandInvocation, MethodMirror method, {Symbol memberName: #call}) {
+convertCommandInvocationToInvocation(CommandInvocation commandInvocation, MethodMirror method, Map<String, String> optionParameterMap, {Symbol memberName: #call}) {
 
   var positionals = commandInvocation.positionals;
 
   var named = {};
 
   commandInvocation.options.forEach((option, value) {
-    var paramSymbol = new Symbol(dashesToCamelCase.encode(option));
+    var paramSymbol = new Symbol(optionParameterMap[option]);
     var paramExists = method.parameters.any((param) =>
         param.simpleName == paramSymbol);
-    if(paramExists) {
+    if (paramExists) {
       named[paramSymbol] = value;
+    } else {
+      // print('Param "${optionParameterMap[option]}" does not exist for option "$option"');
     }
   });
 

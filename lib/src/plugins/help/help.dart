@@ -28,7 +28,8 @@ class Help extends Plugin {
     usage.commands.values.forEach(updateUsage);
 
     if(!usage.options.containsKey(_HELP)) {
-      usage.addOption(_HELP, new Flag(
+      usage.addOption(new Flag(
+        name: _HELP,
         abbr: 'h',
         help: 'Print this usage information.',
         negatable: false));
