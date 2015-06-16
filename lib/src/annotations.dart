@@ -128,3 +128,33 @@ class SubCommand extends BaseCommand {
   const SubCommand({help, bool allowTrailingOptions, this.hide})
       : super(help: help, allowTrailingOptions: allowTrailingOptions);
 }
+
+/// An annotation which defines a group of options.
+///
+/// The group of options will be separated from other options in help text,
+/// and may have a [title] and [help] as well.
+///
+/// See [new Group] and [new Group.start] for different ways to define groups.
+abstract class Group implements HelpAnnotation {
+
+  /// The title to display above the [help] for this group.
+  String get title;
+
+  /// Whether to hide this group.
+  bool get hide;
+
+  /// Marks a `Map<String, dynamic>` [Option] parameter as receiving values for
+  /// multiple options as enumerated by [getOptions].
+  const factory Group(
+      Iterable<Option> getOptions(),
+      {String title,
+       help,
+       bool hide}) = CombinedGroup;
+
+  /// Use [Group.start] to mark a `Map<String, dynamic>` [Option] parameter as starting a group which
+  /// continues until the next [Group] parameter.
+  const factory Group.start(
+      {String title,
+      help,
+      bool hide}) = StartGroup;
+}

@@ -65,6 +65,7 @@ abstract class DeclarationScript extends ScriptImpl {
   MethodMirror get _method;
 
   final Map<Usage, Map<String, String>> usageOptionParameterMap = {};
+  final Map<Usage, Map<OptionGroup, String>> usageOptionGroupParameterMap = {};
 
   List<Plugin> get plugins {
     if(_plugins == null) {
@@ -101,7 +102,7 @@ abstract class DeclarationScript extends ScriptImpl {
 
   _handleResults(CommandInvocation commandInvocation, bool isWindows) {
 
-    var topInvocation = convertCommandInvocationToInvocation(commandInvocation, _method, usageOptionParameterMap[usage]);
+    var topInvocation = convertCommandInvocationToInvocation(commandInvocation, _method, this, usage);
 
     var topResult = _getTopCommandResult(topInvocation);
 
@@ -133,10 +134,8 @@ abstract class DeclarationScript extends ScriptImpl {
     var classMirror = result.type;
     var methods = classMirror.instanceMembers;
     var commandMethod = methods[commandSymbol];
-    Usage subUsage;
-    subUsage = usage.commands[commandInvocation.name];
-    var optionParameterMap = subUsage != null ? usageOptionParameterMap[subUsage] : {};
-    var invocation = convertCommandInvocationToInvocation(commandInvocation, commandMethod, optionParameterMap, memberName: commandSymbol);
+    var subUsage = usage.commands[commandInvocation.name];
+    var invocation = convertCommandInvocationToInvocation(commandInvocation, commandMethod, this, subUsage, memberName: commandSymbol);
     var subResult = result.delegate(invocation);
     return _handleSubCommands(reflect(subResult), commandInvocation.subCommand, subUsage, isWindows);
   }

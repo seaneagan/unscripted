@@ -1,6 +1,7 @@
 ## Unreleased
 
   - Add `name` parameter to `Option` and `Flag` ( #102 )
+  - Add option groups ( #40 )
 
 ## 0.6.1
 

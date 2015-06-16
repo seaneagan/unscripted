@@ -298,6 +298,30 @@ main() {
 
     });
 
+    group('Group', () {
+      test('Group() combines option values into map', () {
+        var aloneValue, groupValue;
+        return new FunctionScript(({@Group(getGroupOptions) group, alone}) {
+          groupValue = group;
+          aloneValue = alone;
+        }).execute(['--option', 'foo', '--alone', 'bar', '--flag']).then((_) {
+          expect(groupValue, {'option': 'foo', 'flag': true});
+          expect(aloneValue, 'bar');
+        });
+      });
+
+      test('Group.start() has no effect on option values', () {
+        var opt1Value, opt2Value;
+        return new FunctionScript(({@Group.start() opt1, opt2}) {
+          opt1Value = opt1;
+          opt2Value = opt2;
+        }).execute(['--opt1', '1', '--opt2', '2']).then((_) {
+          expect(opt1Value, '1');
+          expect(opt2Value, '2');
+        });
+      });
+    });
+
     group('ClassScript', () {
 
       Script unit;
@@ -381,6 +405,8 @@ main() {
     });
   });
 }
+
+getGroupOptions() => [new Option(name: 'option'), new Flag(name: 'flag')];
 
 class CommandScriptTest {
   final bool flag;

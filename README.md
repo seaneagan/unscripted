@@ -27,6 +27,7 @@ main(arguments) => new Script(greet).execute(arguments);
 greet(
     @Rest(help: 'Name(s) to greet.')
     List<String> who, {
+      @Group.start('Output');
       @Option(help: 'How many !\'s to append.')
       int enthusiasm : 0,
       @Flag(abbr: 'l', help: 'Put names on separate lines.')
@@ -61,28 +62,36 @@ $ greet.dart --help
 
 Description:
 
-  Print a configurable greeting
+  Print a configurable greeting.
 
 Usage:
 
-  greet.dart [options] [WHO]...
+  greet.dart [options] [<who>...]
+
+    <who>    Name(s) to greet.
 
 Options:
 
-      --salutation=<greeting>    Alternate <greeting> to greet with e.g. "Hi".
-      --enthusiasm               How many !'s to append.
-  -l, --line-mode                Put names on separate lines.
-      --completion               Tab completion for this command.
+      --completion         Tab completion for this command.
 
-            [install]            Install completion script to .bashrc/.zshrc.
-            [print]              Print completion script to stdout.
-            [uninstall]          Uninstall completion script from .bashrc/.zshrc.
+            [install]      Install completion script to .bashrc/.zshrc.
+            [print]        Print completion script to stdout.
+            [uninstall]    Uninstall completion script from .bashrc/.zshrc.
 
-  -h, --help                     Print this usage information.
+  -h, --help               Print this usage information.
+
+  Output:
+
+      --enthusiasm         How many !'s to append.
+                           (defaults to "0")
+
+  -l, --line-mode          Put names on separate lines.
+      --greeting           Alternate word to greet with e.g. "Hi".
+                           (defaults to "Hello")
 
 Examples:
 
-  greet.dart --salutation Hi --enthusiasm 3 Bob # enthusiastic
+  greet.dart --greeting Hi --enthusiasm 3 Bob # enthusiastic
 
 ```
 
