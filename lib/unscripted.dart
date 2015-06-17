@@ -8,6 +8,7 @@ import 'dart:io';
 
 import 'src/script_impl.dart';
 import 'src/util.dart';
+import 'src/group_annotations.dart';
 
 export 'src/plugins/completion/marker.dart';
 

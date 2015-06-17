@@ -2,6 +2,7 @@
 library unscripted.src.util;
 
 import 'dart:async';
+import 'dart:collection';
 import 'dart:mirrors';
 import 'dart:io';
 
@@ -14,6 +15,7 @@ import 'script_impl.dart';
 import 'string_codecs.dart';
 import 'usage.dart';
 import 'invocation_maker.dart';
+import 'group_annotations.dart';
 
 /// A base class for script annotations which include help.
 class HelpAnnotation {
@@ -84,6 +86,7 @@ Usage getUsageFromFunction(MethodMirror methodMirror, DeclarationScript script, 
 
   if(usage == null) usage = new Usage();
   script.usageOptionParameterMap[usage] = {};
+  script.usageOptionGroupParameterMap[usage] = {};
 
   usage.rest = getRestFromMethod(methodMirror);
 
@@ -125,12 +128,41 @@ Usage getUsageFromFunction(MethodMirror methodMirror, DeclarationScript script, 
   positionals.forEach((positional) =>
       usage.addPositional(positional));
 
+  OptionGroup currentGroup = usage.optionGroups.first;
+
   parameters.where((parameter) => parameter.isNamed).forEach((parameter) {
+
+    var parameterName = MirrorSystem.getName(parameter.simpleName);
+
+    InstanceMirror groupAnnotation = parameter.metadata.firstWhere((annotation) =>
+        annotation.reflectee is GroupMarker, orElse: () => null);
+
+    if (groupAnnotation != null) {
+      GroupMarker group = groupAnnotation.reflectee;
+      if (group is CombinedGroup) {
+        var combinedGroup = usage.addOptionGroup(title: group.title, help: group.help, hide: group.hide);
+
+        // Add all the options to the group.
+        var groupOptions = group.getOptions();
+        groupOptions.forEach(combinedGroup.addOption);
+
+        // Store a mapping from the group to the parameter representing it.
+        script.usageOptionGroupParameterMap[usage][combinedGroup] = parameterName;
+
+        // Reset the current group back to the default group.
+        currentGroup = usage.optionGroups.first;
+
+        // Return, since we already added Don't look for an single-option in this case.
+        return;
+      }
+
+      if (group is StartGroup) {
+        currentGroup = usage.addOptionGroup(title: group.title, help: group.help, hide: group.hide);
+      }
+    }
 
     Option option;
     var type = parameter.type;
-
-    var parameterName = MirrorSystem.getName(parameter.simpleName);
 
     InstanceMirror argAnnotation = parameter.metadata.firstWhere((annotation) =>
         annotation.reflectee is Option, orElse: () => null);
@@ -178,7 +210,7 @@ Usage getUsageFromFunction(MethodMirror methodMirror, DeclarationScript script, 
             valueHelp: option.valueHelp, parser: parser, name: optionName);
 
     script.usageOptionParameterMap[usage][optionName] = parameterName;
-    usage.addOption(option);
+    currentGroup.addOption(option);
   });
 
   _addSubCommandsForClass(usage, script, methodMirror.returnType);
@@ -335,21 +367,26 @@ MethodMirror getUnnamedConstructor(ClassMirror classMirror) {
       constructor.constructorName == const Symbol(''), orElse: () => null);
 }
 
-convertCommandInvocationToInvocation(CommandInvocation commandInvocation, MethodMirror method, Map<String, String> optionParameterMap, {Symbol memberName: #call}) {
+convertCommandInvocationToInvocation(CommandInvocation commandInvocation, MethodMirror method, DeclarationScript script, Usage usage, {Symbol memberName: #call}) {
 
   var positionals = commandInvocation.positionals;
 
   var named = {};
 
-  commandInvocation.options.forEach((option, value) {
-    var paramSymbol = new Symbol(optionParameterMap[option]);
-    var paramExists = method.parameters.any((param) =>
-        param.simpleName == paramSymbol);
-    if (paramExists) {
-      named[paramSymbol] = value;
-    } else {
-      // print('Param "${optionParameterMap[option]}" does not exist for option "$option"');
-    }
+  script.usageOptionGroupParameterMap[usage].forEach((optionGroup, parameter) {
+    var optionMap = {};
+    optionGroup.options.forEach((name, option) {
+      if (commandInvocation.options.containsKey(name)) {
+        optionMap[name] = commandInvocation.options[name];
+      }
+    });
+    var paramSymbol = new Symbol(parameter);
+    named[paramSymbol] = new UnmodifiableMapView(optionMap);
+  });
+
+  script.usageOptionParameterMap[usage].forEach((option, parameter) {
+    var paramSymbol = new Symbol(parameter);
+    named[paramSymbol] = commandInvocation.options[option];
   });
 
   return new InvocationMaker.method(memberName, positionals, named).invocation;

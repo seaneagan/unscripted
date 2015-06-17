@@ -69,21 +69,50 @@ class Usage {
 
   // Options
 
-  Map<String, Option> _options = {};
-  Map<String, Option> _optionsView;
   Map<String, Option> get options {
     if(_optionsView == null) {
       _optionsView = new UnmodifiableMapView(_options);
     }
     return _optionsView;
   }
+  final Map<String, Option> _options = {};
+  Map<String, Option> _optionsView;
+
   addOption(Option option) {
     if (option.name == null) {
       throw new ArgumentError('option.name cannot be null');
     }
+    optionGroups.first.addOption(option);
+  }
+
+  _addOption(Option option) {
     addOptionToParser(parser, option);
     _options[option.name] = option;
   }
+
+  OptionGroup addOptionGroup({String title, String help, bool hide}) {
+    var group = new OptionGroup._(this, title: title, help: help, hide: hide);
+    _initOptionGroups();
+    _optionGroups.add(group);
+    return group;
+  }
+
+  _initOptionGroups() {
+    if (_optionGroups.isEmpty) {
+      // Add default option group.
+      _optionGroups.add(new OptionGroup._(this));
+    }
+  }
+
+  List<OptionGroup> get optionGroups {
+    _initOptionGroups();
+    if (_optionGroupsView == null) {
+      _optionGroupsView = new UnmodifiableListView(_optionGroups);
+    }
+    return _optionGroupsView;
+  }
+  final List<OptionGroup> _optionGroups = [];
+  List<OptionGroup> _optionGroupsView;
 
   List<String> _commandPath;
   List<String> get commandPath {
@@ -193,6 +222,37 @@ class _SubCommandUsage extends Usage {
   _SubCommandUsage(this.parent, this.name, this.hide);
 
   ArgParser _getParser() => parent.parser.commands[name];
+}
+
+class OptionGroup {
+  final Usage _usage;
+
+  /// The title to display above the [help] for this group.
+  final String title;
+
+  /// The help text to include for this part of the command line interface.
+  ///
+  /// Can either be a `String` or a nullary function which returns one.
+  final help;
+
+  /// Whether to hide this group.
+  final bool hide;
+
+  OptionGroup._(this._usage, {this.title, this.help, this.hide: false});
+
+  Map<String, Option> get options {
+    if(_optionsView == null) {
+      _optionsView = new UnmodifiableMapView(_options);
+    }
+    return _optionsView;
+  }
+  final Map<String, Option> _options = {};
+  Map<String, Option> _optionsView;
+
+  addOption(Option option) {
+    _usage._addOption(option);
+    _options[option.name] = option;
+  }
 }
 
 class CommandInvocation {

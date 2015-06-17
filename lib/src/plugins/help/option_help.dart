@@ -23,9 +23,11 @@ import 'util.dart';
  * spaces and wrapping to the next line to keep the cells correctly lined up.
  */
 class OptionHelp {
-  static const NUM_COLUMNS = 3; // Abbreviation, long name, help.
+  static const numColumns = 3; // Abbreviation, long name, help.
 
-  /** The parser this is generating usage for. */
+  static const gutterWidth = 4; // Width of gutter between columns.
+
+  /** The usage this is generating usage for. */
   final Usage usage;
 
   /** The working buffer for the generated usage text. */
@@ -41,7 +43,7 @@ class OptionHelp {
   /** The width in characters of each column. */
   List<int> columnWidths;
 
-  /** The width in characters of each column. */
+  /** The formatters of each column. */
   List<Function> columnFormatters = [abbrFormatter, optionPen, helpFormatter];
 
   static String abbrFormatter(String help) {
@@ -86,46 +88,64 @@ class OptionHelp {
 
     calculateColumnWidths();
 
-    usage.options.forEach((name, option) {
-      if (option.hide != null && option.hide) return;
+    usage.optionGroups.asMap().forEach((index, optionGroup) {
+      if (optionGroup.hide != null && optionGroup.hide) return;
 
-      write(0, getAbbreviation(option));
-      write(1, getLongOption(name, option));
-
-      var help = getHelp(option.help);
-      if (help != null) {
-        write(2, help);
+      var title = optionGroup.title != null
+          ? getGroupTitle(optionGroup.title)
+          : index == 0
+              ? null
+              : '_' * (columnWidths.fold(0, (prev, next) => prev + next) - gutterWidth);
+      if (title != null) {
+        if (buffer.isNotEmpty) buffer.write("\n");
+        write(0, title, format: titlePen);
+        newline();
+        newline();
       }
 
-      if (option.allowed is Map) {
-        var allowedValues = getAllowedValues(option).toList(growable: false);
-        allowedValues.sort();
-        newline();
-        for (var name in allowedValues) {
-          write(1, getAllowedTitle(name));
-          write(2, option.allowed[name]);
-        }
-        newline();
-      } else if (getAllowedValues(option) != null) {
-        write(2, buildAllowedList(option));
-      } else if (option.defaultsTo != null) {
-        var defaultsTo = option is Flag && option.defaultsTo == true ?
-            'on' :
-            option is! Flag ? option.defaultsTo : null;
-        if(defaultsTo != null) {
-          write(2, '(defaults to "$defaultsTo")');
-        }
-      }
+      optionGroup.options.forEach((name, option) {
+        if (option.hide != null && option.hide) return;
 
-      // If any given option displays more than one line of text on the right
-      // column (i.e. help, default value, allowed options, etc.) then put a
-      // blank line after it. This gives space where it's useful while still
-      // keeping simple one-line options clumped together.
-      if (numHelpLines > 1) newline();
+        write(0, getAbbreviation(option));
+        write(1, getLongOption(name, option));
+
+        var help = getHelp(option.help);
+        if (help != null) {
+          write(2, help);
+        }
+
+        if (option.allowed is Map) {
+          var allowedValues = getAllowedValues(option).toList(growable: false);
+          allowedValues.sort();
+          newline();
+          for (var name in allowedValues) {
+            write(1, getAllowedTitle(name));
+            write(2, option.allowed[name]);
+          }
+          newline();
+        } else if (getAllowedValues(option) != null) {
+          write(2, buildAllowedList(option));
+        } else if (option.defaultsTo != null) {
+          var defaultsTo = option is Flag && option.defaultsTo == true ?
+              'on' :
+              option is! Flag ? option.defaultsTo : null;
+          if(defaultsTo != null) {
+            write(2, '(defaults to "$defaultsTo")');
+          }
+        }
+
+        // If any given option displays more than one line of text on the right
+        // column (i.e. help, default value, allowed options, etc.) then put a
+        // blank line after it. This gives space where it's useful while still
+        // keeping simple one-line options clumped together.
+        if (numHelpLines > 1) newline();
+      });
     });
 
     return buffer.toString();
   }
+
+  String getGroupTitle(String name) => '$name:';
 
   Iterable<String> getAllowedValues(Option option) {
     var allowed = option.allowed;
@@ -164,23 +184,30 @@ class OptionHelp {
   void calculateColumnWidths() {
     int abbr = 0;
     int title = 0;
-    usage.options.forEach((name, option) {
-      // Make room in the first column if there are abbreviations.
-      abbr = max(abbr, getAbbreviation(option).length);
+    usage.optionGroups.forEach((optionGroup) {
+      if (optionGroup.hide != null && optionGroup.hide) return;
 
-      // Make room for the option.
-      title = max(title, getLongOption(name, option).length);
+      // Make room for the group title.
+      title = max(title, getGroupTitle(optionGroup.title).length);
 
-      // Make room for the allowed help.
-      if (option.allowed is Map) {
-        for (var allowed in option.allowed.keys) {
-          title = max(title, getAllowedTitle(allowed).length);
+      optionGroup.options.forEach((name, option) {
+        // Make room in the first column if there are abbreviations.
+        abbr = max(abbr, getAbbreviation(option).length);
+
+        // Make room for the option.
+        title = max(title, getLongOption(name, option).length);
+
+        // Make room for the allowed help.
+        if (option.allowed is Map) {
+          for (var allowed in option.allowed.keys) {
+            title = max(title, getAllowedTitle(allowed).length);
+          }
         }
-      }
+      });
     });
 
     // Leave a gutter between the columns.
-    title += 4;
+    title += gutterWidth;
     columnWidths = [abbr, title];
   }
 
@@ -190,24 +217,24 @@ class OptionHelp {
     numHelpLines = 0;
   }
 
-  void write(int column, String text) {
+  void write(int column, String text, {format(String)}) {
     var lines = text.split('\n');
 
     // Strip leading and trailing empty lines.
-    while (lines.length > 0 && lines[0].trim() == '') {
-      lines.removeRange(0, 1);
+    while (lines.isNotEmpty && lines.first.trim() == '') {
+      lines.removeAt(0);
     }
 
-    while (lines.length > 0 && lines[lines.length - 1].trim() == '') {
+    while (lines.isNotEmpty && lines.last.trim() == '') {
       lines.removeLast();
     }
 
     for (var line in lines) {
-      writeLine(column, line);
+      writeLine(column, line, format: format);
     }
   }
 
-  void writeLine(int column, String text) {
+  void writeLine(int column, String text, {format(String)}) {
     // Write any pending newlines.
     while (newlinesNeeded > 0) {
       buffer.write('\n');
@@ -217,15 +244,17 @@ class OptionHelp {
     // Advance until we are at the right column (which may mean wrapping around
     // to the next line.
     while (currentColumn != column) {
-      if (currentColumn < NUM_COLUMNS - 1) {
+      if (currentColumn < numColumns - 1) {
         buffer.write(' ' * columnWidths[currentColumn]);
       } else {
         buffer.write('\n');
       }
-      currentColumn = (currentColumn + 1) % NUM_COLUMNS;
+      currentColumn = (currentColumn + 1) % numColumns;
     }
 
-    var formatted = columnFormatters[column](text);
+    var formatter = format != null ? format : columnFormatters[column];
+
+    var formatted = formatter(text);
     buffer.write(formatted);
 
     if (column < columnWidths.length) {
@@ -234,14 +263,14 @@ class OptionHelp {
     }
 
     // Advance to the next column.
-    currentColumn = (currentColumn + 1) % NUM_COLUMNS;
+    currentColumn = (currentColumn + 1) % numColumns;
 
     // If we reached the last column, we need to wrap to the next line.
-    if (column == NUM_COLUMNS - 1) newlinesNeeded++;
+    if (column == numColumns - 1) newlinesNeeded++;
 
     // Keep track of how many consecutive lines we've written in the last
     // column.
-    if (column == NUM_COLUMNS - 1) {
+    if (column == numColumns - 1) {
       numHelpLines++;
     } else {
       numHelpLines = 0;
