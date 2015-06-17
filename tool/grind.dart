@@ -8,18 +8,25 @@ import 'package:grinder/grinder.dart';
 main(args) => grind(args);
 
 @Task()
-analyze() => new PubApplication('tuneup').run(['check']);
+analyze() => new PubApp.global('tuneup').run(['check']);
 
 @Task()
-test() => new PubApplication('test').run([]);
+test() => new TestRunner().testAsync();
 
 @Task()
 coverage() {
   if (Platform.environment.containsKey('CI') &&
       Platform.environment['TRAVIS_DART_VERSION'] == 'stable') {
-    new PubApplication('dart_coveralls').run(
+
+    var coverageTokenVar = 'COVERALLS_TOKEN';
+    final String coverageToken = Platform.environment[coverageTokenVar];
+    if (coverageToken == null) {
+      log('Skipping, code coverage environment variable "$coverageTokenVar" is not defined.');
+    }
+
+    new PubApp.global('dart_coveralls').run(
       ['report',
-       '--token', Platform.environment['REPO_TOKEN'],
+       '--token', coverageToken,
        '--retry', '3',
        'test/all_tests.dart']);
   } else {

@@ -3,4 +3,4 @@ sudo: false
 dart:
   - dev
   - stable
-script: pub run grinder:grind
+script: pub run grinder
