@@ -96,7 +96,6 @@ class Usage {
     _optionGroups.add(group);
     return group;
   }
-  OptionGroup _currentGroup;
 
   _initOptionGroups() {
     if (_optionGroups.isEmpty) {
