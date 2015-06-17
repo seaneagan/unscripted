@@ -8,16 +8,16 @@ import 'package:grinder/grinder.dart';
 main(args) => grind(args);
 
 @Task()
-analyze() => new PubApplication('tuneup').run(['check']);
+analyze() => new PubApp.global('tuneup').run(['check']);
 
 @Task()
-test() => new PubApplication('test').run([]);
+test() => new TestRunner().testAsync();
 
 @Task()
 coverage() {
   if (Platform.environment.containsKey('CI') &&
       Platform.environment['TRAVIS_DART_VERSION'] == 'stable') {
-    new PubApplication('dart_coveralls').run(
+    new PubApp.global('dart_coveralls').run(
       ['report',
        '--token', Platform.environment['REPO_TOKEN'],
        '--retry', '3',
