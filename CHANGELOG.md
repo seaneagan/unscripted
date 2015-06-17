@@ -1,4 +1,4 @@
-## Unreleased
+## 0.6.2
 
   - Add `name` parameter to `Option` and `Flag` ( #102 )
   - Add option groups ( #40 )
